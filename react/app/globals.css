@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/* variaveis globais */
+:root {
+  /* paleta 1 padrao */
+  --off-white: #F8F4EB; 
+  --preto: #000000;
+  --azul-escuro: #3F8E9B;
+  --laranja: #F18D04;
+  --rosinha: #EAC8BC;
+  --azul-claro: #AAD1D6;
+  --cinza: #929292;
+
+  /* paleta 2 escuro 
+  (como são as mesmas cores do padrão, nao precisa declarar dnv)*/
+  
+  /* paleta 3 esverdeado */
+  --off-white-esverdeado: #F8FFEB;
+  --preto-olivaceo: #000F00;
+  --azul-escuro-olivaceo: #0C6153;
+  --laranja-olivaceo: #B7520A;
+  --rosinha-olivaceo: #E2EABC;
+  --azul-claro-olivaceo: #AAD7B7;
+  --cinza-olivaceo: #607163;
+
+  /* definicoes */
+  --background: var(--off-white);
+  --foreground: var(--preto);
+}
+
+/* mapeando variáveis pra Tailwind usar */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-title: var(--font-victor-mono-title);
+  --font-subtitle: var(--font-afacad-subtitle);
+  --font-body: var(--font-dm-sans-body);
+}
+
+/* detecta se o usuário está em modo escuro no sistema */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--preto);
+    --foreground: var(--off-white);
+  }
+  
+}
+
+/* estilo geral da página */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
