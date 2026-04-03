@@ -26,12 +26,24 @@
   /* definicoes */
   --background: var(--off-white);
   --foreground: var(--preto);
+  --primary: var(--azul-escuro);
+  --secondary: var(--laranja);
+  --accent: var(--rosinha);
+  --info: var(--azul-claro);
+  --neutral: var(--cinza);
 }
 
 /* mapeando variáveis pra Tailwind usar */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-info: var(--info);
+  --color-neutral: var(--neutral);
+
   --font-title: var(--font-victor-mono-title);
   --font-subtitle: var(--font-afacad-subtitle);
   --font-body: var(--font-dm-sans-body);
@@ -42,6 +54,11 @@
   :root {
     --background: var(--preto);
     --foreground: var(--off-white);
+    --primary: var(--azul-claro);
+    --secondary: var(--rosinha);
+    --accent: var(--laranja);
+    --info: var(--azul-escuro);
+    --neutral: var(--cinza);
   }
   
 }
