@@ -53,7 +53,7 @@ export default function NavigationBlue({ }: NavigationBlueProps) {
             <li key={link.label}>
               <a
                 href={link.href}
-                className="font-body text-[14px] font-normal tracking-[-0.075px] text-foreground opacity-70 hover:opacity-100 transition-opacity no-underline"
+                className="font-body font-normal tracking-[-0.075px] text-foreground opacity-70 hover:opacity-100 transition-opacity no-underline"
               >
                 {link.label}
               </a>
@@ -87,7 +87,7 @@ export default function NavigationBlue({ }: NavigationBlueProps) {
             <a
               key={link.label}
               href={link.href}
-              className="font-body text-[16px] font-normal text-foreground no-underline"
+              className="font-body font-normal text-foreground no-underline"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}

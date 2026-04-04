@@ -60,6 +60,60 @@
   }
 }
 
+@layer components {
+  .font-title {
+    /* Fonte e Peso */
+    font-family: 'Victor Mono', monospace;
+    font-weight: 600; /* SemiBold */
+    
+    /* Tamanho */
+    font-size: 70px;
+    
+    /* Line Height (A 80% do print) */
+    line-height: 0.8; 
+    
+    /* Letter Spacing (|A| -1% do print) */
+    /* -1% de 70px é aproximadamente -0.7px */
+    letter-spacing: -0.01em; 
+    
+    /* Garante que o Tailwind não sobrescreva se você usar text-base etc */
+    display: inline-block;
+  }
+  .font-subtitle {
+    /* Fonte e Peso */
+    font-family: 'Afacad', sans-serif;
+    font-weight: 400; /* Regular */
+    font-size: 40px;
+    
+    /* Line Height (90% no Figma) */
+    /* No CSS, 0.9 faz com que as linhas fiquem bem próximas */
+    line-height: 0.9; 
+    
+    /* Letter Spacing (|A| -3% no Figma) */
+    /* -3% equivale a -0.03em */
+    letter-spacing: -0.03em;
+    
+    /* Garante que o texto se comporte corretamente em blocos */
+    display: block;
+  }
+  .font-body {
+    /* Fonte e Peso */
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400; /* Regular */
+    font-size: 15px;
+    
+    /* Line Height (140% no Figma) */
+    /* 1.4 é o valor padrão para boa legibilidade em textos longos */
+    line-height: 1.4; 
+    
+    /* Letter Spacing (0% no Figma) */
+    letter-spacing: 0em;
+    
+    /* Garante um respiro visual suave */
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
 /* mapeando variáveis pra Tailwind usar */
 @theme inline {
   --color-background: var(--background);

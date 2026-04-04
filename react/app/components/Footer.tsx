@@ -17,7 +17,7 @@ export default function Footer({ }: FooterProps) {
           <Link href="/">
             <img className="imagem-tema w-20"/>
           </Link>
-          <span className="font-body text-[13px] font-normal tracking-[-0.075px] text-foreground">
+          <span className="font-body font-normal tracking-[-0.075px] text-foreground">
             © 2026 ALT-CHAT. Todos os direitos reservados.
           </span>
         </div>

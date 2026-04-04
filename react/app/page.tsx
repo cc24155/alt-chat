@@ -26,7 +26,7 @@ const NavBar = () => {
           <a 
             key={link} 
             href={`#${link.toLowerCase()}`} 
-            className="text-foreground text-xs sm:text-sm font-semibold hover:opacity-50 transition-all tracking-wider"
+            className="text-foreground font-body text-xs sm:text-sm font-semibold hover:opacity-50 transition-all tracking-wider"
           >
             {link}
           </a>
@@ -58,7 +58,7 @@ const BibliotecaSection = () => {
         </h1>
 
         {/* Subtítulo */}
-        <p className="font-body text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-foreground max-w-[560px]">
+        <p className="font-body font-normal tracking-[-0.075px] leading-[140%] text-foreground max-w-[560px]">
           PESQUISE QUALQUER PICTOGRAMA
         </p>
 
@@ -74,7 +74,7 @@ const BibliotecaSection = () => {
                 h-[40px] sm:h-[45px] md:h-[55px] 
                 px-6 py-2 
                 border border-foreground rounded-full 
-                text-xs sm:text-base md:text-lg font-bold text-foreground
+                text-body text-xs sm:text-base md:text-lg font-bold text-foreground
               "
             >
               <span>Pesquise</span>
@@ -167,15 +167,15 @@ const ContextoSection = () => {
         <div className="flex flex-col gap-4 items-start text-left">
           <div className="flex items-center gap-2">
               <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
-              <span className="font-body text-[18px] font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
+              <span className="font-body font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
                 Contexto
               </span>
               <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
             </div>
-          <h2 className="font-subtitle text-[18px] font-normal tracking-[-1.2px] leading-[90%] text-foreground max-w-[560px]">
+          <h2 className="font-subtitle font-normal tracking-[-1.2px] leading-[90%] text-foreground max-w-[560px]">
             Democratizando a Comunicação Assistiva.
           </h2>
-          <p>O ALT-CHAT utiliza inteligência artificial para romper barreiras e oferecer dignidade a pessoas não-verbais.</p>
+          <p className="font-body">O ALT-CHAT utiliza inteligência artificial para romper barreiras e oferecer dignidade a pessoas não-verbais.</p>
         </div>
 
         {/* Steps */}
@@ -184,14 +184,14 @@ const ContextoSection = () => {
             <div key={step.icon} className="flex flex-col gap-4 relative">
               
               <div className="relative z-10 w-12 h-12 rounded-full bg-foreground flex items-center justify-center">
-                <span className="font-title text-[14px] font-normal text-background">
+                <span className="font-normal text-background">
                   <img src={step.icon} alt={step.icon} className="icon-adaptive"/>
                 </span>
               </div>
-              <h3 className="font-subtitle text-[24px] font-normal tracking-[-1.2px] leading-[90%] text-foreground">
+              <h3 className="font-body font-normal tracking-[-1.2px] leading-[90%] text-foreground">
                 {step.title}
               </h3>
-              <p className="font-body text-[14px] font-normal tracking-[-0.075px] leading-[140%] text-neutral">
+              <p className="font-body font-normal tracking-[-0.075px] leading-[140%] text-neutral">
                 {step.description}
               </p>
             </div>
@@ -237,17 +237,17 @@ const ObjetivosSection = () => {
         <div className="flex flex-col gap-8">
           <div className="flex items-center gap-2">
             <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
-            <span className="font-body text-[18px] font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
+            <span className="font-body font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
               Objetivos
             </span>
             <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
           </div>
 
-          <h2 className="font-subtitle text-[40px] font-normal tracking-[-1.2px] leading-[90%] text-foreground">
+          <h2 className="font-subtitle font-normal tracking-[-1.2px] leading-[90%] text-foreground">
             O Futuro da Autonomia
           </h2>
 
-          <p className="font-body text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-neutral">
+          <p className="font-body font-normal tracking-[-0.075px] leading-[140%] text-neutral">
             O ALT-CHAT combina IA preditiva e acessibilidade para transformar a comunicação de pessoas não-verbais em uma experiência ágil e digna.
           </p>
 
@@ -259,12 +259,12 @@ const ObjetivosSection = () => {
                 className="grid grid-cols-[50px_1fr] items-start gap-6 py-8 border-b border-foreground/5" // Linhas divisórias sutis
               >
                 {/* Número (01, 02...) à esquerda */}
-                <span className="font-title text-[14px] font-normal text-neutral mt-1">
+                <span className="font-body font-normal text-neutral mt-1">
                   {obj.id}
                 </span>
 
                 {/* Texto do objetivo */}
-                <p className="font-body text-[16px] font-normal leading-[160%] text-foreground">
+                <p className="font-body font-normal leading-[160%] text-foreground">
                   {obj.texto}
                 </p>
               </div>
@@ -280,7 +280,7 @@ const ObjetivosSection = () => {
             <div className="absolute inset-0 bg-background rounded-3xl overflow-hidden">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-10">
                 <div className="w-96 h-20 rounded-full bg-foreground flex items-center justify-center">
-                  <span className="font-title text-[32px] text-foreground">
+                  <span className="text-foreground">
                     <Link 
                       href="https://storyset.com/online" 
                       target="_blank" // Abre em nova aba (opcional)
@@ -351,16 +351,16 @@ const FuncionalidadesSection = () => {
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
               <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
-              <span className="font-body text-[18px] font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
+              <span className="font-body font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
                 Funcionalidades
               </span>
               <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
             </div>
-            <h2 className="font-subtitle text-[40px] font-normal tracking-[-1.2px] leading-[90%] text-foreground max-w-[480px]">
+            <h2 className="font-subtitle font-normal tracking-[-1.2px] leading-[90%] text-foreground max-w-[480px]">
               Por que escolher o ALT-CHAT?
             </h2>
           </div>
-          <p className="font-body text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-foreground max-w-[360px]">
+          <p className="font-body font-normal tracking-[-0.075px] leading-[140%] text-foreground max-w-[360px]">
             Unimos um ecossistema tecnológico robusto (Python, React, Node) a uma interface humana para criar a ferramenta de CAA mais completa do mercado.
           </p>
         </div>
@@ -430,12 +430,14 @@ const CitacaoSection = () => {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6">
           <img src="/Mary Pat.png" alt="Mary Pat.png" className="rounded-2xl w-full h-auto object-cover"/>
           <div>
-            <h2 className="font-subtitle text-[40px] font-normal tracking-[-1.2px] leading-[90%] text-foreground">
+            <h2 className="font-subtitle font-normal tracking-[-1.2px] leading-[90%] text-foreground">
               "Para a maioria das pessoas, a tecnologia torna as coisas mais fáceis. Para as pessoas com deficiência, a tecnologia torna as coisas possíveis."
             </h2>
             <br />
             <p>Mary Pat Radabaugh</p>
-            <p className="text-[10px] text-neutral">Pioneira em tecnologia assistiva da IBM</p>
+            <p className="font-body text-neutral">
+              Pioneira em tecnologia assistiva da IBM
+            </p>
           </div>
         </div>
       </div>

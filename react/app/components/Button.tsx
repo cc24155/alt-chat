@@ -15,7 +15,7 @@ export default function Button({ text, onClick, className }: ButtonProps) {
       className={`
         /* Base: Mobile primeiro */
         px-2 py-[3px] rounded-full
-        text-[8px] sm:text-xs font-medium
+        font-body text-[8px] sm:text-xs font-medium
         
         /* Desktop: Aumenta um pouco o respiro */
         sm:px-6 sm:py-3
