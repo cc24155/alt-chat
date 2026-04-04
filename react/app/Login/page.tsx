@@ -1,6 +1,13 @@
+"use client";
 import Button from "../components/Button";
+import { autenticarUsuario } from "./actions";
 
 export default function LoginPage() {
+  async function handleLogin() {
+      const result = await autenticarUsuario(new FormData());
+      if (result.success) alert("Logado com sucesso!");
+    }
+  
   return (
     <div className="">
       <h1 className="">Sobre nós</h1>

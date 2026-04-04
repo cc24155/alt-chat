@@ -6,71 +6,95 @@ import Navigation from "../app/components/Navigation";
 import Button from "../app/components/Button";
 import Contato from "../app/components/Contato";
 import Footer from "../app/components/Footer";
+import Link from "next/link";
 
-
-//<Navigation />
 
 const NavBar = () => {
-  return(
-    <div className="flex justify-center mt-10 fixed top-0 left-0 w-full z-50 transition-all duration-300">
-      <div className="flex gap-8 bg-foreground/10 px-8 py-3 rounded-full">
-        <a href="#biblioteca" className="text-preto font-medium">
-          Biblioteca
-        </a>
-        <a href="#sobre" className="text-preto font-medium">
-          Sobre
-        </a>
-        <a href="#contato" className="text-preto font-medium">
-          Contato
-        </a>
-      </div>
-    </div>
-  )
-}
-
-const Botoes = () => {
   const router = useRouter();
+  const links = ["Biblioteca", "Sobre", "Contato"];
+
   return (
-    <div className="flex justify-end p-6 fixed top-0 left-0 w-full z-50 transition-all duration-300">
-      <Button text="Login" onClick={() => router.push("/Login")}/>
-      <Button text="Cadastro" onClick={() => router.push("/Cadastro")}/>
-    </div>
+    <nav className="fixed top-4 left-0 w-full z-[100] px-4 flex items-center justify-between pointer-events-none">
+      {/* Lado Esquerdo: Logo */}
+      <div className="pointer-events-auto">
+        <Navigation />
+      </div>
+      
+      {/* Centro: Links */}
+      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-8 bg-foreground/10 backdrop-blur-md px-6 py-2 sm:py-3 rounded-full border border-foreground/5 pointer-events-auto">
+        {links.map((link) => (
+          <a 
+            key={link} 
+            href={`#${link.toLowerCase()}`} 
+            className="text-foreground text-xs sm:text-sm font-semibold hover:opacity-50 transition-all tracking-wider"
+          >
+            {link}
+          </a>
+        ))}
+      </div>
+
+      {/* Lado Direito: Botões */}
+      <div className="flex gap-2 pointer-events-auto">
+        <Button text="Login" onClick={() => router.push("/Login")}/>
+        <Button text="Cadastro" onClick={() => router.push("/Cadastro")}/>
+      </div>
+    </nav>
   );
-}
+};
 
 // 0 biblioteca
 const BibliotecaSection = () => {
+  const router = useRouter();
   return (
     <section
       id="biblioteca"
-      className="relative w-full min-h-screen bg-off-white flex flex-col items-center justify-center overflow-hidden pt-[72px]"
-      aria-label="Seção principal"
+      className="relative w-full min-h-screen bg-background flex flex-col items-center justify-center overflow-hidden pt-[72px]"
+      aria-label="Biblioteca"
     >
       <div className="relative z-10 max-w-[1200px] mx-auto px-8 flex flex-col items-center text-center gap-8">
         {/* Título */}
-        <h1 className="[font-family:'Victor_Mono',Helvetica] text-[clamp(48px,7vw,70px)] font-normal tracking-[-0.7px] leading-[80%] text-preto max-w-[900px]">
+        <h1 className="font-title text-[clamp(48px,7vw,70px)] font-normal tracking-[-0.7px] leading-[80%] text-foreground max-w-[900px]">
           ALT-CHAT
         </h1>
 
         {/* Subtítulo */}
-        <p className="[font-family:'DM_Sans',Helvetica] text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-[rgba(0,0,0,0.6)] max-w-[560px]">
+        <p className="font-body text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-foreground max-w-[560px]">
           PESQUISE QUALQUER PICTOGRAMA
         </p>
 
-        {/* Botões */}
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <a
-            href="#servicos"
-            className="flex items-center justify-center px-7 py-3.5 border border-[rgba(0,0,0,0.2)] rounded-full [font-family:'DM_Sans',Helvetica] text-[14px] font-bold tracking-[-0.35px] text-preto no-underline hover:border-[rgba(0,0,0,0.5)] transition-colors"
-          >
-            Nossos Serviços
-          </a>
+        <div className="relative">
+          <img src="/Hero.png" alt="Hero" className="w-full h-auto" />
+
+          <div className="absolute inset-0 flex items-start justify-center pt-15 sm:pt-20 md:pt-40 z-10">
+            <a
+              className="
+                flex items-center justify-between 
+                bg-background 
+                w-[250px] sm:w-[350px] md:w-[500px] 
+                h-[40px] sm:h-[45px] md:h-[55px] 
+                px-6 py-2 
+                border border-foreground rounded-full 
+                text-xs sm:text-base md:text-lg font-bold text-foreground
+              "
+            >
+              <span>Pesquise</span>
+
+              <Button onClick={() => router.push("/Biblioteca")}
+                text={
+                  <>
+                    <img className="icon-search"/>
+                  </>
+                }
+                className="!p-0 !w-8 !h-8 sm:!w-10 sm:!h-10 flex items-center justify-center !shadow-none !border-none hover:!bg-transparent"
+              />
+            </a>
+          </div>
         </div>
       </div>
 
       {/* Scroll indicator */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-        <span className="[font-family:'Abel',Helvetica] text-[12px] tracking-[1.62px] text-[rgba(0,0,0,0.4)] uppercase">
+        <span className="font-body text-[12px] tracking-[1.62px] text-foreground uppercase">
           Scroll
         </span>
         <svg
@@ -86,7 +110,7 @@ const BibliotecaSection = () => {
             width="14"
             height="22"
             rx="7"
-            stroke="rgba(0,0,0,0.3)"
+            className="stroke-foreground"
             strokeWidth="1.5"
           />
           <rect
@@ -95,7 +119,7 @@ const BibliotecaSection = () => {
             width="2"
             height="5"
             rx="1"
-            fill="rgba(0,0,0,0.4)"
+            className="fill-foreground"
           />
         </svg>
       </div>
@@ -104,50 +128,51 @@ const BibliotecaSection = () => {
 };
 
 // 1 democratizando 
-const processSteps = [
-  {
-    number: "01",
-    title: "Inclusão Necessária",
-    description:
-      "O Brasil possui milhões de pessoas com deficiências que impactam a fala. Nosso foco é transformar o cenário de exclusão em participação ativa na sociedade.",
-  },
-  {
-    number: "02",
-    title: "Evolução da CAA",
-    description:
-      "Substituímos métodos físicos limitados e caros (como pranchas de papel) por uma solução digital de Comunicação Aumentativa e Alternativa (CAA) moderna.",
-  },
-  {
-    number: "03",
-    title: "IA e Acessibilidade",
-    description:
-      "Preenchemos a lacuna tecnológica atual integrando Inteligência Artificial para criar uma ferramenta personalizada, intuitiva e, acima de tudo, gratuita.",
-  },
-  {
-    number: "04",
-    title: "Impacto no Desenvolvimento",
-    description:
-      "Ferramentas eficazes de CAA potencializam a escolarização, a independência e a convivência familiar, transformando a qualidade de vida do usuário.",
-  },
-];
 const ContextoSection = () => {
+  const processSteps = [
+    {
+      icon: "/heart hands.png",
+      title: "Inclusão Necessária",
+      description:
+        "O Brasil possui milhões de pessoas com deficiências que impactam a fala. Nosso foco é transformar o cenário de exclusão em participação ativa na sociedade.",
+    },
+    {
+      icon: "/Growth Chart.png",
+      title: "Evolução da CAA",
+      description:
+        "Substituímos métodos físicos limitados e caros (como pranchas de papel) por uma solução digital de Comunicação Aumentativa e Alternativa (CAA) moderna.",
+    },
+    {
+      icon: "/Artificial Intelligence.png",
+      title: "IA e Acessibilidade",
+      description:
+        "Preenchemos a lacuna tecnológica atual integrando Inteligência Artificial para criar uma ferramenta personalizada, intuitiva e, acima de tudo, gratuita.",
+    },
+    {
+      icon: "/Account.png",
+      title: "Impacto no Desenvolvimento",
+      description:
+        "Ferramentas eficazes de CAA potencializam a escolarização, a independência e a convivência familiar, transformando a qualidade de vida do usuário.",
+    },
+  ];
+
   return (
     <section
       id="sobre"
-      className="w-full bg-rosinha py-[120px] px-8"
-      aria-label="Nosso processo"
+      className="w-full bg-background py-[120px] px-8"
+      aria-label="Contexto"
     >
       <div className="max-w-[1200px] mx-auto flex flex-col gap-16">
         {/* Header */}
-        <div className="flex flex-col gap-4 items-center text-center">
+        <div className="flex flex-col gap-4 items-start text-left">
           <div className="flex items-center gap-2">
-            <span className="w-8 h-px bg-preto opacity-40 inline-block" />
-            <span className="[font-family:'Abel',Helvetica] text-[18px] font-normal tracking-[1.62px] text-preto uppercase">
-              Contexto
-            </span>
-            <span className="w-8 h-px bg-preto opacity-40 inline-block" />
-          </div>
-          <h2 className="[font-family:'Afacad',Helvetica] text-[40px] font-normal tracking-[-1.2px] leading-[90%] text-preto max-w-[560px]">
+              <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
+              <span className="font-body text-[18px] font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
+                Contexto
+              </span>
+              <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
+            </div>
+          <h2 className="font-subtitle text-[18px] font-normal tracking-[-1.2px] leading-[90%] text-foreground max-w-[560px]">
             Democratizando a Comunicação Assistiva.
           </h2>
           <p>O ALT-CHAT utiliza inteligência artificial para romper barreiras e oferecer dignidade a pessoas não-verbais.</p>
@@ -156,20 +181,17 @@ const ContextoSection = () => {
         {/* Steps */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {processSteps.map((step, index) => (
-            <div key={step.number} className="flex flex-col gap-4 relative">
-              {/* Connector line */}
-              {index < processSteps.length - 1 && (
-                <div className="hidden lg:block absolute top-6 left-[calc(100%+16px)] w-[calc(100%-32px)] h-px bg-[rgba(0,0,0,0.15)] z-0" />
-              )}
-              <div className="relative z-10 w-12 h-12 rounded-full bg-preto flex items-center justify-center">
-                <span className="[font-family:'Victor_Mono',Helvetica] text-[14px] font-normal text-off-white">
-                  {step.number}
+            <div key={step.icon} className="flex flex-col gap-4 relative">
+              
+              <div className="relative z-10 w-12 h-12 rounded-full bg-foreground flex items-center justify-center">
+                <span className="font-title text-[14px] font-normal text-background">
+                  <img src={step.icon} alt={step.icon} className="icon-adaptive"/>
                 </span>
               </div>
-              <h3 className="[font-family:'Afacad',Helvetica] text-[24px] font-normal tracking-[-1.2px] leading-[90%] text-preto">
+              <h3 className="font-subtitle text-[24px] font-normal tracking-[-1.2px] leading-[90%] text-foreground">
                 {step.title}
               </h3>
-              <p className="[font-family:'DM_Sans',Helvetica] text-[14px] font-normal tracking-[-0.075px] leading-[140%] text-[rgba(0,0,0,0.6)]">
+              <p className="font-body text-[14px] font-normal tracking-[-0.075px] leading-[140%] text-neutral">
                 {step.description}
               </p>
             </div>
@@ -182,41 +204,72 @@ const ContextoSection = () => {
 
 // 2 o futuro
 const ObjetivosSection = () => {
+  const objetivos = [
+    {
+      id: "01",
+      texto:
+        "Oferecer uma biblioteca completa de pictogramas digitais 100% gratuita, eliminando o custo como obstáculo à inclusão.",
+    },
+    {
+      id: "02",
+      texto:
+        "Reduzir em pelo menos 30% o tempo de construção de mensagens através de um sistema inteligente de sugestões.",
+    },
+    {
+      id: "03",
+      texto:
+        "Fornecer suporte tecnológico para que alunos não-verbais superem barreiras em ambientes estruturados para pessoas típicas.",
+    },
+    {
+      id: "04",
+      texto:
+        "Estabelecer a base para geração de relatórios de evolução, conectando usuários, pais e terapeutas em uma só rede.",
+    },
+  ];
+
   return (
     <section
-      className="w-full bg-off-white py-[120px] px-8"
-      aria-label="Sobre nós"
+      className="w-full bg-background py-[120px] px-8"
+      aria-label="Objetivos"
     >
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         {/* Left */}
         <div className="flex flex-col gap-8">
           <div className="flex items-center gap-2">
-            <span className="w-8 h-px bg-preto inline-block" />
+            <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
+            <span className="font-body text-[18px] font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
+              Objetivos
+            </span>
+            <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
           </div>
 
-          <h2 className="[font-family:'Afacad',Helvetica] text-[40px] font-normal tracking-[-1.2px] leading-[90%] text-preto">
+          <h2 className="font-subtitle text-[40px] font-normal tracking-[-1.2px] leading-[90%] text-foreground">
             O Futuro da Autonomia
           </h2>
 
-          <p className="[font-family:'DM_Sans',Helvetica] text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-[rgba(0,0,0,0.65)]">
+          <p className="font-body text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-neutral">
             O ALT-CHAT combina IA preditiva e acessibilidade para transformar a comunicação de pessoas não-verbais em uma experiência ágil e digna.
           </p>
 
-          <p className="[font-family:'DM_Sans',Helvetica] text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-[rgba(0,0,0,0.65)]">
-            Oferecer uma biblioteca completa de pictogramas digitais 100% gratuita, eliminando o custo como obstáculo à inclusão.
-          </p>
+          {/* Lista de Objetivos */}
+          <div className="flex flex-col w-full border-t border-foreground/5"> {/* Linha superior da lista */}
+            {objetivos.map((obj) => (
+              <div 
+                key={obj.id} 
+                className="grid grid-cols-[50px_1fr] items-start gap-6 py-8 border-b border-foreground/5" // Linhas divisórias sutis
+              >
+                {/* Número (01, 02...) à esquerda */}
+                <span className="font-title text-[14px] font-normal text-neutral mt-1">
+                  {obj.id}
+                </span>
 
-          <p className="[font-family:'DM_Sans',Helvetica] text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-[rgba(0,0,0,0.65)]">
-            Reduzir em pelo menos 30% o tempo de construção de mensagens através de um sistema inteligente de sugestões.
-          </p>
-
-          <p className="[font-family:'DM_Sans',Helvetica] text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-[rgba(0,0,0,0.65)]">
-            Fornecer suporte tecnológico para que alunos não-verbais superem barreiras em ambientes estruturados para pessoas típicas.
-          </p>
-
-          <p className="[font-family:'DM_Sans',Helvetica] text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-[rgba(0,0,0,0.65)]">
-            Estabelecer a base para geração de relatórios de evolução, conectando usuários, pais e terapeutas em uma só rede.
-          </p>
+                {/* Texto do objetivo */}
+                <p className="font-body text-[16px] font-normal leading-[160%] text-foreground">
+                  {obj.texto}
+                </p>
+              </div>
+            ))}
+          </div>
 
         </div>
 
@@ -224,11 +277,16 @@ const ObjetivosSection = () => {
         <div className="relative">
           <div className="w-full aspect-square max-w-[480px] mx-auto relative">
             {/* Main card */}
-            <div className="absolute inset-0 bg-azul-claro rounded-3xl overflow-hidden">
+            <div className="absolute inset-0 bg-background rounded-3xl overflow-hidden">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-10">
-                <div className="w-96 h-20 rounded-full bg-[rgba(255,255,255,0.4)] flex items-center justify-center">
-                  <span className="[font-family:'Victor_Mono',Helvetica] text-[32px] text-preto">
-                    <img src="/Archery-bro.png" alt="Arquery-bro.png" className="w-96 h-auto"/>
+                <div className="w-96 h-20 rounded-full bg-foreground flex items-center justify-center">
+                  <span className="font-title text-[32px] text-foreground">
+                    <Link 
+                      href="https://storyset.com/online" 
+                      target="_blank" // Abre em nova aba (opcional)
+                    >
+                      <img src="/Archery-bro.png" alt="Arquery-bro.png" className="w-96 h-auto"/>
+                    </Link>
                   </span>
                 </div>
               </div>
@@ -242,80 +300,119 @@ const ObjetivosSection = () => {
 };
 
 // 3 por que escolher
-const services = [
-  {
-    id: 1,
-    icon: "✦",
-    title: "ALT-CHAT",
-    description:
-      "Criamos experiências digitais centradas no usuário, com foco em usabilidade, estética e resultados mensuráveis para o seu negócio.",
-    tag: "UX/UI",
-  },
-  {
-    id: 2,
-    icon: "◈",
-    title: "Soluções Digitais Comuns",
-    description:
-      "Desenvolvemos aplicações web modernas, performáticas e escaláveis utilizando as tecnologias mais avançadas do mercado.",
-    tag: "DEV",
-  },
-  {
-    id: 3,
-    icon: "⬡",
-    title: "Pranchas Físicas",
-    description:
-      "Construímos marcas memoráveis que comunicam os valores da sua empresa e criam conexões emocionais com o público.",
-    tag: "BRAND",
-  }
-];
 const FuncionalidadesSection = () => {
+  const services = [
+    {
+      label: "IA Preditiva (Redução de 30% no tempo)",
+      altChat: true,
+      digital: "Sem sugestões inteligentes",
+      fisica: "Totalmente manual",
+    },
+    {
+      label: "100% Gratuito e Acessível",
+      altChat: true,
+      digital: "Assinaturas caras/limitadas",
+      fisica: "Custo alto de impressão e material",
+    },
+    {
+      label: "Temas visuais e pictogramas próprios",
+      altChat: true,
+      digital: "Customização restrita",
+      fisica: "Estética e difícil de adaptar",
+    },
+    {
+      label: "Modo Aprendizado com conquistas",
+      altChat: true,
+      digital: "Focado apenas em comunicação",
+      fisica: "Sem feedback de aprendizado",
+    },
+    {
+      label: "Evolução clínica e de uso",
+      altChat: true,
+      digital: "Sem análise de dados",
+      fisica: "Registro manual e impreciso",
+    },
+    {
+      label: "Construção de frases inteligente",
+      altChat: true,
+      digital: "Busca manual por categorias",
+      fisica: "Lentidão por volume físico",
+    },
+  ];
+
   return (
     <section
-      className="w-full bg-preto py-[120px] px-8"
-      aria-label="Serviços"
+      className="w-full bg-background py-[120px] px-8"
+      aria-label="Funcionalidades"
     >
       <div className="max-w-[1200px] mx-auto flex flex-col gap-16">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
-              <span className="w-8 h-px bg-off-white opacity-40 inline-block" />
-              <span className="[font-family:'Abel',Helvetica] text-[18px] font-normal tracking-[1.62px] text-off-white opacity-60 uppercase">
+              <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
+              <span className="font-body text-[18px] font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
                 Funcionalidades
               </span>
+              <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
             </div>
-            <h2 className="[font-family:'Afacad',Helvetica] text-[40px] font-normal tracking-[-1.2px] leading-[90%] text-off-white max-w-[480px]">
+            <h2 className="font-subtitle text-[40px] font-normal tracking-[-1.2px] leading-[90%] text-foreground max-w-[480px]">
               Por que escolher o ALT-CHAT?
             </h2>
           </div>
-          <p className="[font-family:'DM_Sans',Helvetica] text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-[rgba(248,244,235,0.55)] max-w-[360px]">
+          <p className="font-body text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-foreground max-w-[360px]">
             Unimos um ecossistema tecnológico robusto (Python, React, Node) a uma interface humana para criar a ferramenta de CAA mais completa do mercado.
           </p>
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[rgba(255,255,255,0.08)] rounded-2xl overflow-hidden">
-          {services.map((service) => (
-            <article
-              key={service.id}
-              className="bg-preto p-10 flex flex-col gap-6 group hover:bg-[rgba(255,255,255,0.03)] transition-colors cursor-pointer"
-            >
-              <div className="flex items-start justify-between">
-                <span className="text-[32px] text-azul-claro">
-                  {service.icon}
-                </span>
-                <span className="[font-family:'Abel',Helvetica] text-[12px] font-normal tracking-[1.62px] text-[rgba(248,244,235,0.3)] uppercase border border-[rgba(255,255,255,0.1)] rounded-full px-3 py-1">
-                  {service.tag}
-                </span>
-              </div>
-              <h3 className="[font-family:'Afacad',Helvetica] text-[28px] font-normal tracking-[-1.2px] leading-[90%] text-off-white">
-                {service.title}
-              </h3>
-              <p className="[font-family:'DM_Sans',Helvetica] text-[15px] font-normal tracking-[-0.075px] leading-[140%] text-[rgba(248,244,235,0.55)]">
-                {service.description}
-              </p>
-            </article>
-          ))}
+        <div className="w-full overflow-x-auto py-10">
+          <table className="w-full border-collapse min-w-[800px]">
+            <thead>
+              <tr className="text-[12px] uppercase tracking-widest text-neutral-400">
+                <th className="pb-8 px-6 text-center w-[35%]">
+                  <span className="text-[24px] text-foreground font-normal normal-case tracking-normal">ALT-CHAT</span>
+                </th>
+                <th className="pb-8 px-6 font-normal">Soluções Digitais Comuns</th>
+                <th className="pb-8 px-6 font-normal">Pranchas Físicas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {services.map((row, index) => (
+                <tr key={index} className="border-t border-neutral/5">
+                  {/* Coluna ALT-CHAT com destaque */}
+                  <td className="relative px-6 py-6">
+                    <div className={`absolute inset-y-0 inset-x-2 bg-primary z-0 
+                      /* Se for a primeira linha (índice 0), arredonda o topo */
+                      ${index === 0 ? 'rounded-t-2xl' : ''}
+                      /* Se for a ultima, arredonda*/
+                      ${index === services.length - 1 ? 'rounded-b-2xl shadow-sm' : ''}
+                    `}></div>
+                    <div className="relative z-10 flex items-center gap-3 text-[14px] font-medium text-background">
+                      <span className="text-green-700">✓</span>
+                      {row.label}
+                    </div>
+                  </td>
+
+                  {/* Coluna Digital */}
+                  <td className="px-8 py-6 text-[13px] text-neutral-600">
+                    <div className="flex items-center gap-3">
+                      <span className="opacity-40">×</span>
+                      {row.digital}
+                    </div>
+                  </td>
+
+                  {/* Coluna Física */}
+                  <td className="px-8 py-6 text-[13px] text-neutral-600">
+                    <div className="flex items-center gap-3">
+                      <span className="opacity-40">×</span>
+                      {row.fisica}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -324,26 +421,22 @@ const FuncionalidadesSection = () => {
 
 // 4 mary pat
 const CitacaoSection = () => {
-  const [activeFilter, setActiveFilter] = useState("Todos");
-  const filters = ["Todos", "Design", "Dev", "Branding"];
-
   return (
     <section
-      className="w-full bg-off-white py-[120px] px-8"
-      aria-label="Portfólio"
+      className="w-full bg-background py-[120px] px-8"
+      aria-label="Citacao"
     >
       <div className="max-w-[1200px] mx-auto flex flex-col gap-12">
-        {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <img src="/Mary Pat.png" alt="Mary Pat.png" />
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6">
+          <img src="/Mary Pat.png" alt="Mary Pat.png" className="rounded-2xl w-full h-auto object-cover"/>
           <div>
-            <h2 className="[font-family:'Afacad',Helvetica] text-[40px] font-normal tracking-[-1.2px] leading-[90%] text-preto">
+            <h2 className="font-subtitle text-[40px] font-normal tracking-[-1.2px] leading-[90%] text-foreground">
               "Para a maioria das pessoas, a tecnologia torna as coisas mais fáceis. Para as pessoas com deficiência, a tecnologia torna as coisas possíveis."
             </h2>
+            <br />
             <p>Mary Pat Radabaugh</p>
-            <p>Pioneira em tecnologia assistiva da IBM</p>
+            <p className="text-[10px] text-neutral">Pioneira em tecnologia assistiva da IBM</p>
           </div>
-         
         </div>
       </div>
     </section>
@@ -357,10 +450,8 @@ const CitacaoSection = () => {
 
 export const Box = (): JSX.Element => {
   return (
-    <div className="w-full min-h-screen bg-off-white">
-      <Navigation/>
+    <div className="w-full min-h-screen bg-background">
       <NavBar/>
-      <Botoes/>
       <main>
         <BibliotecaSection />
         <ContextoSection />

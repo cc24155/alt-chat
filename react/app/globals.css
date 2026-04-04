@@ -33,6 +33,33 @@
   --neutral: var(--cinza);
 }
 
+.imagem-tema {
+  content: url("/Logotipo Claro.png");
+}
+
+.icon-search {
+  content: url("/Icon Search.png");
+}
+
+@layer utilities {
+  .shadow-figma {
+    box-shadow: 
+      0 4px 9px rgb(from var(--foreground) r g b / 0.3), 
+      inset 0 4px 9px rgb(from var(--foreground) r g b / 0.3);
+  }
+
+  .shadow-figma-hover {
+    box-shadow: 
+      0 2px 5px rgb(from var(--foreground) r g b / 0.3), 
+      inset 0 2px 5px rgb(from var(--foreground) r g b / 0.3);
+  }
+
+  .icon-adaptive {
+    /* Inverte preto para branco no tema claro */
+    filter: invert(1);
+  }
+}
+
 /* mapeando variáveis pra Tailwind usar */
 @theme inline {
   --color-background: var(--background);
@@ -49,9 +76,9 @@
   --font-body: var(--font-dm-sans-body);
 }
 
-/* detecta se o usuário está em modo escuro no sistema */
+/* auto: detecta se o usuário está em modo escuro no sistema */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light):not(.dark) {
     --background: var(--preto);
     --foreground: var(--off-white);
     --primary: var(--azul-claro);
@@ -60,10 +87,83 @@
     --info: var(--azul-escuro);
     --neutral: var(--cinza);
   }
-  
+  :root:not(.light):not(.dark) .imagem-tema {
+    content: url("/Logotipo Escuro.png");
+  }
+  :root:not(.light):not(.dark) .icon-search {
+    filter: brightness(0) invert(1);
+  }
+
+  :root:not(.light):not(.dark) .icon-adaptive {
+    filter: invert(0);
+  }
+}
+
+/* tema claro forçado */
+.light {
+  --background: var(--off-white);
+  --foreground: var(--preto);
+  --primary: var(--azul-escuro);
+  --secondary: var(--laranja);
+  --accent: var(--rosinha);
+  --info: var(--azul-claro);
+  --neutral: var(--cinza);
+}
+.light .imagem-tema {
+  content: url("/Logotipo Claro.png");
+}
+.light .icon-search {
+  content: url("/Icon Search.png");
+}
+.light .icon-adaptive {
+  filter: invert(1);
+}
+
+/* classe para trocar para o modo escuro msm se o usuario tiver modo claro no sistema */
+.dark {
+  --background: var(--preto);
+  --foreground: var(--off-white);
+  --primary: var(--azul-claro);
+  --secondary: var(--rosinha);
+  --accent: var(--laranja);
+  --info: var(--azul-escuro);
+  --neutral: var(--cinza);
+}
+.dark .imagem-tema {
+  content: url("/Logotipo Escuro.png");
+}
+.dark .icon-search {
+  filter: brightness(0) invert(1);
+}
+.dark .icon-adaptive {
+  filter: invert(0);
+}
+
+/* tema olivaceo */
+.tema-olivaceo {
+  --background: var(--off-white-esverdeado);
+  --foreground: var(--preto-olivaceo);
+  --primary: var(--azul-escuro-olivaceo);
+  --secondary: var(--laranja-olivaceo);
+  --accent: var(--rosinha-olivaceo);
+  --info: var(--azul-claro-olivaceo);
+  --neutral: var(--cinza-olivaceo);
+}
+.tema-olivaceo .imagem-tema {
+  content: url("/Logotipo Claro.png");
+}
+.tema-olivaceo .icon-search {
+  content: url("/Icon Search.png");
+}
+.tema-olivaceo .icon-adaptive {
+  filter: invert(1);
 }
 
 /* estilo geral da página */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

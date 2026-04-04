@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 
 interface NavigationBlueProps {
@@ -26,7 +27,7 @@ export default function NavigationBlue({ }: NavigationBlueProps) {
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
         scrolled
           // antes de rolar é trnsparente, dps tem cor
-          ? "bg-[rgba(248,244,235,0.95)] backdrop-blur-sm shadow-sombra"
+          ? "bg-neutral backdrop-blur-sm shadow-figma"
           : "bg-transparent"
       }`}
       role="navigation"
@@ -39,7 +40,7 @@ export default function NavigationBlue({ }: NavigationBlueProps) {
           className="flex items-center gap-2 no-underline"
           aria-label="Ir para o início"
         >
-          <div className="w-20 h-20 bg-preto rounded-sm flex items-center justify-center">
+          <div className="w-20 h-20 bg-foreground rounded-sm flex items-center justify-center">
             <span>
               <img src="/Logotipo Claro.png" alt="Logotipo Claro.png" />
             </span>
@@ -52,7 +53,7 @@ export default function NavigationBlue({ }: NavigationBlueProps) {
             <li key={link.label}>
               <a
                 href={link.href}
-                className="[font-family:'DM_Sans',Helvetica] text-[14px] font-normal tracking-[-0.075px] text-preto opacity-70 hover:opacity-100 transition-opacity no-underline"
+                className="font-body text-[14px] font-normal tracking-[-0.075px] text-foreground opacity-70 hover:opacity-100 transition-opacity no-underline"
               >
                 {link.label}
               </a>
@@ -68,25 +69,25 @@ export default function NavigationBlue({ }: NavigationBlueProps) {
           aria-expanded={menuOpen}
         >
           <span
-            className={`block w-6 h-0.5 bg-preto transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+            className={`block w-6 h-0.5 bg-foreground transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
           />
           <span
-            className={`block w-6 h-0.5 bg-preto transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`}
+            className={`block w-6 h-0.5 bg-foreground transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`}
           />
           <span
-            className={`block w-6 h-0.5 bg-preto transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+            className={`block w-6 h-0.5 bg-foreground transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
           />
         </button>
       </div>
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-off-white border-t border-[rgba(0,0,0,0.08)] px-8 py-6 flex flex-col gap-4">
+        <div className="md:hidden bg-background border-t border-foreground px-8 py-6 flex flex-col gap-4">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="[font-family:'DM_Sans',Helvetica] text-[16px] font-normal text-preto no-underline"
+              className="font-body text-[16px] font-normal text-foreground no-underline"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}

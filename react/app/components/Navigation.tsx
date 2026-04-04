@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+"use client";
+import Link from "next/link";
 
 interface NavigationProps {
 
@@ -7,7 +8,7 @@ interface NavigationProps {
 export default function Navigation({ }: NavigationProps) {
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300`}
+      className={`fixed top-0 left-0 transition-all duration-300`}
       role="navigation"
       aria-label="Navegação principal"
     >
@@ -18,10 +19,8 @@ export default function Navigation({ }: NavigationProps) {
           className="flex items-center gap-2 no-underline"
           aria-label="Ir para o início"
         >
-          <div className="w-20 h-20 bg-preto rounded-sm flex items-center justify-center">
-            <span>
-              <img src="/Logotipo Claro.png" alt="Logotipo Claro.png" />
-            </span>
+          <div className="w-20 h-20 bg-transparent rounded-sm flex items-center justify-center">
+            <img className="imagem-tema w-full h-full object-contain" alt="Logotipo.png" />
           </div>
         </a>
       </div>

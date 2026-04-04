@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title: "ALT-CHAT",
   description: "Comunicação Alternativa",
   icons: {
-    icon: '/Logo.png',
+    icon: '/Logo Claro.png',
   },
 };
 

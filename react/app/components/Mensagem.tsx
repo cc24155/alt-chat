@@ -1,3 +1,5 @@
+"use client";
+
 interface MensagemProps {
   text: string;
   onClick?: () => void;
