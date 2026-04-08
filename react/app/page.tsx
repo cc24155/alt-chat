@@ -1,5 +1,5 @@
 "use client";
-import { JSX, useEffect, useState } from "react";
+import { JSX, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Navigation from "../app/components/Navigation";
@@ -14,18 +14,18 @@ const NavBar = () => {
   const links = ["Biblioteca", "Sobre", "Contato"];
 
   return (
-    <nav className="fixed top-4 left-0 w-full z-[100] px-4 flex items-center justify-between pointer-events-none">
+    <nav className="fixed top-4 left-0 w-full z-[100] px-4 flex items-center justify-between pointer-events-none transition-all">
       {/* Lado Esquerdo: Logo */}
       <div className="pointer-events-auto">
         <Navigation />
       </div>
       
       {/* Centro: Links */}
-      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-8 bg-foreground/10 backdrop-blur-md px-6 py-2 sm:py-3 rounded-full border border-foreground/5 pointer-events-auto">
+      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-8 bg-foreground/10 backdrop-blur-md px-6 py-2 rounded-full border border-foreground/5 pointer-events-auto">
         {links.map((link) => (
-          <a 
-            key={link} 
-            href={`#${link.toLowerCase()}`} 
+          <a
+            key={link}
+            href={`#${link.toLowerCase()}`}
             className="text-foreground font-body text-xs sm:text-sm font-semibold hover:opacity-50 transition-all tracking-wider"
           >
             {link}
@@ -34,10 +34,28 @@ const NavBar = () => {
       </div>
 
       {/* Lado Direito: Botões */}
-      <div className="flex gap-2 pointer-events-auto">
-        <Button text="Login" onClick={() => router.push("/Login")}/>
-        <Button text="Cadastro" onClick={() => router.push("/Cadastro")}/>
-      </div>
+      <div className="flex gap-1 sm:gap-2 md:gap-3 pointer-events-auto">
+            <Button
+              text="Login"
+              onClick={() => router.push("/login")}
+              className="
+                text-[10px] sm:text-xs md:text-sm
+                px-2 sm:px-3 md:px-5
+                py-1 sm:py-1.5 md:py-2
+                h-7 sm:h-8 md:h-9
+              "
+            />
+            <Button
+              text="Cadastro"
+              onClick={() => router.push("/cadastro")}
+              className="
+                text-[10px] sm:text-xs md:text-sm
+                px-2 sm:px-3 md:px-5
+                py-1 sm:py-1.5 md:py-2
+                h-7 sm:h-8 md:h-9
+              "
+            />
+          </div>
     </nav>
   );
 };
@@ -45,6 +63,12 @@ const NavBar = () => {
 // 0 biblioteca
 const BibliotecaSection = () => {
   const router = useRouter();
+  const [search, setSearch] = useState("");
+
+  const handleSearch = () => {
+    router.push(`/Biblioteca?q=${encodeURIComponent(search)}`);
+  };
+
   return (
     <section
       id="biblioteca"
@@ -66,28 +90,37 @@ const BibliotecaSection = () => {
           <img src="/Hero.png" alt="Hero" className="w-full h-auto" />
 
           <div className="absolute inset-0 flex items-start justify-center pt-15 sm:pt-20 md:pt-40 z-10">
-            <a
+            <div
               className="
-                flex items-center justify-between 
-                bg-background 
-                w-[250px] sm:w-[350px] md:w-[500px] 
-                h-[40px] sm:h-[45px] md:h-[55px] 
-                px-6 py-2 
-                border border-foreground rounded-full 
-                text-body text-xs sm:text-base md:text-lg font-bold text-foreground
+                flex items-center justify-between
+                bg-background
+                w-[250px] sm:w-[350px] md:w-[500px]
+                h-[40px] sm:h-[45px] md:h-[55px]
+                px-6 py-2
+                border border-foreground rounded-full
               "
             >
-              <span>Pesquise</span>
+              <input
+                type="text"
+                placeholder="Pesquise"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                className="
+                  flex-1 bg-transparent outline-none border-none
+                  text-xs sm:text-base md:text-lg font-bold text-foreground
+                  placeholder:text-foreground placeholder:font-bold
+                "
+              />
 
-              <Button onClick={() => router.push("/Biblioteca")}
+              <Button
+                onClick={handleSearch}
                 text={
-                  <>
-                    <img className="icon-search"/>
-                  </>
+                  <img className="icon-search" alt="search icon"/>
                 }
                 className="!p-0 !w-8 !h-8 sm:!w-10 sm:!h-10 flex items-center justify-center !shadow-none !border-none hover:!bg-transparent"
               />
-            </a>
+            </div>
           </div>
         </div>
       </div>
@@ -127,7 +160,7 @@ const BibliotecaSection = () => {
   );
 };
 
-// 1 democratizando 
+// 1 democratizando
 const ContextoSection = () => {
   const processSteps = [
     {
@@ -254,8 +287,8 @@ const ObjetivosSection = () => {
           {/* Lista de Objetivos */}
           <div className="flex flex-col w-full border-t border-foreground/5"> {/* Linha superior da lista */}
             {objetivos.map((obj) => (
-              <div 
-                key={obj.id} 
+              <div
+                key={obj.id}
                 className="grid grid-cols-[50px_1fr] items-start gap-6 py-8 border-b border-foreground/5" // Linhas divisórias sutis
               >
                 {/* Número (01, 02...) à esquerda */}
@@ -281,8 +314,8 @@ const ObjetivosSection = () => {
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-10">
                 <div className="w-96 h-20 rounded-full bg-foreground flex items-center justify-center">
                   <span className="text-foreground">
-                    <Link 
-                      href="https://storyset.com/online" 
+                    <Link
+                      href="https://storyset.com/online"
                       target="_blank" // Abre em nova aba (opcional)
                     >
                       <img src="/Archery-bro.png" alt="Arquery-bro.png" className="w-96 h-auto"/>
@@ -382,7 +415,7 @@ const FuncionalidadesSection = () => {
                 <tr key={index} className="border-t border-neutral/5">
                   {/* Coluna ALT-CHAT com destaque */}
                   <td className="relative px-6 py-6">
-                    <div className={`absolute inset-y-0 inset-x-2 bg-primary z-0 
+                    <div className={`absolute inset-y-0 inset-x-2 bg-primary z-0
                       /* Se for a primeira linha (índice 0), arredonda o topo */
                       ${index === 0 ? 'rounded-t-2xl' : ''}
                       /* Se for a ultima, arredonda*/

@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 
 interface NavigationProps {
 
@@ -19,7 +18,7 @@ export default function Navigation({ }: NavigationProps) {
           className="flex items-center gap-2 no-underline"
           aria-label="Ir para o início"
         >
-          <div className="w-20 h-20 bg-transparent rounded-sm flex items-center justify-center">
+          <div className="w-18 h-18 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-transparent rounded-sm flex items-center justify-center">
             <img className="imagem-tema w-full h-full object-contain" alt="Logotipo.png" />
           </div>
         </a>

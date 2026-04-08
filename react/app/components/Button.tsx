@@ -14,11 +14,13 @@ export default function Button({ text, onClick, className }: ButtonProps) {
       onClick={onClick}
       className={`
         /* Base: Mobile primeiro */
-        px-2 py-[3px] rounded-full
-        font-body text-[8px] sm:text-xs font-medium
+        px-[7px] py-[3px] rounded-full
         
         /* Desktop: Aumenta um pouco o respiro */
         sm:px-6 sm:py-3
+        md:px-5 md:py-2
+
+        font-body text-[8px] sm:text-xs font-medium
         
         bg-background
         flex items-center justify-center text-center

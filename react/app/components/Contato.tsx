@@ -17,13 +17,18 @@ export default function Contato({ }: ContatoProps) {
             Fale conosco
           </h2>
 
-          <p className="font-body font-normal tracking-[-0.075px] leading-[140%] text-neutral">
-            cc24140@g.unicamp.br
-            <br />
-            cc24153@g.unicamp.br
-            <br />
-            cc24155@g.unicamp.br
+          <p className="font-body font-normal tracking-[-0.075px] leading-[140%] text-neutral flex flex-col gap-1">
+            {["cc24140@g.unicamp.br", "cc24153@g.unicamp.br", "cc24155@g.unicamp.br"].map((email) => (
+              <a
+                key={email}
+                href={`mailto:${email}`}
+                className="hover:text-foreground transition-colors"
+              >
+                {email}
+              </a>
+            ))}
           </p>
+
         </div>
       </div>
     </section>

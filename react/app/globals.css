@@ -3,7 +3,7 @@
 /* variaveis globais */
 :root {
   /* paleta 1 padrao */
-  --off-white: #F8F4EB; 
+  --off-white: #F8F4EB;
   --preto: #000000;
   --azul-escuro: #3F8E9B;
   --laranja: #F18D04;
@@ -11,7 +11,7 @@
   --azul-claro: #AAD1D6;
   --cinza: #929292;
 
-  /* paleta 2 escuro 
+  /* paleta 2 escuro
   (como são as mesmas cores do padrão, nao precisa declarar dnv)*/
   
   /* paleta 3 esverdeado */
@@ -43,14 +43,14 @@
 
 @layer utilities {
   .shadow-figma {
-    box-shadow: 
-      0 4px 9px rgb(from var(--foreground) r g b / 0.3), 
+    box-shadow:
+      0 4px 9px rgb(from var(--foreground) r g b / 0.3),
       inset 0 4px 9px rgb(from var(--foreground) r g b / 0.3);
   }
 
   .shadow-figma-hover {
-    box-shadow: 
-      0 2px 5px rgb(from var(--foreground) r g b / 0.3), 
+    box-shadow:
+      0 2px 5px rgb(from var(--foreground) r g b / 0.3),
       inset 0 2px 5px rgb(from var(--foreground) r g b / 0.3);
   }
 
@@ -70,11 +70,11 @@
     font-size: 70px;
     
     /* Line Height (A 80% do print) */
-    line-height: 0.8; 
+    line-height: 0.8;
     
     /* Letter Spacing (|A| -1% do print) */
     /* -1% de 70px é aproximadamente -0.7px */
-    letter-spacing: -0.01em; 
+    letter-spacing: -0.01em;
     
     /* Garante que o Tailwind não sobrescreva se você usar text-base etc */
     display: inline-block;
@@ -87,7 +87,7 @@
     
     /* Line Height (90% no Figma) */
     /* No CSS, 0.9 faz com que as linhas fiquem bem próximas */
-    line-height: 0.9; 
+    line-height: 0.9;
     
     /* Letter Spacing (|A| -3% no Figma) */
     /* -3% equivale a -0.03em */
@@ -104,7 +104,7 @@
     
     /* Line Height (140% no Figma) */
     /* 1.4 é o valor padrão para boa legibilidade em textos longos */
-    line-height: 1.4; 
+    line-height: 1.4;
     
     /* Letter Spacing (0% no Figma) */
     letter-spacing: 0em;
