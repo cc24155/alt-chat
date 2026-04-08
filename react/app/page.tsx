@@ -1,5 +1,5 @@
 "use client";
-import { JSX, useState } from "react";
+import { JSX, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import Navigation from "../app/components/Navigation";
@@ -37,7 +37,7 @@ const NavBar = () => {
       <div className="flex gap-1 sm:gap-2 md:gap-3 pointer-events-auto">
             <Button
               text="Login"
-              onClick={() => router.push("/login")}
+              onClick={() => router.push("/Login")}
               className="
                 text-[10px] sm:text-xs md:text-sm
                 px-2 sm:px-3 md:px-5
@@ -47,7 +47,7 @@ const NavBar = () => {
             />
             <Button
               text="Cadastro"
-              onClick={() => router.push("/cadastro")}
+              onClick={() => router.push("/Cadastro")}
               className="
                 text-[10px] sm:text-xs md:text-sm
                 px-2 sm:px-3 md:px-5
