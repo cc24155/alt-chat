@@ -33,6 +33,8 @@ export default function Button({ text, onClick, className }: ButtonProps) {
         /* Hovers */
         hover:bg-neutral
         hover:text-white
+
+        cursor-pointer
         
         /* Permite que você controle a largura (ex: w-full ou w-64) por fora */
         ${className}

@@ -34,8 +34,9 @@ const Form = () => {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     alert("Tentativa de login");
+    autenticarUsuario(user, password);
   };
 
   return (
