@@ -13,6 +13,6 @@
   return { success: true };
 }*/
 
-export async function autenticarUsuario(user: String, password: String){
+export async function autenticarUsuario(user: string, password: string){
   //const usuario = await db.user.findUnique({ where: { user } });
 }
