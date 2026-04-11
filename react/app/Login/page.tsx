@@ -5,26 +5,43 @@ import { useRouter } from "next/navigation";
 import Navigation from "../components/Navigation";
 import { JSX, useState } from "react";
 import Footer from "../components/Footer";
+import "../globals.css"
 
-// Componente de navegação (NavBar) permanece o mesmo
 const NavBar = () => {
   const router = useRouter();
   const links = ["Biblioteca", "Sobre", "Contato"];
   return (
-    <nav className="fixed top-4 left-0 w-full z-[100] px-4 flex items-center justify-between pointer-events-auto transition-all">
+    <nav className="fixed top-4 left-0 w-full z-100 px-4 flex items-center justify-between pointer-events-none transition-all">
       <div className="pointer-events-auto">
-        <Navigation/>
+        <Navigation />
       </div>
+
       <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-8 bg-foreground/10 backdrop-blur-md px-6 py-2 rounded-full border border-foreground/5 pointer-events-auto">
-        {links.map((link) => (
-          <a key={link} href={`#${link.toLowerCase()}`} className="text-foreground font-body text-xs sm:text-sm font-semibold hover:opacity-50 transition-all tracking-wider">
-            {link}
-          </a>
-        ))}
+        {links.map((link) => {
+
+          let displayLink = link;
+          let href = `/#${link.toLowerCase()}`;
+
+          //a biblioteca tem uma estrutura de link diferente dos outros dois, por isso precisa verificar
+          if (link === "Biblioteca") {
+            displayLink = "Biblioteca";
+            href = "/Biblioteca?q=";    
+          }
+
+          return (
+            <a
+              key={link}
+              href={href}
+              className="text-foreground font-body text-xs sm:text-sm font-semibold hover:opacity-50 transition-all tracking-wider"
+            >
+              {displayLink}
+            </a>
+          );
+        })}
       </div>
       <div className="flex gap-1 sm:gap-2 md:gap-3 pointer-events-auto">
-        <Button text="Login" onClick={() => router.push("/Login")} className="text-[10px] sm:text-xs md:text-sm px-2 sm:px-3 md:px-5 py-1 sm:py-1.5 md:py-2 h-7 sm:h-8 md:h-9" />
-        <Button text="Cadastro" onClick={() => router.push("/Cadastro")} className="text-[10px] sm:text-xs md:text-sm px-2 sm:px-3 md:px-5 py-1 sm:py-1.5 md:py-2 h-7 sm:h-8 md:h-9" />
+        <Button text="Login" onClick={() => router.push("/Login")} className="text-body sm:text-xs md:text-sm px-2 sm:px-3 md:px-5 py-1 sm:py-1.5 md:py-2 h-7 sm:h-8 md:h-9" />
+        <Button text="Cadastro" onClick={() => router.push("/Cadastro")} className="text-body sm:text-xs md:text-sm px-2 sm:px-3 md:px-5 py-1 sm:py-1.5 md:py-2 h-7 sm:h-8 md:h-9" />
       </div>
     </nav>
   );
@@ -54,7 +71,7 @@ const Form = () => {
             placeholder="Usuário"
             value={user}
             onChange={(e) => setUser(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral-400 font-body text-foreground"
+            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-(--cinza) font-body text-foreground"
           />
         </div>
 
@@ -64,10 +81,10 @@ const Form = () => {
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral-400 font-body text-foreground"
+            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-(--cinza) font-body text-foreground"
           />
           <div className="flex justify-end px-2">
-            <button type="button" className="text-[10px] text-neutral-500 hover:underline">
+            <button type="button" className="text-body text-(--cinza) hover:underline">
               ESQUECEU A SENHA?
             </button>
           </div>
@@ -81,7 +98,7 @@ const Form = () => {
       </form>
 
       {/* Rodapé do Form */}
-      <p className="font-body text-xs text-neutral-500">
+      <p className="font-body text-xs text-(--cinza)">
         NÃO TEM UMA CONTA?{" "}
         <a href="/Cadastro" className="text-foreground font-bold hover:underline">
           CADASTRE-SE
