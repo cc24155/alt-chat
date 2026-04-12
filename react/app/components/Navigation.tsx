@@ -19,7 +19,7 @@ export default function Navigation({ }: NavigationProps) {
           aria-label="Ir para o início"
         >
           <div className="w-18 h-18 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-transparent rounded-sm flex items-center justify-center">
-            <img className="imagem-tema w-full h-full object-contain" alt="Logotipo.png" />
+            <img className="theme-image w-full h-full object-contain" alt="Logotipo.png" />
           </div>
         </a>
       </div>

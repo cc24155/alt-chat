@@ -33,7 +33,7 @@
   --neutral: var(--cinza);
 }
 
-.imagem-tema {
+.theme-image {
   content: url("/Logotipo Claro.png");
 }
 
@@ -67,7 +67,7 @@
     font-weight: 600; /* SemiBold */
     
     /* Tamanho */
-    font-size: 70px;
+    font-size: clamp(48px, 7vw, 70px);
     
     /* Line Height (A 80% do print) */
     line-height: 0.8;
@@ -83,7 +83,7 @@
     /* Fonte e Peso */
     font-family: 'Afacad', sans-serif;
     font-weight: 400; /* Regular */
-    font-size: 40px;
+    font-size: clamp(22px, 3.5vw, 40px);
     
     /* Line Height (90% no Figma) */
     /* No CSS, 0.9 faz com que as linhas fiquem bem próximas */
@@ -100,7 +100,7 @@
     /* Fonte e Peso */
     font-family: 'DM Sans', sans-serif;
     font-weight: 400; /* Regular */
-    font-size: 15px;
+    font-size: clamp(11px, 1.2vw, 15px);
     
     /* Line Height (140% no Figma) */
     /* 1.4 é o valor padrão para boa legibilidade em textos longos */
@@ -141,13 +141,12 @@
     --info: var(--azul-escuro);
     --neutral: var(--cinza);
   }
-  :root:not(.light):not(.dark) .imagem-tema {
+  :root:not(.light):not(.dark) .theme-image {
     content: url("/Logotipo Escuro.png");
   }
   :root:not(.light):not(.dark) .icon-search {
     filter: brightness(0) invert(1);
   }
-
   :root:not(.light):not(.dark) .icon-adaptive {
     filter: invert(0);
   }
@@ -163,7 +162,7 @@
   --info: var(--azul-claro);
   --neutral: var(--cinza);
 }
-.light .imagem-tema {
+.light .theme-image {
   content: url("/Logotipo Claro.png");
 }
 .light .icon-search {
@@ -183,7 +182,7 @@
   --info: var(--azul-escuro);
   --neutral: var(--cinza);
 }
-.dark .imagem-tema {
+.dark .theme-image {
   content: url("/Logotipo Escuro.png");
 }
 .dark .icon-search {
@@ -194,7 +193,7 @@
 }
 
 /* tema olivaceo */
-.tema-olivaceo {
+.olivaceo-theme {
   --background: var(--off-white-esverdeado);
   --foreground: var(--preto-olivaceo);
   --primary: var(--azul-escuro-olivaceo);
@@ -203,13 +202,13 @@
   --info: var(--azul-claro-olivaceo);
   --neutral: var(--cinza-olivaceo);
 }
-.tema-olivaceo .imagem-tema {
+.olivaceo-theme .theme-image {
   content: url("/Logotipo Claro.png");
 }
-.tema-olivaceo .icon-search {
+.olivaceo-theme .icon-search {
   content: url("/Icon Search.png");
 }
-.tema-olivaceo .icon-adaptive {
+.olivaceo-theme .icon-adaptive {
   filter: invert(1);
 }
 
