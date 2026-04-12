@@ -41,6 +41,7 @@
   content: url("/Icon Search.png");
 }
 
+
 @layer utilities {
   .shadow-figma {
     box-shadow:
@@ -128,6 +129,19 @@
   --font-title: var(--font-victor-mono-title);
   --font-subtitle: var(--font-afacad-subtitle);
   --font-body: var(--font-dm-sans-body);
+
+  --animate-fade-in: fadeIn 0.2s ease forwards;
+  --animate-slide-up: slideUp 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* auto: detecta se o usuário está em modo escuro no sistema */

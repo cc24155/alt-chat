@@ -6,8 +6,8 @@ import Footer from "../components/Footer";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { Pictograma, buscarFavoritos } from "../utils/arasaac"; 
-import { PictogramasGrid } from "../components/PicCard";
+import { Pictograma, buscarFavoritos } from "../../arasaac api/arasaac"; 
+import { PictogramasGrid } from "../components/PictogramaSection";
 
 
 export default function ContaPage() {

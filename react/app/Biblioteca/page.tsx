@@ -5,8 +5,8 @@ import HeroSection from "../components/HeroSection";
 import Contato from "../components/Contato";
 import Footer from "../components/Footer";
 
-import { usePictogramas } from "../utils/arasaac";
-import { PictogramasGrid } from "../components/PicCard";
+import { usePictogramas } from "../../arasaac api/arasaac";
+import { PictogramasGrid } from "../components/PictogramaSection";
 
 
 export default function BibliotecaPage() {

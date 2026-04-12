@@ -7,8 +7,8 @@ import Link from "next/link";
 import Button from "../components/Button"; 
 import HeroSection from "../components/HeroSection";
 
-import { Pictograma, buscarFavoritos } from "../utils/arasaac"; 
-import { PictogramasGrid } from "../components/PicCard";
+import { Pictograma, buscarFavoritos } from "../../arasaac api/arasaac"; 
+import { PictogramasGrid } from "../components/PictogramaSection";
 
 
 export default function RelatorioPage() {

@@ -36,6 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt"
+      data-scroll-behavior="smooth"
       // classes globais que afetam toto o site
       className={`${victorMono.variable} ${afacad.variable} ${dmSans.variable} h-full antialiased`}
     >

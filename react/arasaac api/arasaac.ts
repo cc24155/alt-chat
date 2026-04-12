@@ -53,7 +53,6 @@ export function usePictogramas(nomes: string[]) {
   return { q, categorias, resultados, loading };
 }
 
-// No arquivo arasaac.ts
 
 export async function buscarPictogramaPorId(id: number): Promise<Pictograma | null> {
   try {
