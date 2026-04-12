@@ -6,7 +6,7 @@ import Navigation from "../components/Navigation";
 import { JSX, useState } from "react";
 import Footer from "../components/Footer";
 import "../globals.css"
-import Image from "next/image";
+
 
 const NavBar = () => {
   const router = useRouter();
@@ -59,8 +59,9 @@ const Form = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async () => {
-    alert("Tentativa de login");
-    createUser(name, email, user, password);
+    if ((await createUser(name, email, user, password)).success){
+      alert("Usuário cadastrado com sucesso!")
+    }
   };
 
   return (
@@ -151,7 +152,7 @@ const Form = () => {
         </div>
 
         <Button
-          text="ENTRAR"
+          text="CADASTRAR"
           className="w-full py-4 mt-4 !rounded-full !text-2x1 md:!text-sm font-bold tracking-widest"
           onClick={handleSubmit}
         />
