@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-// Você pode remover a importação do Button aqui em cima se não for mais usar na página
 import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 
 interface Pictograma {
   _id: number;
@@ -27,6 +28,8 @@ export default function ContaPage() {
   const [busca, setBusca] = useState("");
   const [query, setQuery] = useState("pessoa");
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  
 
   useEffect(() => {
     const fetchPics = async () => {
@@ -83,7 +86,8 @@ export default function ContaPage() {
             </div>
 
             <div className="absolute top-6 right-6 flex gap-3 z-50">
-              <button 
+              <button
+                onClick ={() => router.push("/Relatorio")}
                 className="bg-background text-foreground font-body text-[14px] font-semibold px-6 py-2 rounded-full shadow-figma hover:shadow-figma-hover hover:opacity-90 active:scale-95 transition-all cursor-pointer"
               >
                 Relatório
