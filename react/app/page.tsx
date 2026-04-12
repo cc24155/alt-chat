@@ -27,7 +27,7 @@ const NavBar = () => {
           <a
             key={link}
             href={`#${link.toLowerCase()}`}
-            className="text-foreground font-body text-xs sm:text-sm font-semibold hover:opacity-50 transition-all tracking-wider"
+            className="text-foreground font-body font-semibold hover:opacity-50 transition-all tracking-wider"
           >
             {link}
           </a>
@@ -40,7 +40,6 @@ const NavBar = () => {
               text="Login"
               onClick={() => router.push("/Login")}
               className="
-                text-[10px] sm:text-xs md:text-sm
                 px-2 sm:px-3 md:px-5
                 py-1 sm:py-1.5 md:py-2
                 h-7 sm:h-8 md:h-9
@@ -50,7 +49,6 @@ const NavBar = () => {
               text="Cadastro"
               onClick={() => router.push("/Cadastro")}
               className="
-                text-[10px] sm:text-xs md:text-sm
                 px-2 sm:px-3 md:px-5
                 py-1 sm:py-1.5 md:py-2
                 h-7 sm:h-8 md:h-9

@@ -1,54 +1,35 @@
 "use client";
 import { useEffect, useState } from "react";
+
 import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { Pictograma, buscarFavoritos } from "../utils/arasaac"; 
+import { PictogramasGrid } from "../components/PicCard";
 
-interface Pictograma {
-  _id: number;
-  keywords: { keyword: string }[];
-}
-
-function PicCard({ pic }: { pic: Pictograma }) {
-  return (
-    <div className="border border-foreground/10 rounded-3xl p-4 flex items-center justify-center aspect-square bg-neutral shadow-figma hover:shadow-figma-hover transition-all cursor-pointer">
-      <img
-        src={`https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`}
-        alt={pic.keywords?.[0]?.keyword ?? "pictograma"}
-        className="w-full h-full object-contain"
-      />
-    </div>
-  );
-}
 
 export default function ContaPage() {
-  const [resultados, setResultados] = useState<Pictograma[]>([]);
-  const [busca, setBusca] = useState("");
-  const [query, setQuery] = useState("pessoa");
+  const [favoritos, setFavoritos] = useState<Pictograma[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  
 
+  // Exemplo de IDs salvos para trocar pra quando vir proo banco de dados
+  const meusIdsFavoritos = [34560, 34558, 34559, 34557];
+  
   useEffect(() => {
-    const fetchPics = async () => {
+    const carregarFavoritos = async () => {
       setLoading(true);
-      const res = await fetch(
-        `https://api.arasaac.org/api/pictograms/pt/search/${encodeURIComponent(query)}`
-      );
-      const data = await res.json();
-      setResultados(data.slice(0, 4));
+      const dados = await buscarFavoritos(meusIdsFavoritos);
+      setFavoritos(dados);
       setLoading(false);
     };
+    carregarFavoritos();
+  }, []);
+  if (loading)
+    return <div className="text-foreground text-center py-20">Carregando...</div>;
 
-    fetchPics();
-  }, [query]);
-
-  const handleBusca = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (busca.trim()) setQuery(busca.trim());
-  };
 
   return (
     <div className="w-full min-h-screen bg-background">
@@ -62,16 +43,16 @@ export default function ContaPage() {
             
             {/* Info do Usuário */}
             <div className="flex flex-col gap-1 w-full md:w-1/2 text-center md:text-left text-background relative z-10 pb-16 md:pb-0">
-              <h1 className="font-subtitle text-[40px] leading-[90%] mb-2">
+              <h1 className="font-subtitle leading-[90%] mb-2">
                 usuário
               </h1>
-              <p className="font-body text-[15px] opacity-90">
+              <p className="font-body opacity-90">
                 biografia biografia biografia
               </p>
-              <p className="font-body text-[15px] opacity-90">
+              <p className="font-body opacity-90">
                 biografia biografia biografia
               </p>
-              <p className="font-body text-[15px] opacity-90">
+              <p className="font-body opacity-90">
                 biografia biografia biografia
               </p>
             </div>
@@ -80,7 +61,7 @@ export default function ContaPage() {
             <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-20">
                 <div className="w-[120px] h-[120px] md:w-[140px] md:h-[140px] rounded-full flex items-center justify-center bg-background shadow-figma border-4 border-transparent">
                     <Link href="/">
-                        <img className="imagem-tema w-20 md:w-28 object-contain" alt="logotipo" />
+                        <img className="theme-image w-20 md:w-28 object-contain" alt="logotipo" />
                     </Link>
                 </div>
             </div>
@@ -88,7 +69,7 @@ export default function ContaPage() {
             <div className="absolute top-6 right-6 flex gap-3 z-50">
               <button
                 onClick ={() => router.push("/Relatorio")}
-                className="bg-background text-foreground font-body text-[14px] font-semibold px-6 py-2 rounded-full shadow-figma hover:shadow-figma-hover hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                className="bg-background text-foreground font-body font-semibold px-6 py-2 rounded-full shadow-figma hover:shadow-figma-hover hover:opacity-90 active:scale-95 transition-all cursor-pointer"
               >
                 Relatório
               </button>
@@ -105,39 +86,20 @@ export default function ContaPage() {
           <div className="border border-foreground/10 rounded-3xl p-8 md:p-10 flex flex-col gap-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               
-              <h2 className="font-subtitle text-[40px] leading-[90%] text-foreground">
+              <h2 className="font-subtitle leading-[90%] text-foreground">
                 Meus Pictogramas
               </h2>
-
-              <form onSubmit={handleBusca} className="flex gap-3">
-                <div className="relative flex items-center">
-                  <img className="icon-search absolute left-4 w-4 h-4 opacity-50" alt="buscar" />
-                  <input
-                    type="text"
-                    value={busca}
-                    onChange={(e) => setBusca(e.target.value)}
-                    placeholder="Buscar pictograma..."
-                    className="font-body text-[15px] border border-foreground/20 rounded-full pl-11 pr-4 py-2 bg-background text-foreground focus:outline-none focus:border-foreground/50 transition-all w-full md:w-64"
-                  />
-                </div>
-                
-                <button
-                  type="submit"
-                  className="font-body text-[15px] px-6 py-2 rounded-full bg-foreground text-background hover:opacity-80 transition-all font-medium"
-                >
-                  Buscar
-                </button>
-              </form>
             </div>
 
             {loading ? (
-              <div className="text-center py-16 font-body text-[15px] text-neutral">Buscando pictogramas...</div>
+              <div className="text-center py-16 font-body text-neutral">Buscando pictogramas...</div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {resultados.map((pic) => (
-                  <PicCard key={pic._id} pic={pic} />
-                ))}
-              </div>
+              <PictogramasGrid 
+                q={null} 
+                resultados={favoritos} 
+                categorias={[]} 
+                limite={4} 
+              />
             )}
           </div>
 

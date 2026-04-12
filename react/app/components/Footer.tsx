@@ -15,7 +15,7 @@ export default function Footer({ }: FooterProps) {
         {/* Bottom row */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <Link href="/">
-            <img className="imagem-tema w-20" alt="logotipo"/>
+            <img className="theme-image w-20" alt="logotipo"/>
           </Link>
           <span className="font-body font-normal tracking-[-0.075px] text-foreground">
             © 2026 ALT-CHAT. Todos os direitos reservados.
