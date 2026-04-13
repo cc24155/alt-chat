@@ -39,7 +39,7 @@ export default function NavigationBlue({ }: NavigationBlueProps) {
 
         {/* Logo */}
         <a
-          href="#biblioteca"
+          href="/"
           className="flex items-center gap-2 no-underline"
           aria-label="Ir para o início"
         >
