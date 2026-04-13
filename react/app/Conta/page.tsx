@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { Pictograma, buscarFavoritos } from "../../arasaac api/arasaac"; 
 import { PictogramasGrid } from "../components/PictogramaSection";
+import Button from "../components/Button";
 
 
 export default function ContaPage() {
@@ -74,11 +75,11 @@ export default function ContaPage() {
                 Relatório
               </button>
               
-              <button 
-                className="bg-background text-foreground w-10 h-10 rounded-full flex items-center justify-center shadow-figma hover:shadow-figma-hover hover:opacity-90 active:scale-95 transition-all cursor-pointer"
-              >
-                <img src="/Settings.png" alt="Configurações" className="w-[18px] h-[18px] dark:invert opacity-70" />
-              </button>
+              <Button 
+                onClick={() => router.push("/Configuracoes")}
+                text={<img src="/Settings.png" alt="Configurações" className="w-[18px] h-[18px] dark:invert opacity-70" />}
+                className="!p-0 !w-10 !h-10 rounded-full shadow-figma hover:shadow-figma-hover active:scale-95"
+              />
             </div>
           </div>
 

@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 
 import NavigationBlue from "../components/NavigationBlue";
 import HeroSection from "../components/HeroSection";
@@ -13,6 +14,14 @@ export default function BibliotecaPage() {
   const { q, categorias, resultados, loading } = usePictogramas([
     "Pessoas", "Animais", "Alimentos", "Ações", "Objetos"
   ]);
+
+  // quando terminar de carregar E tiver uma busca, rola até os resultados
+  useEffect(() => {
+    if (!loading && q) {
+      document.getElementById("resultados")?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [loading, q]);
+
   if (loading)
     return <div className="text-foreground text-center py-20">Carregando...</div>;
 
@@ -28,8 +37,10 @@ export default function BibliotecaPage() {
       />
 
       {/* PICTOGRAMAS */}
-      <PictogramasGrid q={q} resultados={resultados} categorias={categorias} />
-      
+      <div id="resultados">
+        <PictogramasGrid q={q} resultados={resultados} categorias={categorias} />
+      </div>
+     
       <Contato/>
       <Footer/>
     </section>

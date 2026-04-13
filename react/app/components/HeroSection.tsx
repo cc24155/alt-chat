@@ -24,7 +24,7 @@ export default function HeroSection(
   const [search, setSearch] = useState("");
 
   const handleSearch = () => {
-    router.push(`${redirectTo}?q=${encodeURIComponent(search)}`);
+    router.push(`${redirectTo}?q=${encodeURIComponent(search)}#resultados`);
   };
 
   return (
