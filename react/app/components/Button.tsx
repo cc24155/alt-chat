@@ -20,7 +20,7 @@ export default function Button({ text, onClick, className }: ButtonProps) {
         sm:px-6 sm:py-3
         md:px-5 md:py-2
 
-        font-body text-[8px] sm:text-xs font-medium
+        font-body text-[10px] sm:text-xs font-medium
         
         bg-background
         flex items-center justify-center text-center

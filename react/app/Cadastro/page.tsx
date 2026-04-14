@@ -93,7 +93,9 @@ const Form = () => {
     return;
   }
   else if (!passwordRegex.test(password)){
-    notify("Senha inválida!");
+    notify("Senha inválida! A senha deve conter:\n " + 
+      "- 8 letras;\n- Maiúsculas e minúsculas;\n- Números;\n- Caractere especial."
+    );
     return;
   }
 
@@ -101,7 +103,7 @@ const Form = () => {
     const result = await createUser(name, email, user, password);
     if (result.success) {
       notify("Usuário cadastrado com sucesso! Redirecionando...", false);
-      setTimeout(() => { router.push("/Login"); }, 2000);
+      setTimeout(() => { router.push("/Login"); }, 2500);
     } else {
       notify("Erro ao cadastrar: " + result.error);
     }
@@ -125,7 +127,7 @@ const Form = () => {
             placeholder="Nome"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral text-foreground"
           />
         </div>
         <div>
@@ -134,7 +136,7 @@ const Form = () => {
             placeholder="E-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral text-foreground"
           />
         </div>
         <div>
@@ -143,7 +145,7 @@ const Form = () => {
             placeholder="Usuário"
             value={user}
             onChange={(e) => setUser(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral text-foreground"
           />
         </div>
         {/* CAMPO SENHA 1 */}
@@ -153,7 +155,7 @@ const Form = () => {
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral text-foreground"
           />
           <button
             type="button"
@@ -176,7 +178,7 @@ const Form = () => {
               placeholder="Confirme sua senha"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+              className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral text-foreground"
             />
             <button
               type="button"
@@ -191,7 +193,7 @@ const Form = () => {
             </button>
           </div>
           <div className="flex justify-end px-2">
-            <button type="button" className="text-body text-neutral hover:underline">
+            <button type="button" className="text-body cursor-pointer text-neutral hover:underline">
               ESQUECEU A SENHA?
             </button>
           </div>
@@ -199,19 +201,24 @@ const Form = () => {
         
         <div>
           {message && (
-  <div className={`text-sm font-bold text-center p-3 rounded-full border ${
-    isError 
-      ? "text-red-500 border-red-500 bg-red-500/10" 
-      : "text-green-500 border-green-500 bg-green-500/10"
-  } transition-all animate-bounce`}>
-    {message}
-  </div>
-)}
+          <div className={`font-bold text-center p-3 rounded-full border ${
+            isError 
+              ? "text-secondary border-secondary bg-secondary/10" 
+              : "text-primary border-primary bg-primary/10"
+          } transition-all animate-bounce`}>
+            {message.split("\n").map((line, index) => (
+              <span key={index}>
+                {line}
+                <br />
+              </span>
+            ))}
+          </div>
+        )}
         </div>
 
         <Button
           text="CADASTRAR"
-          className="w-full py-4 mt-4 !rounded-full font-bold tracking-widest"
+          className="!text-[15px] w-full py-4 mt-4 !rounded-full font-bold tracking-widest"
           onClick={handleSubmit}
         />
       </form>
