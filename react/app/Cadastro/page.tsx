@@ -8,7 +8,6 @@ import Button from "../components/Button";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 
-
 const NavBar = () => {
   const router = useRouter();
   const links = ["Biblioteca", "Sobre", "Contato"];
@@ -60,12 +59,57 @@ const Form = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = async () => {
-    if ((await createUser(name, email, user, password)).success){
-      alert("Usuário cadastrado com sucesso!")
-    }
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+
+  const router = useRouter();
+
+  const handleSubmit = async (e?: React.SubmitEvent) => {
+  if (e) e.preventDefault();    //faz com que a página não recarregue quando apertar o botão cadastrar
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  //o padrão de senha tem no minimo 8 letras, contendo maiusculas e minusculas, letras e caracteres especiais
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  
+  const notify = (msg: string, error = true) => {
+    setMessage(msg);
+    setIsError(error);
+    setTimeout(() => setMessage(""), 2500);
   };
 
+  if (name === "" || email === "" || user === "" || password === "" || confirmPassword === ""){
+    notify("Preencha todos os campos.")
+    return;
+  }
+
+  if (!emailRegex.test(email)) {
+    notify("E-mail inválido.");
+    return;
+  }
+
+  if (confirmPassword !== password) {
+    notify("As senhas não coincidem.");
+    return;
+  }
+  else if (!passwordRegex.test(password)){
+    notify("Senha inválida!");
+    return;
+  }
+
+  try {
+    const result = await createUser(name, email, user, password);
+    if (result.success) {
+      notify("Usuário cadastrado com sucesso! Redirecionando...", false);
+      setTimeout(() => { router.push("/Login"); }, 2000);
+    } else {
+      notify("Erro ao cadastrar: " + result.error);
+    }
+  } catch (e) {
+    console.error("Erro: ", e);
+    notify("Erro inesperado no servidor.");
+  }
+};
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">
       {/* Título e Subtítulo */}
@@ -151,6 +195,18 @@ const Form = () => {
               ESQUECEU A SENHA?
             </button>
           </div>
+        </div>
+        
+        <div>
+          {message && (
+  <div className={`text-sm font-bold text-center p-3 rounded-full border ${
+    isError 
+      ? "text-red-500 border-red-500 bg-red-500/10" 
+      : "text-green-500 border-green-500 bg-green-500/10"
+  } transition-all animate-bounce`}>
+    {message}
+  </div>
+)}
         </div>
 
         <Button
