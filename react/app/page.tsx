@@ -23,15 +23,25 @@ const NavBar = () => {
       
       {/* Centro: Links */}
       <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-8 bg-foreground/10 backdrop-blur-md px-6 py-2 rounded-full border border-foreground/5 pointer-events-auto">
-        {links.map((link) => (
-          <a
-            key={link}
-            href={`#${link.toLowerCase()}`}
-            className="text-foreground font-body font-semibold hover:opacity-50 transition-all tracking-wider"
-          >
-            {link}
-          </a>
-        ))}
+        {links.map((link) =>
+          link === "Biblioteca" ? (
+            <button
+              key={link}
+              onClick={() => router.push("/Biblioteca")}
+              className="text-foreground font-body font-semibold hover:opacity-50 transition-all tracking-wider"
+            >
+              {link}
+            </button>
+          ) : (
+            <a
+              key={link}
+              href={`#${link.toLowerCase()}`}
+              className="text-foreground font-body font-semibold hover:opacity-50 transition-all tracking-wider"
+            >
+              {link}
+            </a>
+          )
+        )}
       </div>
 
       {/* Lado Direito: Botões */}

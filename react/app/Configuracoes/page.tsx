@@ -5,6 +5,8 @@ import Button from "../components/Button";
 import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
 
+import { createUser } from "./actions";
+
 
 const Config = () => {
   const [name, setName] = useState("");

@@ -55,19 +55,24 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
             <span className="font-body text-neutral">
               Resultados para: <strong className="text-foreground">{q}</strong>
             </span>
-            <div className="grid grid-cols-4 gap-4">
-              {(limite ? resultados.slice(0, limite) : resultados).map((pic) => (
-                <PicCard key={pic._id} pic={pic} />
-              ))}
-            </div>
+            
+            {resultados.length === 0 ? (
+              <p className="font-body text-neutral py-8">Nenhum pictograma encontrado.</p>
+            ) : (
+              <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
+                {(limite ? resultados.slice(0, limite) : resultados).map((pic) => (
+                  <PicCard key={pic._id} pic={pic} />
+                ))}
+              </div>
+            )}
           </>
         ) : categorias && categorias.length > 0 ? (
           // Todas as categorias
           <div className="flex flex-col gap-12">
             {categorias.map((cat) => (
-              <div key={cat.nome} className="rounded-2xl p-6 flex items-center justify-center flex flex-col gap-4 bg-background shadow-figma">
+              <div key={cat.nome} className="max-w-[1200px] mx-auto w-full rounded-2xl p-6 flex items-center justify-center flex flex-col gap-4 bg-background shadow-figma">
                 {/* categoria */}
-                <button 
+                <button
                   onClick={() => setCategoriaAberta(cat.nome)}
                   className="font-body text-neutral tracking-widest uppercase hover:text-primary"
                   >
@@ -75,9 +80,11 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
                 </button>
 
                 {/* pictogramas */}
-                <div className="grid grid-cols-4 gap-4">
-                  {(limite ? cat.pictogramas.slice(0, limite) : cat.pictogramas).map((pic) => (
-                    <PicCard key={pic._id} pic={pic} />
+                <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
+                  {(limite ? cat.pictogramas.slice(0, limite) : cat.pictogramas).map((pic, index) => (
+                    <div key={pic._id} className={index >= 4 ? "hidden md:block" : ""}>
+                      <PicCard pic={pic} />
+                    </div>
                   ))}
                 </div>
               </div>

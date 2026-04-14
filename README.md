@@ -7,7 +7,7 @@
 ### Para rodar:
 Certifique-se de ter instalado:
 
-``npm install`` 
+``npm install``
 
 ``npm install @supabase/supabase-js``
 
