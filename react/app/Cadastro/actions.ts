@@ -2,35 +2,55 @@
 import { supabase } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
 
-export async function createUser(name:string, email:string, user: string, password: string){
-  try{
-    const salt = await bcrypt.genSalt(10);   //gera dados aleatórios para serem misturados na criptografia em seguida
-    const passwordHash = await bcrypt.hash(password, salt);
+export async function createUser(name: string, email: string, user: string, password: string) {
+  try {
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
 
-    const { data, error } = await supabase
-    .from('usuario')
-    .insert([
-      { 
-        nome: name, 
-        email: email, 
-        senha_hash: passwordHash 
+        data: {
+          full_name: name,
+          username: user,
+        },
+      },
+    });
+
+    if (authError) {
+      console.error("Erro no Auth: ", authError.message);
+      return { success: false, error: authError.message };
+    }
+
+    if (authData.user) {
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(password, salt);
+
+      const { error: dbError } = await supabase
+        .from('usuario')
+        .insert([
+          { 
+            id: authData.user.id, 
+            nome: name, 
+            email: email, 
+            senha_hash: passwordHash,
+            username: user,
+            ative: false
+          }
+        ]);
+
+      if (dbError) {
+        console.error("Erro ao salvar no banco:", dbError.message);
+        return { success: false, error: dbError.message };
       }
-    ])
-    .select(); //faz com que o data não venha vazio
+    }
 
-  if (error) {
-    console.error("Erro ao cadastrar:", error.message);
-    return { success: false, error: error.message };
-  }
+    return { 
+      success: true, 
+      message: "Cadastro realizado! Verifique seu e-mail para ativar a conta." 
+    }; 
 
-  if (data && data.length > 0) {
-    return { success: true, data: data[0] };
-  }
-  
-  return { success: true }; 
-  }
-  catch(e){
-    console.error("Erro critico ", e);
-    return {success : false};
+  } catch (e) {
+    console.error("Erro crítico:", e);
+    return { success: false, error: "Erro inesperado ao criar conta." };
   }
 }
