@@ -33,7 +33,7 @@ export default function NavigationBlue({ }: NavigationBlueProps) {
       <div className={`w-full mx-auto px-8 h-[72px] flex items-center justify-between ${
         scrolled
           // antes de rolar é trnsparente, dps tem cor
-          ? "bg-primary backdrop-blur-sm shadow-figma text-background"
+          ? "bg-background backdrop-blur-sm"
           : "bg-transparent text-foreground"
       }`}>
 

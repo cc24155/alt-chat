@@ -17,7 +17,7 @@ export async function buscarCategorias(nomes: string[]) {
   return Promise.all(
     nomes.map(async (nome) => {
       const pics = await buscarPictogramas(nome);
-      return { nome, pictogramas: pics.slice(0, 4) };
+      return { nome, pictogramas: pics.slice(0, 6) }; // pega só os 6 primeiros de cada categoria
     })
   );
 }
