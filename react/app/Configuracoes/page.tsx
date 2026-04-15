@@ -1,25 +1,102 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Button from "../components/Button";
 import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
 
+import { supabase } from "@/lib/supabase";
+import { useRouter } from 'next/navigation';
+
 // import { createUser } from "./actions";
 
-
 const Config = () => {
+  // estado para armazenar os dados do usuário
   const [name, setName] = useState("");
   const [user, setUser] = useState("");
   const [email, setEmail] = useState("");
-  const [bio, setBio] = useState("");
+  const [biografia, setBiografia] = useState("");
   const [password, setPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+  const notify = (msg: string, error = true) => {
+    setMessage(msg);
+    setIsError(error);
+    setTimeout(() => setMessage(""), 2500);
+  };
+
+  // carrega os dados do bd ao abrir a página
+  useEffect(() => {
+    // async function carregarDados() {
+    //   try {
+    //     const { data: { user }, error: authError } = await supabase.auth.getUser();
+        
+ 
+    //     const { data, error } = await supabase
+    //       .from("usuario")
+    //       .select("nome, username, email, biografia")
+    //       .eq("id", user.id)
+    //       .single();
+ 
+    //     if (error)
+    //       throw error;
+ 
+    //     setName(data.nome ?? "");
+    //     setUser(data.username ?? "");
+    //     setEmail(data.email ?? "");
+    //     setBiografia(data.biografia ?? "");
+    //   }
+    //   catch (error) {
+    //     console.error("Erro ao buscar dados:", error);
+    //     notify("Erro ao carregar perfil.");
+    //   }
+    // }
+    // carregarDados();
+  }, []);
+ 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
+
+  // atualiza os dados do usuário no bd
   const handleSubmit = async () => {
-    // if ((await createUser(name, user, email, bio, password)).success){
-    //   alert("Usuário cadastrado com sucesso!")
+    // if (!name.trim() || !user.trim()) {
+    //   notify("Nome e usuário são obrigatórios.");
+    //   return;
+    // }
+ 
+    // try {
+    //   const { data: { user } } = await supabase.auth.getUser();
+ 
+    //   // atualiza perfil na tabela usuario
+    //   const { error } = await supabase
+    //     .from("usuario")
+    //     .update({ name, username: user, biografia })
+    //     .eq("id", user.id);
+ 
+    //   if (error) throw error;
+ 
+    //   // atualiza senha se preenchida
+    //   if (password) {
+    //     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    //     if (!passwordRegex.test(password)) {
+    //       notify("Senha inválida! A senha deve conter:\n- 8 caracteres;\n- Maiúsculas e minúsculas;\n- Números;\n- Caractere especial.");
+    //       return;
+    //     }
+    //     const { error: senhaError } = await supabase.auth.updateUser({ password: password });
+    //     if (senhaError) throw senhaError;
+    //   }
+ 
+    //   notify("Dados salvos com sucesso!", false);
+    // } catch (e: any) {
+    //   console.error("Erro:", e);
+    //   notify("Erro ao salvar: " + (e.message ?? "tente novamente."));
     // }
   };
 
@@ -42,60 +119,75 @@ const Config = () => {
       </div>
 
       {/* Formulário Estilizado */}
-      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
 
         {/* Campo nome */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-row items-end gap-2">
+          <span>
+            Nome:
+          </span>
           <input
             type="text"
-            placeholder="Nome"
+            placeholder="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="px-2 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
         </div>
 
         {/* Campo usuario */}
-        <div>
+        <div className="flex flex-row items-end gap-2">
+          <span>
+            Usuário:
+          </span>
           <input
             type="text"
-            placeholder="Usuário"
+            placeholder="user"
             value={user}
             onChange={(e) => setUser(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
         </div>
 
         {/* Campo email */}
-        <div>
+        <div className="flex flex-row items-end gap-2">
+          <span>
+            E-mail:
+          </span>
           <input
             type="text"
             placeholder="E-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
         </div>
 
         {/* Campo biografia */}
-        <div>
+        <div className="flex flex-row items-end gap-2">
+          <span>
+            Biografia:
+          </span>
           <input
             type="text"
-            placeholder="Usuário"
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            placeholder="Biografia"
+            value={biografia}
+            onChange={(e) => setBiografia(e.target.value)}
+            className="px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
         </div>
 
         {/* CAMPO SENHA */}
-        <div className="relative w-full">
+        <div className="relative w-full flex flex-row items-end gap-2">
+          <span>
+            Senha:
+          </span>
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
           <button
             type="button"
@@ -134,13 +226,26 @@ const Config = () => {
           >
           </Button>
         </div>
+
+        {/* Mensagem de feedback */}
+        {message && (
+          <div className={`font-bold text-center p-3 rounded-full border ${
+            isError
+              ? "text-secondary border-secondary bg-secondary/10"
+              : "text-primary border-primary bg-primary/10"
+          } transition-all animate-bounce`}>
+            {message.split("\n").map((line, index) => (
+              <span key={index}>{line}<br /></span>
+            ))}
+          </div>
+        )}
         
         {/* botoes */}
         <div className="flex gap-4 mt-4">
           <Button
             text="Sair"
             className="flex-1 py-4 !rounded-full font-bold tracking-widest"
-            onClick={() => alert("Função de logout não implementada ainda")}
+            onClick={handleLogout}
           />
           <Button
             text="Salvar"

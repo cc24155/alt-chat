@@ -42,7 +42,9 @@ export default function RootLayout({
       className={`${victorMono.variable} ${afacad.variable} ${dmSans.variable} h-full antialiased`}
     >
        <head>
-          <script dangerouslySetInnerHTML={{ __html: `
+          <script
+            id="check-theme"
+            dangerouslySetInnerHTML={{ __html: `
             const tema = localStorage.getItem('tema-extra');
             if (tema) document.documentElement.classList.add(tema);
           `}} />
