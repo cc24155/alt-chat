@@ -4,14 +4,15 @@ import { ReactNode } from "react";
 
 interface ButtonProps {
   text: ReactNode;
+  type?: "button" | "submit" | "reset";
   onClick?: () => void;
   className?: string;
 }
 
-export default function Button({ text, onClick, className }: ButtonProps) {
+export default function Button({ text, type = "button", onClick, className }: ButtonProps) {
   return (
     <button
-      type="button"
+      type={type}
       onClick={onClick}
       className={`
         /* Base: Mobile primeiro */
