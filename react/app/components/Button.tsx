@@ -11,6 +11,7 @@ interface ButtonProps {
 export default function Button({ text, onClick, className }: ButtonProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={`
         /* Base: Mobile primeiro */
@@ -32,7 +33,7 @@ export default function Button({ text, onClick, className }: ButtonProps) {
 
         /* Hovers */
         hover:bg-neutral
-        hover:text-white
+        hover:text-background
 
         cursor-pointer
         

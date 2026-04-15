@@ -14,7 +14,7 @@ export default function Navigation({ }: NavigationProps) {
       <div className="max-w-[1440px] mx-auto px-8 h-[72px] flex items-center justify-between">
         {/* Logo */}
         <a
-          href="#biblioteca"
+          href="/"
           className="flex items-center gap-2 no-underline"
           aria-label="Ir para o início"
         >

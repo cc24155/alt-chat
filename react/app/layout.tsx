@@ -37,9 +37,16 @@ export default function RootLayout({
     <html
       lang="pt"
       data-scroll-behavior="smooth"
+      suppressHydrationWarning
       // classes globais que afetam toto o site
       className={`${victorMono.variable} ${afacad.variable} ${dmSans.variable} h-full antialiased`}
     >
+       <head>
+          <script dangerouslySetInnerHTML={{ __html: `
+            const tema = localStorage.getItem('tema-extra');
+            if (tema) document.documentElement.classList.add(tema);
+          `}} />
+        </head>
       {/* garante que o corpo ocupe pelo menos a altura da tela/layout flex vertical */}
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

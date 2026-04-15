@@ -2,14 +2,15 @@
 import { supabase } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
 
-export async function createUser(name:string, email:string, user: string, password: string){
+export async function createUser(name:string, user:string, email:string, bio: string, password: string){
   try {
     const salt = await bcrypt.genSalt(10);   //gera dados aleatórios para serem misturados na criptografia em seguida
     const passwordHash = await bcrypt.hash(password, salt);
 
     const { data, error } = await supabase
+
     .from('usuario')
-    .insert([
+    .update([
       {
         nome: name,
         email: email,
@@ -19,7 +20,7 @@ export async function createUser(name:string, email:string, user: string, passwo
     .select(); //faz com que o data não venha vazio
 
     if (error) {
-      console.error("Erro ao cadastrar:", error.message);
+      console.error("Erro ao alterar dados:", error.message);
       return { success: false, error: error.message };
     }
 
@@ -30,7 +31,7 @@ export async function createUser(name:string, email:string, user: string, passwo
     return { success: true };
   }
   catch(e){
-    console.error("Erro critico ", e);
+    console.error("Erro crítico ", e);
     return {success : false};
   }
 }
