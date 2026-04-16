@@ -21,14 +21,14 @@ export default function RelatorioPage() {
             Relatório
           </h1>
 
-          <div className = "max-w-2xl mx-auto bg-background rounded-3xl p-10 shadow-figma">
+          <div className = "max-w-2xl mx-auto bg-background rounded-3xl p-10 shadow-figma gap-20">
             {/* Grid: Coluna 1 (Texto) | Coluna 2 (Barra) */}
             <div className="grid grid-cols-[1fr_200px] items-center gap-y-6 gap-x-4">
 
               <span className="font-body text-foreground/80 text-center">
                 Tempo médio de uso
               </span>
-              <div className="w-full h-6 bg-foreground/10 rounded-full overflow-hidden">  {/* Fundo temporário */}
+              <div className="w-full h-6 bg-foreground/10 rounded-full overflow-hidden ">  {/* Fundo temporário */}
                 <div className="bg-primary h-full rounded-full" style={{ width: '45%' }} />
               </div>
       
