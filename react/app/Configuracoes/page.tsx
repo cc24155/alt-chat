@@ -123,7 +123,7 @@ const Config = () => {
 
         {/* Campo nome */}
         <div className="flex flex-row items-end gap-2">
-          <span>
+          <span className="font-body">
             Nome:
           </span>
           <input
@@ -131,13 +131,13 @@ const Config = () => {
             placeholder="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="px-2 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="max-w-[330px] ml-auto px-2 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
         </div>
 
         {/* Campo usuario */}
         <div className="flex flex-row items-end gap-2">
-          <span>
+          <span className="font-body">
             Usuário:
           </span>
           <input
@@ -145,13 +145,13 @@ const Config = () => {
             placeholder="user"
             value={user}
             onChange={(e) => setUser(e.target.value)}
-            className="px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="max-w-[330px] ml-auto px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
         </div>
 
         {/* Campo email */}
         <div className="flex flex-row items-end gap-2">
-          <span>
+          <span className="font-body">
             E-mail:
           </span>
           <input
@@ -159,13 +159,13 @@ const Config = () => {
             placeholder="E-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="max-w-[330px] ml-auto px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
         </div>
 
         {/* Campo biografia */}
         <div className="flex flex-row items-end gap-2">
-          <span>
+          <span className="font-body">
             Biografia:
           </span>
           <input
@@ -173,13 +173,13 @@ const Config = () => {
             placeholder="Biografia"
             value={biografia}
             onChange={(e) => setBiografia(e.target.value)}
-            className="px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="max-w-[330px] ml-auto px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
         </div>
 
         {/* CAMPO SENHA */}
         <div className="relative w-full flex flex-row items-end gap-2">
-          <span>
+          <span className="font-body">
             Senha:
           </span>
           <input
@@ -187,7 +187,7 @@ const Config = () => {
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="max-w-[330px] ml-auto px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
           <button
             type="button"
@@ -203,7 +203,7 @@ const Config = () => {
         </div>
 
         {/* Campo tema */}
-        <span>
+        <span className="font-body">
           Temas
         </span>
         <div className="relative w-full gap-4 flex">
