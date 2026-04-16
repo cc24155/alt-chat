@@ -35,6 +35,7 @@
 
 .theme-image {
   content: url("/Logotipo.png");
+  filter: invert(1);
 }
 
 .icon-search {
