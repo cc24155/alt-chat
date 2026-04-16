@@ -54,8 +54,12 @@ const Form = () => {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
 
+  const router = useRouter();
+
   const handleSubmit = async () => {
-    console.log((await autenticarUsuario(user, password)).success)
+    if((await autenticarUsuario(user, password)).success){
+      router.push("./Conta")
+    }
   };
 
   return (
