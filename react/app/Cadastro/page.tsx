@@ -219,10 +219,10 @@ const Form = () => {
       </form>
 
       {/* Rodapé do Form */}
-      <p className="font-body text-neutral">
-        NÃO TEM UMA CONTA?{" "}
-        <a href="/Cadastro" className="text-foreground font-bold hover:underline">
-          CADASTRE-SE
+      <p className="font-[10px] text-neutral">
+        JÁ TEM UMA CONTA? FAÇA O {" "}
+        <a href="/Login" className="text-foreground font-bold hover:underline">
+          LOGIN
         </a>
       </p>
     </div>

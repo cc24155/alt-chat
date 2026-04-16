@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.2",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "next": "16.2.3",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "supabase": "^2.91.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
