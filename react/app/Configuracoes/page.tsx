@@ -119,7 +119,7 @@ const Config = () => {
       </div>
 
       {/* Formulário Estilizado */}
-      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
+      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6 mt-4">
 
         {/* Campo nome */}
         <div className="flex flex-row items-end gap-2">
