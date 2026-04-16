@@ -104,8 +104,9 @@ const Form = () => {
       if (result.success) {
         notify("Usuário cadastrado com sucesso! Redirecionando...", false);
         setTimeout(() => { router.push("/Login"); }, 2500);
-      } else {
-        notify("Erro ao cadastrar: " + result.error);
+      } 
+      else {
+        notify("Erro ao cadastrar: " + result.error?.toString());
       }
     } catch (e) {
       console.error("Erro: ", e);
@@ -115,12 +116,11 @@ const Form = () => {
 
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">
-      {/* Título e Subtítulo */}
+      
       <div className="text-center flex flex-col gap-2">
         <h1 className="font-title text-foreground">CADASTRO</h1>
       </div>
 
-      {/* Formulário Estilizado */}
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <input
@@ -149,7 +149,7 @@ const Form = () => {
             className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none focus:ring-1 focus:ring-foreground placeholder:text-neutral text-foreground"
           />
         </div>
-        {/* CAMPO SENHA 1 */}
+
         <div className="relative w-full">
           <input
             type={showPassword ? "text" : "password"}
@@ -171,7 +171,6 @@ const Form = () => {
           </button>
         </div>
 
-        {/* CAMPO SENHA 2 (CONFIRMAÇÃO) */}
         <div className="flex flex-col gap-1">
           <div className="relative w-full">
             <input
@@ -218,8 +217,7 @@ const Form = () => {
         />
       </form>
 
-      {/* Rodapé do Form */}
-      <p className="font-[10px] text-neutral">
+      <p className="font-body text-neutral">
         JÁ TEM UMA CONTA? FAÇA O {" "}
         <a href="/Login" className="text-foreground font-bold hover:underline">
           LOGIN

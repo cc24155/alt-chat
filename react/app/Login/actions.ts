@@ -10,15 +10,10 @@ export async function autenticarUsuario(email: string, password: string){
       return { success: false, error: "Dado(s) inválido(s)"};
     }
     if (!data.user.email_confirmed_at){
-      console.log("conta não ativada")
       return {success: false, error: "Conta não ativada."};
-      
     }
-    console.log("logou")
-    return { 
-      success: true, 
-      user: data.user 
-    };
+    
+    return { success: true, user: data.user};
 
   }
   catch(e){
