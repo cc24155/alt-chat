@@ -34,7 +34,7 @@
 }
 
 .theme-image {
-  content: url("/Logotipo Claro.png");
+  content: url("/Logotipo.png");
 }
 
 .icon-search {
@@ -157,7 +157,8 @@
     --neutral: var(--cinza);
   }
   :root:not(.light):not(.dark):not(.olivaceo-theme) .theme-image {
-    content: url("/Logotipo Escuro.png");
+    content: url("/Logotipo.png");
+    filter: invert(0);
   }
   :root:not(.light):not(.dark):not(.olivaceo-theme) .icon-search {
     filter: brightness(0) invert(1);
@@ -178,7 +179,8 @@
   --neutral: var(--cinza);
 }
 .light .theme-image {
-  content: url("/Logotipo Claro.png");
+  content: url("/Logotipo.png");
+  filter: invert(1);
 }
 .light .icon-search {
   content: url("/Icon Search.png");
@@ -198,7 +200,8 @@
   --neutral: var(--cinza);
 }
 .dark .theme-image {
-  content: url("/Logotipo Escuro.png");
+  content: url("/Logotipo.png");
+  filter: invert(0);
 }
 .dark .icon-search {
   filter: brightness(0) invert(1);
@@ -218,7 +221,8 @@
   --neutral: var(--cinza-olivaceo);
 }
 .olivaceo-theme .theme-image {
-  content: url("/Logotipo Claro.png");
+  content: url("/Logotipo.png");
+  filter: invert(1);
 }
 .olivaceo-theme .icon-search {
   content: url("/Icon Search.png");
