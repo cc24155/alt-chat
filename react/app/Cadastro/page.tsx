@@ -193,11 +193,6 @@ const Form = () => {
               />
             </button>
           </div>
-          <div className="flex justify-end px-2">
-            <button type="button" className="text-body cursor-pointer text-neutral hover:underline">
-              ESQUECEU A SENHA?
-            </button>
-          </div>
         </div>
 
         <div>

@@ -55,8 +55,7 @@ const Form = () => {
   const [password, setPassword] = useState("");
 
   const handleSubmit = async () => {
-    alert("Tentativa de login");
-    autenticarUsuario(user, password);
+    console.log((await autenticarUsuario(user, password)).success)
   };
 
   return (
