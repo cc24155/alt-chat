@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.103.2",
+    "@supabase/supabase-js": "^2.103.3",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "next": "16.2.3",

@@ -15,6 +15,8 @@
     const [favoritos, setFavoritos] = useState<Pictograma[]>([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [forgotEmail, setForgotEmail] = useState("");
 
     // Exemplo de IDs salvos para trocar pra quando vir proo banco de dados
     const meusIdsFavoritos = [34560, 34558, 34559, 34557];
@@ -46,20 +48,20 @@
             <div className="flex flex-col gap-1 w-full md:w-[60%] lg:w-1/2 text-center md:text-left text-background relative z-10 pb-16 md:pb-0 px-4 md:px-0">
               
               {/* Tamanho dinâmico para o nome do usuário */}
-              <h1 className="font-subtitle text-3xl md:text-4xl lg:text-5xl leading-[90%] mb-2 break-words">
+              <span className="font-subtitle leading-[90%] mb-2 break-words">
                 usuário
-              </h1>
+              </span>
               
               {/* Tamanho dinâmico e proteção de quebra de linha para a bio */}
-              <p className="font-body text-sm md:text-base opacity-90 break-words">
+              <span className="font-body opacity-90 break-words">
                 biografia biografia biografia
-              </p>
-              <p className="font-body text-sm md:text-base opacity-90 break-words">
+              </span>
+              <span className="font-body opacity-90 break-words">
                 biografia biografia biografia
-              </p>
-              <p className="font-body text-sm md:text-base opacity-90 break-words">
+              </span>
+              <span className="font-body opacity-90 break-words">
                 biografia biografia biografia
-              </p>
+              </span>
             </div>
 
               {/* Avatar na Borda Inferior Central (Estilo Figma) */}
@@ -86,13 +88,47 @@
               </div>
             </div>
 
-            {/* Seção Meus Pictogramas */}
+          {/* Seção Meus Pictogramas */}
             <div className="border border-foreground/10 rounded-3xl p-8 md:p-10 flex flex-col gap-8">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              
+              {/* Container BLINDADO: sempre em linha (flex-row), nunca quebra (flex-nowrap), ocupa 100% (w-full) */}
+              <div className="flex flex-row items-center justify-between w-full gap-4 flex-nowrap">
                 
-                <h2 className="font-subtitle leading-[90%] text-foreground">
+                {/* O 'shrink' permite que o título diminua ou corte se a tela for minúscula de verdade */}
+                <h2 className="font-subtitle leading-[90%] text-foreground shrink">
                   Meus Pictogramas
                 </h2>
+                
+                {/* O 'shrink-0' é a mágica: ele avisa o flexbox que esse botão não pode encolher nem ser jogado pra baixo NUNCA */}
+                <div className="shrink-0">
+                  <Button 
+                    onClick={() => setIsModalOpen(true)}
+                    text={<img src="/Plus.png" alt="Adicionar" className="w-[18px] h-[18px] dark:invert opacity-70" />}
+                    className="bg-background text-foreground font-body font-semibold px-4 py-2 rounded-full shadow-figma hover:shadow-figma-hover hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                  />
+                </div>
+
+                {isModalOpen && (
+                        <div className=" fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/40 backdrop-blur-md animate-in fade-in duration-300">
+                          <div className=" bg-background w-full max-w-md bg-background border border-foreground/20 p-8 rounded-[2rem] shadow-2xl flex flex-col gap-6">
+                            <div className="text-center">
+                              <span className="font-title text-2xl text-background'">Adicione seu próprio pictograma</span>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                              <Button 
+                                text="Abrir galeria" 
+                                className="w-full py-4 !rounded-full font-bold bg-primary" 
+                                onClick={() => {
+                                  console.log("Recuperar para:", forgotEmail);
+                                  setIsModalOpen(false);
+                                }} 
+                              />
+
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
               </div>
 
               {loading ? (
