@@ -3,47 +3,142 @@ import Button from "../components/Button";
 import Footer from "../components/Footer";
 import NavigationBlue from "../components/NavigationBlue";
 import PicCard from "../components/PictogramaSection";
-import { Pictograma, buscarFavoritos } from "../../arasaac api/arasaac";
 import { useEffect, useState } from "react";
-import { PictogramasGrid } from "../components/PictogramaSection";
 import { useRouter } from "next/navigation";
 
 export default function ModoAprendizadoPage() {
   const router = useRouter();
 
-  return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <NavigationBlue/>
-      <main className="flex-grow py-20 flex flex-col gap-12 justify-center">
-        <h1 className="text-center font-title uppercase">
-          Modo Aprendizado
-        </h1>
-        
-        <div>
-          <p className="text-center font-body text-foreground/80 mb-8">
-            Exercício 1: Relacione os pictogramas às palavras corretas.
-          </p>
-                  
-        {/* Container centralizado que "prende" o card */}
-        <div className="flex justify-center w-full">
-          
-          {/* AQUI cravamos o tamanho: w-[120px] deixa ele com 120 pixels. Se quiser ainda menor, mude para 100px, 80px... */}
-          <div className="w-[120px] pointer-events-none">
-            <PicCard  
-              pic={{
-                _id: 9879,
-                keywords: [
-                  { keyword: "Gato" }
-                ]
-              }} 
-            />
-          </div>
+  const picGato = { _id: 9879, keywords: [{ keyword: "Gato" }] };
+  const picBurguer = { _id: 2419, keywords: [{ keyword: "Hambúrguer" }] };
+  const picCasa = { _id: 8599, keywords: [{ keyword: "Guitarra Elétrica" }] };
 
+  const [selecionado, setSelecionado] = useState<number | null>(null); 
+  const [acertos, setAcertos] = useState<number[]>([]); 
+  const [popup, setPopup] = useState<{ visivel: boolean; mensagem: string; cor: string }>({ 
+    visivel: false, 
+    mensagem: "", 
+    cor: "" 
+  });
+
+  const verificarResposta = (idDaPalavraClicada: number) => {
+    if (!selecionado) {
+      mostrarPopup("Clique em uma imagem na esquerda primeiro!", "bg-yellow-500");
+      return;
+    }
+
+    if (selecionado === idDaPalavraClicada) {
+      mostrarPopup("Boa! Você acertou! 🎉", "bg-green-500");
+      setAcertos([...acertos, idDaPalavraClicada]);
+    } else {
+      mostrarPopup("Ops! Não é essa. Tente de novo! 🤔", "bg-red-500");
+    }
+    
+    setSelecionado(null);
+  };
+
+  const mostrarPopup = (mensagem: string, cor: string) => {
+    setPopup({ visivel: true, mensagem, cor });
+    setTimeout(() => {
+      setPopup({ visivel: false, mensagem: "", cor: "" });
+    }, 2500);
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background relative">
+      <NavigationBlue />
+
+      {/* POPUP RESPONSIVO: No celular ocupa 90% da tela, no PC ajusta ao texto */}
+      {popup.visivel && (
+        <div className={`fixed top-24 left-1/2 transform -translate-x-1/2 w-[90%] md:w-auto px-6 py-4 rounded-xl shadow-2xl z-50 text-white font-bold text-sm md:text-lg text-center transition-all ${popup.cor}`}>
+          {popup.mensagem}
         </div>
-          
+      )}
+
+      <main className="flex-grow py-10 md:py-20 flex flex-col gap-8 md:gap-12 justify-center">
+        <span className="text-center font-title uppercase text-2xl md:text-4xl">
+          Modo Aprendizado
+        </span>
+
+        <div>
+          <span className="text-center font-body text-foreground/80 mb-8 px-4 center block">
+            Exercício 1: Clique na imagem e depois na palavra correta.
+          </span>
+
+          {/* CONTAINER RESPONSIVO: 
+              Celular: px-4 (pouco padding), gap-6 (pouco espaço no meio)
+              Tablet (md): px-10, gap-20
+              PC (lg): px-40, gap-[200px] 
+          */}
+          <div className="flex flex-row justify-center w-full px-4 md:px-10 lg:px-40 gap-6 md:gap-20 lg:gap-[200px]">
+            
+            {/* GRUPO DA ESQUERDA (IMAGENS) */}
+            <div className="flex flex-col gap-6 md:gap-8">
+              {/* CARDS RESPONSIVOS: 100px no celular, 120px no PC */}
+              <div 
+                onClick={() => !acertos.includes(picGato._id) && setSelecionado(picGato._id)}
+                className={`w-[100px] md:w-[120px] cursor-pointer transition-all rounded-xl ${selecionado === picGato._id ? "ring-4 ring-blue-500" : ""} ${acertos.includes(picGato._id) ? "opacity-40 grayscale pointer-events-none" : ""}`}
+              >
+                <div className="pointer-events-none">
+                  <PicCard pic={picGato} />
+                </div>
+              </div>
+
+              <div 
+                onClick={() => !acertos.includes(picBurguer._id) && setSelecionado(picBurguer._id)}
+                className={`w-[100px] md:w-[120px] cursor-pointer transition-all rounded-xl ${selecionado === picBurguer._id ? "ring-4 ring-blue-500" : ""} ${acertos.includes(picBurguer._id) ? "opacity-40 grayscale pointer-events-none" : ""}`}
+              >
+                <div className="pointer-events-none">
+                  <PicCard pic={picBurguer} />
+                </div>
+              </div>
+
+              <div 
+                onClick={() => !acertos.includes(picCasa._id) && setSelecionado(picCasa._id)}
+                className={`w-[100px] md:w-[120px] cursor-pointer transition-all rounded-xl ${selecionado === picCasa._id ? "ring-4 ring-blue-500" : ""} ${acertos.includes(picCasa._id) ? "opacity-40 grayscale pointer-events-none" : ""}`}
+              >
+                <div className="pointer-events-none">
+                  <PicCard pic={picCasa} />
+                </div>
+              </div>
+            </div>
+
+            {/* GRUPO DA DIREITA (PALAVRAS) */}
+            <div className="flex flex-col gap-6 md:gap-8">
+              {/* QUADRADOS RESPONSIVOS: 100x100 no celular, 120x120 no PC. Texto menor no celular. */}
+              <div 
+                onClick={() => !acertos.includes(picBurguer._id) && verificarResposta(picBurguer._id)}
+                className={`w-[100px] h-[100px] md:w-[120px] md:h-[120px] flex items-center justify-center border-2 rounded-xl cursor-pointer transition-all ${acertos.includes(picBurguer._id) ? "bg-green-100 border-green-500 text-green-700 pointer-events-none" : "border-dashed border-gray-300 hover:border-blue-400"}`}
+              >
+                <span className="font-body font-bold text-sm md:text-lg text-center px-1">
+                  {picBurguer.keywords[0].keyword}
+                </span>
+              </div>
+
+              <div 
+                onClick={() => !acertos.includes(picCasa._id) && verificarResposta(picCasa._id)}
+                className={`w-[100px] h-[100px] md:w-[120px] md:h-[120px] flex items-center justify-center border-2 rounded-xl cursor-pointer transition-all ${acertos.includes(picCasa._id) ? "bg-green-100 border-green-500 text-green-700 pointer-events-none" : "border-dashed border-gray-300 hover:border-blue-400"}`}
+              >
+                <span className="font-body font-bold text-sm md:text-lg text-center px-1">
+                  {picCasa.keywords[0].keyword}
+                </span>
+              </div>
+
+              <div 
+                onClick={() => !acertos.includes(picGato._id) && verificarResposta(picGato._id)}
+                className={`w-[100px] h-[100px] md:w-[120px] md:h-[120px] flex items-center justify-center border-2 rounded-xl cursor-pointer transition-all ${acertos.includes(picGato._id) ? "bg-green-100 border-green-500 text-green-700 pointer-events-none" : "border-dashed border-gray-300 hover:border-blue-400"}`}
+              >
+                <span className="font-body font-bold text-sm md:text-lg text-center px-1">
+                  {picGato.keywords[0].keyword}
+                </span>
+              </div>
+
+            </div>
+
+          </div>
         </div>
       </main>
-      <Footer/>
-    </div>    
+      <Footer />
+    </div>
   );
 }
