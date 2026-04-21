@@ -59,7 +59,7 @@ const Form = () => {
     setTimeout(() => setMessage(""), 2500);
   };
 
-  const handleSubmit = async (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.SubmitEvent) => {
     if (e) e.preventDefault();
     try {
       const result = await autenticarUsuario(email, password);
