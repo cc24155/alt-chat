@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Button from "../components/Button";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
+import { recuperarSenha } from "../Senha/actions";
 
 const NavBar = () => {
   const router = useRouter();
@@ -46,8 +47,8 @@ const Form = () => {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
-  // ESTADO DO POPUP
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
 
@@ -146,10 +147,16 @@ const Form = () => {
               <Button 
                 text="ENVIAR LINK" 
                 className="w-full py-4 !rounded-full font-bold" 
-                onClick={() => {
+                onClick={async () => {
                   console.log("Recuperar para:", forgotEmail);
                   setIsModalOpen(false);
-                  notify("Link enviado!", false);
+                  const rec = await recuperarSenha(forgotEmail);
+                  if (rec.success){
+                    notify("Link enviado!", false);
+                  }
+                  else{
+                    notify("Erro: " + rec.error);
+                  }
                 }} 
               />
               <button 
