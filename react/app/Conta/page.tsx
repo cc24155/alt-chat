@@ -18,7 +18,7 @@
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [forgotEmail, setForgotEmail] = useState("");
 
-    // Exemplo de IDs salvos para trocar pra quando vir proo banco de dados
+    // Exemplo de IDs salvos para trocar pra quando vir pro banco de dados
     const meusIdsFavoritos = [34560, 34558, 34559, 34557];
     
     useEffect(() => {
@@ -53,23 +53,15 @@
               </span>
               
               {/* Tamanho dinâmico e proteção de quebra de linha para a bio */}
-              <span className="font-body opacity-90 break-words">
-                biografia biografia biografia
-              </span>
-              <span className="font-body opacity-90 break-words">
-                biografia biografia biografia
-              </span>
-              <span className="font-body opacity-90 break-words">
-                biografia biografia biografia
+              <span className="font-body mb-2 break-words opacity-90">
+                biografia biografia biografia biografia
               </span>
             </div>
 
               {/* Avatar na Borda Inferior Central (Estilo Figma) */}
               <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-20">
                   <div className="w-max h-max md:w-[140px] md:h-[140px] rounded-full flex items-center justify-center bg-background shadow-figma border-4 border-transparent">
-                      <Link href="/">
-                          <img className="theme-image w-20 md:w-28 object-contain" alt="logotipo" />
-                      </Link>
+                    <img className="theme-image w-20 md:w-28 object-contain" alt="Avatar" />
                   </div>
               </div>
 
@@ -82,7 +74,7 @@
                 
                 <Button 
                   onClick={() => router.push("/Configuracoes")}
-                  text={<img src="/Settings.png" alt="Configurações" className="w-[18px] h-[18px] dark:invert opacity-70" />}
+                  text={<img src="/Settings.png" alt="Configurações" className="w-[18px] h-[18px] dark:invert" />}
                   className="bg-background text-foreground font-body font-semibold px-6 py-2 rounded-full shadow-figma hover:shadow-figma-hover hover:opacity-90 active:scale-95 transition-all cursor-pointer"
                 />
               </div>
@@ -91,7 +83,7 @@
           {/* Seção Meus Pictogramas */}
             <div className="border border-foreground/10 rounded-3xl p-8 md:p-10 flex flex-col gap-8">
               
-              {/* Container BLINDADO: sempre em linha (flex-row), nunca quebra (flex-nowrap), ocupa 100% (w-full) */}
+              {/* Container BLINDADO: sempre em linha (flex-row), nunca quebra (flex-nowrap) */}
               <div className="flex flex-row items-center justify-between w-full gap-4 flex-nowrap">
                 
                 {/* O 'shrink' permite que o título diminua ou corte se a tela for minúscula de verdade */}
@@ -103,7 +95,7 @@
                 <div className="shrink-0">
                   <Button 
                     onClick={() => setIsModalOpen(true)}
-                    text={<img src="/Plus.png" alt="Adicionar" className="w-[18px] h-[18px] dark:invert opacity-70" />}
+                    text={<img src="/Plus.png" alt="Adicionar" className="w-[18px] h-[18px] dark:invert"/>}
                     className="bg-background text-foreground font-body font-semibold px-4 py-2 rounded-full shadow-figma hover:shadow-figma-hover hover:opacity-90 active:scale-95 transition-all cursor-pointer"
                   />
                 </div>

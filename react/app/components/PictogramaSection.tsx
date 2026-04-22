@@ -70,13 +70,14 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
           // Todas as categorias
           <div className="flex flex-col gap-12">
             {categorias.map((cat) => (
-              <div key={cat.nome} className="max-w-[1200px] mx-auto w-full rounded-2xl p-6 flex items-center justify-center flex flex-col gap-4 bg-background shadow-figma hover:scale-[1.03] transition-all cursor-pointer">
+              <div key={cat.nome} className="max-w-[1200px] mx-auto w-full rounded-2xl p-6 flex items-center justify-center flex flex-col gap-4 bg-background shadow-figma transition-all cursor-pointer">
                 {/* categoria */}
                 <div
-                  onClick={() => setCategoriaAberta(cat.nome)}
                   className="w-full flex flex-col items-center gap-4"
                 >
-                  <span className="font-body text-neutral tracking-widest uppercase hover:text-primary text-center">
+                  <span 
+                  onClick={() => setCategoriaAberta(cat.nome)}
+                  className="font-body text-neutral tracking-widest uppercase hover:text-primary  hover:scale-[1.09] text-center">
                     {cat.nome}
                   </span>
 
