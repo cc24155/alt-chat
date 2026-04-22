@@ -1,9 +1,10 @@
 "use client";
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { atualizarSenha } from "./actions"; // Ajuste o caminho se necessário
 import Navigation from "../components/Navigation";
 import Button from "../components/Button";
+import { supabase } from "@/lib/supabase";
 
 const NavBar = () => {
   return (
@@ -24,46 +25,72 @@ const Form = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
+  useEffect(() => {
+    // Quando a página carrega, o Supabase olha para o link (#access_token)
+    // e ativa a sessão no navegador.
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        console.log("Sessão de recuperação detectada no cliente!");
+      }
+    });
+  }, []);
+
   const notify = (msg: string, error = true) => {
     setMessage(msg);
     setIsError(error);
     setTimeout(() => setMessage(""), 3000);
   };
 
-  const handleSubmit = async (e?: React.SubmitEvent) => {
-    if (e) e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => { // Use FormEvent para evitar erros de tipo
+  if (e) e.preventDefault();
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-    if (pass === "" || confirmPass === "") {
-      notify("Preencha todos os campos.")
+  // 1. Validações básicas
+  if (pass === "" || confirmPass === "") {
+    notify("Preencha todos os campos.");
+    return;
+  }
+
+  if (pass !== confirmPass) {
+    return notify("As senhas não coincidem.");
+  }
+
+  if (!passwordRegex.test(pass)) {
+    notify("Senha inválida! Verifique os requisitos.");
+    return;
+  }
+
+  try {
+    // 2. A MÁGICA ACONTECE AQUI:
+    // Chamamos o supabase diretamente no componente (Client Side).
+    // Ele vai ler o #access_token da URL automaticamente.
+    const { data, error } = await supabase.auth.updateUser({
+      password: pass
+    });
+
+    if (error) {
+      // Se o Supabase retornar erro (ex: link expirado)
+      console.error("Erro do Supabase:", error.message);
+      notify("Erro: " + error.message);
       return;
     }
 
-    if (pass !== confirmPass) {
-      return notify("As senhas não coincidem.");
+    // 3. Sucesso!
+    if (data) {
+      notify("Senha atualizada! Redirecionando...", false);
+      
+      // Espera um pouco para o usuário ler a mensagem e redireciona
+      setTimeout(() => {
+        router.push("/Login");
+      }, 2500);
     }
 
-    if (!passwordRegex.test(pass)) {
-      notify("Senha inválida! A senha deve conter:\n " +
-        "- 8 letras;\n- Maiúsculas e minúsculas;\n- Números;\n- Caractere especial."
-      );
-      return;
-    }
-
-    try {
-      const result = await atualizarSenha(pass);
-      if (result.success) {
-        notify("Senha atualizada! Redirecionando para o login...", false);
-        setTimeout(() => router.push("/Login"), 2500);
-      } else {
-        notify("Erro ao atualizar: " + result.error);
-      }
-    } catch (e) {
-      notify("Erro inesperado no servidor.");
-      console.error("Deu erro: ", e)
-    }
-  };
+  } catch (err) {
+    notify("Erro inesperado ao processar.");
+    console.error("Erro na submissão:", err);
+  }
+};
 
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">
