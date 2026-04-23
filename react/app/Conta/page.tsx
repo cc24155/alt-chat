@@ -88,8 +88,8 @@ interface Usuario {
 
               {/* Avatar na Borda Inferior Central (Estilo Figma) */}
               <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-20">
-                  <div className="w-max h-max md:w-[140px] md:h-[140px] rounded-full flex items-center justify-center bg-background shadow-figma border-4 border-transparent">
-                    <img className="theme-image w-20 md:w-28 object-contain" alt="Avatar" />
+                  <div className="w-max h-max md:w-[140px] md:h-[140px] rounded-full flex items-center justify-center bg-background shadow-figma border-4 border-transparent overflow-hidden">
+                    <img src={usuario?.avatar_url || "/AvatarDefault.png"} className="w-full h-full object-cover" alt="Avatar" />
                   </div>
               </div>
 
