@@ -9,17 +9,42 @@ import HeroSection from "../components/HeroSection";
 
 import { Pictograma, buscarFavoritos } from "../../arasaac api/arasaac"; 
 import { PictogramasGrid } from "../components/PictogramaSection";
+import { supabase } from "@/lib/supabase";
+import { buscarDadosRelatorio } from "../Relatorio/actions";
+
+interface Relatorio {
+  tempo_medio_mensagem?: number;
+  acertos_modo_aprendizado?: number;
+  pic?: Pictograma;
+
+}
+
+
 
 
 export default function RelatorioPage() {
+const [usuario, setUsuario] = useState<Relatorio | null>(null);
+
+  async() =>{
+    try
+    {    
+      const result = await buscarDadosRelatorio();
+        if (result.success && result.dados){
+          setUsuario(result.dados);
+        }
+        else setUsuario(null);
+      } catch(e) {
+        console.error("Erro: ", e);
+      }
+  }
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <NavigationBlue/>
 
         <main className="flex-grow py-20 flex flex-col gap-12 justify-center">
-          <h1 className="text-center font-title uppercase">
+          <span className="text-center font-title uppercase">
             Relatório
-          </h1>
+          </span>
 
           <div className = "max-w-2xl mx-auto bg-background rounded-3xl p-10 shadow-figma gap-20">
             {/* Grid: Coluna 1 (Texto) | Coluna 2 (Barra) */}
