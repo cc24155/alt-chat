@@ -13,7 +13,7 @@
 
   /* paleta 2 escuro
   (como são as mesmas cores do padrão, nao precisa declarar dnv)*/
-  
+
   /* paleta 3 esverdeado */
   --off-white-esverdeado: #F8FFEB;
   --preto-olivaceo: #000F00;
@@ -47,8 +47,8 @@
   .shadow-figma {
     box-shadow:
       3px 1px 10px rgb(from var(--foreground) r g b / 0.3);
-      /* 0 4px 9px rgb(from var(--foreground) r g b / 0.3) */
-      /* inset 0 4px 9px rgb(from var(--foreground) r g b / 0.3); */
+    /* 0 4px 9px rgb(from var(--foreground) r g b / 0.3) */
+    /* inset 0 4px 9px rgb(from var(--foreground) r g b / 0.3); */
   }
 
   .shadow-figma-hover {
@@ -67,51 +67,56 @@
   .font-title {
     /* Fonte e Peso */
     font-family: 'Victor Mono', monospace;
-    font-weight: 600; /* SemiBold */
-    
+    font-weight: 600;
+    /* SemiBold */
+
     /* Tamanho */
     font-size: clamp(48px, 7vw, 70px);
-    
+
     /* Line Height (A 80% do print) */
     line-height: 0.8;
-    
+
     /* Letter Spacing (|A| -1% do print) */
     /* -1% de 70px é aproximadamente -0.7px */
     letter-spacing: -0.01em;
-    
+
     /* Garante que o Tailwind não sobrescreva se você usar text-base etc */
     display: inline-block;
   }
+
   .font-subtitle {
     /* Fonte e Peso */
     font-family: 'Afacad', sans-serif;
-    font-weight: 400; /* Regular */
+    font-weight: 400;
+    /* Regular */
     font-size: clamp(22px, 3.5vw, 40px);
-    
+
     /* Line Height (90% no Figma) */
     /* No CSS, 0.9 faz com que as linhas fiquem bem próximas */
     line-height: 0.9;
-    
+
     /* Letter Spacing (|A| -3% no Figma) */
     /* -3% equivale a -0.03em */
     letter-spacing: -0.03em;
-    
+
     /* Garante que o texto se comporte corretamente em blocos */
     display: block;
   }
+
   .font-body {
     /* Fonte e Peso */
     font-family: 'DM Sans', sans-serif;
-    font-weight: 400; /* Regular */
+    font-weight: 400;
+    /* Regular */
     font-size: clamp(11px, 1.2vw, 15px);
-    
+
     /* Line Height (140% no Figma) */
     /* 1.4 é o valor padrão para boa legibilidade em textos longos */
     line-height: 1.4;
-    
+
     /* Letter Spacing (0% no Figma) */
     letter-spacing: 0em;
-    
+
     /* Garante um respiro visual suave */
     -webkit-font-smoothing: antialiased;
   }
@@ -133,17 +138,29 @@
   --font-body: var(--font-dm-sans-body);
 
   --animate-fade-in: fadeIn 0.2s ease forwards;
-  --animate-slide-up: slideUp 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  --animate-slide-up: slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* auto: detecta se o usuário está em modo escuro no sistema */
@@ -157,13 +174,16 @@
     --info: var(--azul-escuro);
     --neutral: var(--cinza);
   }
+
   :root:not(.light):not(.dark):not(.olivaceo-theme) .theme-image {
     content: url("/Logotipo.png");
     filter: invert(0);
   }
+
   :root:not(.light):not(.dark):not(.olivaceo-theme) .icon-search {
     filter: invert(1);
   }
+
   :root:not(.light):not(.dark):not(.olivaceo-theme) .icon-adaptive {
     filter: invert(1);
   }
@@ -179,14 +199,17 @@
   --info: var(--azul-claro);
   --neutral: var(--cinza);
 }
+
 .light .theme-image {
   content: url("/Logotipo.png");
   filter: invert(1);
 }
+
 .light .icon-search {
   content: url("/Icon Search.png");
   filter: invert(0);
 }
+
 .light .icon-adaptive {
   filter: invert(0);
 }
@@ -201,13 +224,16 @@
   --info: var(--azul-escuro);
   --neutral: var(--cinza);
 }
+
 .dark .theme-image {
   content: url("/Logotipo.png");
   filter: invert(0);
 }
+
 .dark .icon-search {
   filter: invert(1);
 }
+
 .dark .icon-adaptive {
   filter: invert(1);
 }
@@ -222,14 +248,17 @@
   --info: var(--azul-claro-olivaceo);
   --neutral: var(--cinza-olivaceo);
 }
+
 .olivaceo-theme .theme-image {
   content: url("/Logotipo.png");
   filter: invert(1);
 }
+
 .olivaceo-theme .icon-search {
   content: url("/Icon Search.png");
   filter: invert(0);
 }
+
 .olivaceo-theme .icon-adaptive {
   filter: invert(0);
 }

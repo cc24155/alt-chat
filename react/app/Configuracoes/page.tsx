@@ -231,8 +231,8 @@ const Config = () => {
         {/* Mensagem de feedback */}
         {message && (
           <div className={`font-bold text-center p-3 rounded-full border ${isError
-              ? "text-secondary border-secondary bg-secondary/10"
-              : "text-primary border-primary bg-primary/10"
+            ? "text-secondary border-secondary bg-secondary/10"
+            : "text-primary border-primary bg-primary/10"
             } transition-all animate-bounce`}>
             {message.split("\n").map((line, index) => (
               <span key={index}>{line}<br /></span>

@@ -11,7 +11,7 @@ const afacad = Afacad({
   variable: "--font-afacad-subtitle",
   subsets: ["latin"],
 });
-import { DM_Sans} from "next/font/google";
+import { DM_Sans } from "next/font/google";
 const dmSans = DM_Sans({
   variable: "--font-dm-sans-body",
   subsets: ["latin"],
@@ -41,14 +41,15 @@ export default function RootLayout({
       // classes globais que afetam toto o site
       className={`${victorMono.variable} ${afacad.variable} ${dmSans.variable} h-full antialiased`}
     >
-       <head>
-          <script
-            id="check-theme"
-            dangerouslySetInnerHTML={{ __html: `
+      <head>
+        <script
+          id="check-theme"
+          dangerouslySetInnerHTML={{
+            __html: `
             const tema = localStorage.getItem('tema-extra');
             if (tema) document.documentElement.classList.add(tema);
           `}} />
-        </head>
+      </head>
       {/* garante que o corpo ocupe pelo menos a altura da tela/layout flex vertical */}
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

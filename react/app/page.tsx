@@ -52,12 +52,12 @@ const ContextoSection = () => {
         {/* Header */}
         <div className="flex flex-col gap-4 items-start text-left">
           <div className="flex items-center gap-2">
-              <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
-              <span className="font-body font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
-                Contexto
-              </span>
-              <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
-            </div>
+            <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
+            <span className="font-body font-normal tracking-[1.62px] text-foreground opacity-60 uppercase">
+              Contexto
+            </span>
+            <span className="w-8 h-px bg-foreground opacity-40 inline-block" />
+          </div>
           <h2 className="font-subtitle font-normal tracking-[-1.2px] leading-[90%] text-foreground max-w-[560px]">
             Democratizando a Comunicação Assistiva.
           </h2>
@@ -68,10 +68,10 @@ const ContextoSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {processSteps.map((step, index) => (
             <div key={step.icon} className="flex flex-col gap-4 relative">
-              
+
               <div className="relative z-10 w-12 h-12 rounded-full bg-foreground flex items-center justify-center">
                 <span className="font-normal text-background">
-                  <img src={step.icon} alt={step.icon} className="icon-adaptive"/>
+                  <img src={step.icon} alt={step.icon} className="icon-adaptive" />
                 </span>
               </div>
               <h3 className="font-body font-normal tracking-[-1.2px] leading-[90%] text-foreground">
@@ -171,7 +171,7 @@ const ObjetivosSection = () => {
                       href="https://storyset.com/online"
                       target="_blank" // Abre em nova aba (opcional)
                     >
-                      <img src="/Archery-bro.png" alt="Arquery-bro.png" className="w-96 h-auto"/>
+                      <img src="/Archery-bro.png" alt="Arquery-bro.png" className="w-96 h-auto" />
                     </Link>
                   </span>
                 </div>
@@ -314,7 +314,7 @@ const CitacaoSection = () => {
     >
       <div className="max-w-[1200px] mx-auto flex flex-col gap-12">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          <img src="/Mary Pat.png" alt="Mary Pat.png" className="rounded-2xl w-full h-auto object-cover"/>
+          <img src="/Mary Pat.png" alt="Mary Pat.png" className="rounded-2xl w-full h-auto object-cover" />
           <div>
             <h2 className="font-subtitle font-normal tracking-[-1.2px] leading-[90%] text-foreground">
               "Para a maioria das pessoas, a tecnologia torna as coisas mais fáceis. Para as pessoas com deficiência, a tecnologia torna as coisas possíveis."
@@ -338,14 +338,14 @@ const CitacaoSection = () => {
 export const Box = (): JSX.Element => {
   return (
     <div className="w-full min-h-screen bg-background">
-      <NavBar/>
+      <NavBar />
       <main>
         <HeroSection />
         <ContextoSection />
         <ObjetivosSection />
         <FuncionalidadesSection />
         <CitacaoSection />
-        <Contato/>
+        <Contato />
       </main>
       <Footer />
     </div>
