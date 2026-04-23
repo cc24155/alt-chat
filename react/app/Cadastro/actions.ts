@@ -28,10 +28,10 @@ export async function createUser(name: string, email: string, user: string, pass
       const { error: dbError } = await supabase
         .from('usuario')
         .insert([
-          { 
-            id: authData.user.id, 
-            nome: name, 
-            email: email, 
+          {
+            id: authData.user.id,
+            nome: name,
+            email: email,
             senha_hash: passwordHash,
             username: user,
             ative: false
@@ -44,10 +44,10 @@ export async function createUser(name: string, email: string, user: string, pass
       }
     }
 
-    return { 
-      success: true, 
-      message: "Cadastro realizado! Verifique seu e-mail para ativar a conta." 
-    }; 
+    return {
+      success: true,
+      message: "Cadastro realizado! Verifique seu e-mail para ativar a conta."
+    };
 
   } catch (e) {
     console.error("Erro crítico:", e);

@@ -12,14 +12,14 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection(
-{
+  {
     title = "ALT-CHAT",
     subtitle = "PESQUISE QUALQUER PICTOGRAMA",
     heroImage = "/Hero.png",
     redirectTo = "/Biblioteca",
     showScroll = true,
-}: HeroSectionProps) {
-        
+  }: HeroSectionProps) {
+
   const router = useRouter();
   const [search, setSearch] = useState("");
 

@@ -9,13 +9,13 @@ import Button from "./Button";
 
 export default function PicCard({ pic }: { pic: Pictograma }) {
   const [open, setOpen] = useState(false);
-  
+
   return (
     <>
-      <div 
-        onClick={() => setOpen(true)} 
+      <div
+        onClick={() => setOpen(true)}
         className="border border-foreground/10 rounded-2xl p-4 flex items-center justify-center aspect-square bg-neutral hover:border-foreground/30 hover:scale-[1.03] transition-all cursor-pointer shadow-figma">
-        
+
         <img
           src={`https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`}
           alt={pic.keywords?.[0]?.keyword ?? "pictograma"}
@@ -24,11 +24,11 @@ export default function PicCard({ pic }: { pic: Pictograma }) {
       </div>
 
       {/* se estiver aberto*/}
-      {open && 
+      {open &&
         // chama a funcao (sobrepoe a tela e passa qual imagem deve abrir)
-        <PicModal pic={pic} 
+        <PicModal pic={pic}
           // quando alquem clicar no botao de fechar, mude a variavel
-          onClose={() => 
+          onClose={() =>
             setOpen(false)} />}
     </>
   );
@@ -55,7 +55,7 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
             <span className="font-body text-neutral">
               Resultados para: <strong className="text-foreground">{q}</strong>
             </span>
-            
+
             {resultados.length === 0 ? (
               <p className="font-body text-neutral py-8">Nenhum pictograma encontrado.</p>
             ) : (
@@ -75,9 +75,9 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
                 <div
                   className="w-full flex flex-col items-center gap-4"
                 >
-                  <span 
-                  onClick={() => setCategoriaAberta(cat.nome)}
-                  className="font-body text-neutral tracking-widest uppercase hover:text-primary  hover:scale-[1.09] text-center">
+                  <span
+                    onClick={() => setCategoriaAberta(cat.nome)}
+                    className="font-body text-neutral tracking-widest uppercase hover:text-primary  hover:scale-[1.09] text-center">
                     {cat.nome}
                   </span>
 
@@ -93,7 +93,7 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
               </div>
             ))}
           </div>
-      ) : (
+        ) : (
           // MODO FAVORITOS: Se não for busca nem categoria, renderiza apenas a grade simples
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {(limite ? resultados.slice(0, limite) : resultados).map((pic) => (
@@ -121,13 +121,13 @@ function PicModal({ pic, onClose }: PicModalProps) {
   const imageUrl = `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`;
   const keyword = pic.keywords?.[0]?.keyword ?? "sem nome";         // primeira keyword como titulo
   const allKeywords = pic.keywords?.map((k) => k.keyword) ?? [];   // cria uma lista com todas as outras
- 
+
   // trava a rolagem da pagina que fica atras
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);
- 
+
   return (
     <div
       className="animate-fade-in fixed inset-0 z-[200] flex items-center justify-center p-4"
@@ -137,7 +137,7 @@ function PicModal({ pic, onClose }: PicModalProps) {
         className="absolute inset-0 bg-foreground/30 backdrop-blur-md"
         onClick={onClose}
       />
- 
+
       {/* Card central */}
       <div
         className="animate-slide-up relative z-10 bg-background rounded-3xl shadow-figma w-full max-w-2xl overflow-hidden flex flex-col"
@@ -155,7 +155,7 @@ function PicModal({ pic, onClose }: PicModalProps) {
           >
           </Button>
         </div>
- 
+
         {/* Imagem */}
         <div className="flex items-center justify-center bg-neutral/10 mx-8 rounded-2xl p-8 aspect-square max-h-72">
           <img
@@ -164,15 +164,15 @@ function PicModal({ pic, onClose }: PicModalProps) {
             className="w-full h-full object-contain"
           />
         </div>
- 
+
         {/* Info */}
         <div className="px-8 py-6 flex flex-col gap-6">
- 
+
           {/* Nome principal */}
           <h2 className="font-subtitle capitalize tracking-[-1.2px] leading-[90%] text-foreground">
             {keyword}
           </h2>
- 
+
           {/* Palavras-chave */}
           <div className="flex flex-col gap-2">
             <InfoBox label="Palavras-chave" value={
@@ -195,11 +195,13 @@ function PicModal({ pic, onClose }: PicModalProps) {
     </div>
   );
 }
- 
-function InfoBox({ label, value }: 
-  { label: string; 
-    value: React.ReactNode; }
-  ){
+
+function InfoBox({ label, value }:
+  {
+    label: string;
+    value: React.ReactNode;
+  }
+) {
 
   return (
     <div className="flex flex-col gap-1 bg-neutral/10 rounded-xl px-4 py-3">
@@ -248,8 +250,8 @@ export function CategoriaModal({ nome, onClose }: CategoriaModalProps) {
           <h2 className="font-subtitle capitalize tracking-[-1.2px] leading-[90%] text-foreground">
             {nome}
           </h2>
-          <Button 
-            onClick={onClose} 
+          <Button
+            onClick={onClose}
             text="✕"
             className="!w-9 h-9 rounded-full flex items-center justify-center border border-foreground/10 text-foreground hover:bg-foreground hover:text-background transition-all duration-200 cursor-pointer">
           </Button>

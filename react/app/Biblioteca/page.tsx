@@ -28,7 +28,7 @@ export default function BibliotecaPage() {
 
   return (
     <section className="w-full bg-background px-8 py-12 flex flex-col gap-8">
-      <NavigationBlue/>
+      <NavigationBlue />
 
       <HeroSection
         title="Biblioteca"
@@ -40,9 +40,9 @@ export default function BibliotecaPage() {
       <div id="resultados">
         <PictogramasGrid q={q} resultados={resultados} categorias={categorias} />
       </div>
-     
-      <Contato/>
-      <Footer/>
+
+      <Contato />
+      <Footer />
     </section>
   );
 }
