@@ -1,9 +1,16 @@
-  "use client";
+"use client";
+
+interface Usuario {
+  username: string;
+  biografia: string;
+  avatar_url?: string; // a interface vai ajudar o react a reconhecer os dados desejados para exibição
+}
+
   import { useEffect, useState } from "react";
 
   import NavigationBlue from "../components/NavigationBlue";
   import Footer from "../components/Footer";
-  import Link from "next/link";
+  import { buscarDadosUsuario } from "./actions";
   import { useRouter } from "next/navigation";
 
   import { Pictograma, buscarFavoritos } from "../../arasaac api/arasaac"; 
@@ -16,11 +23,11 @@
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [forgotEmail, setForgotEmail] = useState("");
-
+    const [forgotEmail, setForgotEmail] = useState(""); 
+    const [usuario, setUsuario] = useState<Usuario | null>(null);
+    
     // Exemplo de IDs salvos para trocar pra quando vir pro banco de dados
     const meusIdsFavoritos = [34560, 34558, 34559, 34557];
-    
     useEffect(() => {
       const carregarFavoritos = async () => {
         setLoading(true);
@@ -30,10 +37,31 @@
       };
       carregarFavoritos();
     }, []);
-    if (loading)
-      return <div className="text-foreground text-center py-20">Carregando...</div>;
 
+    useEffect(() => {
+    const carregarPerfil = async () => {
+      try {
+        const res = await buscarDadosUsuario();
+        if (res.success && res.dados) {
+          setUsuario(res.dados);
+        }
+        else{
+          setUsuario(null);
+        }
+        
+      } catch (err) {
+        console.error("Erro ao carregar perfil", err);
+      } finally {
+        setLoading(false); // Só para de carregar depois de tentar pegar os dados
+      }
+    };
 
+    carregarPerfil();
+  }, []);
+
+  if (loading) {
+    return <div className="text-foreground text-center py-20">Carregando...</div>;
+  }
     return (
       <div className="w-full min-h-screen bg-background">
         <NavigationBlue />
@@ -49,12 +77,12 @@
               
               {/* Tamanho dinâmico para o nome do usuário */}
               <span className="font-subtitle leading-[90%] mb-2 break-words">
-                usuário
+                {usuario?.username}
               </span>
               
               {/* Tamanho dinâmico e proteção de quebra de linha para a bio */}
               <span className="font-body mb-2 break-words opacity-90">
-                biografia biografia biografia biografia
+                {usuario?.biografia}
               </span>
             </div>
 
