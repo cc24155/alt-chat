@@ -112,7 +112,7 @@ const Form = () => {
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-6 top-1/2 -translate-y-1/2 hover:opacity-60 transition-all"
           >
-            <img src={showPassword ? "/Eye.png" : "/EyeOff.png"} alt="Ver" className="w-5 h-5 dark:invert" />
+            <img src={showPassword ? "/Eye.png" : "/EyeOff.png"} alt="Ver" className="w-5 h-5 icon-adaptive" />
           </button>
         </div>
         
@@ -129,7 +129,7 @@ const Form = () => {
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="absolute right-6 top-1/2 -translate-y-1/2 hover:opacity-60 transition-all"
           >
-            <img src={showConfirmPassword ? "/Eye.png" : "/EyeOff.png"} alt="Ver" className="w-5 h-5 dark:invert" />
+            <img src={showConfirmPassword ? "/Eye.png" : "/EyeOff.png"} alt="Ver" className="w-5 h-5 icon-adaptive" />
           </button>
         </div>
         

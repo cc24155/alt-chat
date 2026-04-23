@@ -59,7 +59,7 @@
 
   .icon-adaptive {
     /* Inverte preto para branco no tema claro */
-    filter: invert(1);
+    filter: invert(0);
   }
 }
 
@@ -162,10 +162,10 @@
     filter: invert(0);
   }
   :root:not(.light):not(.dark):not(.olivaceo-theme) .icon-search {
-    filter: brightness(0) invert(1);
+    filter: invert(1);
   }
   :root:not(.light):not(.dark):not(.olivaceo-theme) .icon-adaptive {
-    filter: invert(0);
+    filter: invert(1);
   }
 }
 
@@ -185,9 +185,10 @@
 }
 .light .icon-search {
   content: url("/Icon Search.png");
+  filter: invert(0);
 }
 .light .icon-adaptive {
-  filter: invert(1);
+  filter: invert(0);
 }
 
 /* classe para trocar para o modo escuro msm se o usuario tiver modo claro no sistema */
@@ -205,10 +206,10 @@
   filter: invert(0);
 }
 .dark .icon-search {
-  filter: brightness(0) invert(1);
+  filter: invert(1);
 }
 .dark .icon-adaptive {
-  filter: invert(0);
+  filter: invert(1);
 }
 
 /* tema olivaceo */
@@ -227,9 +228,10 @@
 }
 .olivaceo-theme .icon-search {
   content: url("/Icon Search.png");
+  filter: invert(0);
 }
 .olivaceo-theme .icon-adaptive {
-  filter: invert(1);
+  filter: invert(0);
 }
 
 /* estilo geral da página */

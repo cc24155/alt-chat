@@ -30,12 +30,11 @@ export default function NavigationBlue({ }: NavigationBlueProps) {
       aria-label="Navegação principal"
     >
       {/* Menu fechado */}
-      <div className={`w-full mx-auto px-8 h-[72px] flex items-center justify-between ${
-        scrolled
+      <div className={`w-full mx-auto px-8 h-[72px] flex items-center justify-between ${scrolled
           // antes de rolar é trnsparente, dps tem cor
           ? "bg-background backdrop-blur-sm"
           : "bg-transparent text-foreground"
-      }`}>
+        }`}>
 
         {/* Logo */}
         <a
@@ -84,11 +83,10 @@ export default function NavigationBlue({ }: NavigationBlueProps) {
 
       {/* Mobile Menu ABERTO */}
       {menuOpen && (
-        <div className={`md:hidden border-t border-foreground px-8 py-6 flex flex-col gap-4 rounded-b-2xl overflow-hidden ${
-          scrolled
+        <div className={`md:hidden border-t border-foreground px-8 py-6 flex flex-col gap-4 rounded-b-2xl overflow-hidden ${scrolled
             ? "bg-info backdrop-blur-sm shadow-figma text-background"
             : "bg-neutral text-foreground"
-        }`}>
+          }`}>
           {navLinks.map((link) => (
             <Link
               key={link.label}

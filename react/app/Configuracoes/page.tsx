@@ -23,6 +23,7 @@ const Config = () => {
 
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+
   const notify = (msg: string, error = true) => {
     setMessage(msg);
     setIsError(error);
@@ -34,17 +35,17 @@ const Config = () => {
     // async function carregarDados() {
     //   try {
     //     const { data: { user }, error: authError } = await supabase.auth.getUser();
-        
- 
+
+
     //     const { data, error } = await supabase
     //       .from("usuario")
     //       .select("nome, username, email, biografia")
     //       .eq("id", user.id)
     //       .single();
- 
+
     //     if (error)
     //       throw error;
- 
+
     //     setName(data.nome ?? "");
     //     setUser(data.username ?? "");
     //     setEmail(data.email ?? "");
@@ -57,7 +58,7 @@ const Config = () => {
     // }
     // carregarDados();
   }, []);
- 
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
@@ -69,18 +70,18 @@ const Config = () => {
     //   notify("Nome e usuário são obrigatórios.");
     //   return;
     // }
- 
+
     // try {
     //   const { data: { user } } = await supabase.auth.getUser();
- 
+
     //   // atualiza perfil na tabela usuario
     //   const { error } = await supabase
     //     .from("usuario")
     //     .update({ name, username: user, biografia })
     //     .eq("id", user.id);
- 
+
     //   if (error) throw error;
- 
+
     //   // atualiza senha se preenchida
     //   if (password) {
     //     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -92,7 +93,7 @@ const Config = () => {
     //     const { error: senhaError } = await supabase.auth.updateUser({ password: password });
     //     if (senhaError) throw senhaError;
     //   }
- 
+
     //   notify("Dados salvos com sucesso!", false);
     // } catch (e: any) {
     //   console.error("Erro:", e);
@@ -110,7 +111,7 @@ const Config = () => {
     localStorage.setItem("tema-extra", tema);
   };
 
-  
+
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">
       {/* Título e Subtítulo */}
@@ -197,7 +198,7 @@ const Config = () => {
             <img
               src={showPassword ? "/Eye.png" : "/EyeOff.png"}
               alt="Ver senha"
-              className="w-5 h-5 dark:invert"
+              className="w-5 h-5 icon-adaptive"
             />
           </button>
         </div>
@@ -229,17 +230,16 @@ const Config = () => {
 
         {/* Mensagem de feedback */}
         {message && (
-          <div className={`font-bold text-center p-3 rounded-full border ${
-            isError
+          <div className={`font-bold text-center p-3 rounded-full border ${isError
               ? "text-secondary border-secondary bg-secondary/10"
               : "text-primary border-primary bg-primary/10"
-          } transition-all animate-bounce`}>
+            } transition-all animate-bounce`}>
             {message.split("\n").map((line, index) => (
               <span key={index}>{line}<br /></span>
             ))}
           </div>
         )}
-        
+
         {/* botoes */}
         <div className="flex gap-4 mt-4">
           <Button
@@ -253,7 +253,7 @@ const Config = () => {
             onClick={handleSubmit}
           />
         </div>
-        
+
       </form>
     </div>
   );
@@ -268,7 +268,7 @@ export default function ConfiguracoesPage() {
         <Config />
       </main>
 
-      <Footer/>
+      <Footer />
     </div>
   );
 }
