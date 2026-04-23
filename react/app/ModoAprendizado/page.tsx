@@ -24,7 +24,7 @@ export default function ModoAprendizadoPage() {
 
   const verificarResposta = (idDaPalavraClicada: number) => {
     if (!selecionado) {
-      mostrarPopup("Clique em uma imagem na esquerda primeiro!", "bg-yellow-500");
+      mostrarPopup("Clique em uma imagem na esquerda primeiro!", "bg-secondary");
       return;
     }
 
@@ -32,7 +32,7 @@ export default function ModoAprendizadoPage() {
       mostrarPopup("Boa! Você acertou! 🎉", "bg-seconday");
       setAcertos([...acertos, idDaPalavraClicada]);
     } else {
-      mostrarPopup("Ops! Não é essa. Tente de novo! 🤔", "bg-red-500");
+      mostrarPopup("Ops! Não é essa. Tente de novo! 🤔", "bg-secondary");
     }
 
     setSelecionado(null);

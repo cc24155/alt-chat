@@ -1,10 +1,10 @@
-"use server"; 
+"use server";
 import { supabase } from "@/lib/supabase";
 
 export async function recuperarSenha(email: string) {
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'http://localhost:3000/Senha', 
+      redirectTo: 'http://localhost:3000/Senha',
     });
 
     if (error) {
@@ -29,7 +29,7 @@ export async function atualizarSenha(newPass: string) {
     if (!session) {
       return { success: false, error: "Sessão expirada ou inválida. Peça um novo e-mail." };
     }
-    
+
     const { data, error } = await supabase.auth.updateUser({
       password: newPass
     });

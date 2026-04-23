@@ -6,7 +6,7 @@ import Navigation from "./Navigation";
 import Button from "./Button";
 
 
-const NavBar = () => {
+export default function NavBar() {
   const router = useRouter();
   const links = ["Biblioteca", "Sobre", "Contato"];
 
@@ -16,7 +16,7 @@ const NavBar = () => {
       <div className="pointer-events-auto">
         <Navigation />
       </div>
-      
+
       {/* Centro: Links */}
       <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-8 bg-foreground/10 backdrop-blur-md px-6 py-2 rounded-full border border-foreground/5 pointer-events-auto">
         {links.map((link) =>
@@ -42,31 +42,25 @@ const NavBar = () => {
 
       {/* Lado Direito: Botões */}
       <div className="flex gap-1 sm:gap-2 md:gap-3 pointer-events-auto">
-            <Button
-              text="Login"
-              onClick={() => router.push("/Login")}
-              className="
+        <Button
+          text="Login"
+          onClick={() => router.push("/Login")}
+          className="
                 px-2 sm:px-3 md:px-5
                 py-1 sm:py-1.5 md:py-2
                 h-7 sm:h-8 md:h-9
               "
-            />
-            <Button
-              text="Cadastro"
-              onClick={() => router.push("/Cadastro")}
-              className="
+        />
+        <Button
+          text="Cadastro"
+          onClick={() => router.push("/Cadastro")}
+          className="
                 px-2 sm:px-3 md:px-5
                 py-1 sm:py-1.5 md:py-2
                 h-7 sm:h-8 md:h-9
               "
-            />
-          </div>
+        />
+      </div>
     </nav>
-  );
-};
-
-export default function Mensagem() {
-  return (
-    <NavBar/>
   );
 }

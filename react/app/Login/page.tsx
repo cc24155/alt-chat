@@ -128,7 +128,7 @@ const Form = () => {
             <div className="flex flex-col gap-3">
               <Button
                 text="ENVIAR LINK"
-                className="w-full py-4 !rounded-full font-bold"
+                className="w-full py-4 !rounded-full font-bold bg-primary"
                 onClick={async () => {
                   console.log("Recuperar para:", forgotEmail);
                   setIsModalOpen(false);
