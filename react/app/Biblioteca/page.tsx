@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import NavigationBlue from "../components/NavigationBlue";
 import HeroSection from "../components/HeroSection";
@@ -12,28 +13,27 @@ import { PictogramasGrid } from "../components/PictogramaSection";
 import NavBar from "../components/NavBar";
 
 
-export default async function BibliotecaPage() {
-
-  async function Logou() {
-    try{
-      const result = await EstaLogado();
-      if (result?.success){
-        return true;
-      }
-      else{
-        return false;
-      }
-    }
-    catch(e){
-      console.error("Deu erro: ", e);
-      return false;
-    }
-  }
-
+// eslint-disable-next-line @next/next/no-async-client-component
+export default function BibliotecaPage() {
   const { q, categorias, resultados, loading } = usePictogramas([
     "Pessoas", "Animais", "Alimentos", "Ações", "Objetos"
   ]);
 
+  const [logado, setLogado] = useState<boolean | null>(null); // null significa "carregando"
+
+  useEffect(() => {
+    const verificarLogin = async () => {
+      try {
+        const result = await EstaLogado();
+        setLogado(!!result?.success); // o primeiro ! inverte o valor, e o segundo transforma coisas que não são booleanos em booleanos também
+      } // exemplo: valor inicial : null    1ª exclamação:  true    2ª exclamação: false
+      catch (e) {                   
+        console.error("Deu erro: ", e);
+        setLogado(false);
+      }
+    };
+    verificarLogin();
+  }, []);
   // quando terminar de carregar E tiver uma busca, rola até os resultados
   useEffect(() => {
     if (!loading && q) {
@@ -44,47 +44,27 @@ export default async function BibliotecaPage() {
   if (loading)
     return <div className="text-foreground text-center py-20">Carregando...</div>;
 
-  if (await Logou()){
-    return (
-      <section className="w-full bg-background px-8 py-12 flex flex-col gap-8">
-        <NavigationBlue />
+  const qualBarraNavegacao = logado? <NavigationBlue /> : <NavBar/>;
+  console.log(logado);
+  //se é true, navigationblue, se não é, navbar
 
-        <HeroSection
-          title="Biblioteca"
-          redirectTo="/Biblioteca"
-          showScroll={false}
-        />
+  return (
+    <section className="w-full bg-background px-8 py-12 flex flex-col gap-8">
+      {qualBarraNavegacao}
 
-        {/* PICTOGRAMAS */}
-        <div id="resultados">
-          <PictogramasGrid q={q} resultados={resultados} categorias={categorias} />
-        </div>
+      <HeroSection
+        title="Biblioteca"
+        redirectTo="/Biblioteca"
+        showScroll={false}
+      />
 
-        <Contato />
-        <Footer />
-      </section>
-    );
-  }
-  else{
-    return (
-      <section className="w-full bg-background px-8 py-12 flex flex-col gap-8">
-        <NavBar />
+      {/* PICTOGRAMAS */}
+      <div id="resultados">
+        <PictogramasGrid q={q} resultados={resultados} categorias={categorias} />
+      </div>
 
-        <HeroSection
-          title="Biblioteca"
-          redirectTo="/Biblioteca"
-          showScroll={false}
-        />
-
-        {/* PICTOGRAMAS */}
-        <div id="resultados">
-          <PictogramasGrid q={q} resultados={resultados} categorias={categorias} />
-        </div>
-
-        <Contato />
-        <Footer />
-      </section>
-    );
-  }
-  
+      <Contato />
+      <Footer />
+    </section>
+  );
 }
