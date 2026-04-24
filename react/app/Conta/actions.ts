@@ -12,7 +12,7 @@ export async function buscarDadosUsuario() {
 
     const { data, error } = await supabase  //da tabela usuario pega o username, a biografia e o avatar_url
       .from('usuario')
-      .select('username, biografia, avatar_url')
+      .select('username, biografia, avatar_url, email, nome')
       .eq('id', user.id)    //pega esses dados todos onde o campo id for igual ao id do user q acabou de logar
       .single();            //ao invés de acessar os dados como uma array (result.dados[0].username) acessa tipo result.dados.username            
 
