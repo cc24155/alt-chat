@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import { useEffect, useState } from "react";
 
@@ -13,7 +12,6 @@ import { PictogramasGrid } from "../components/PictogramaSection";
 import NavBar from "../components/NavBar";
 
 
-// eslint-disable-next-line @next/next/no-async-client-component
 export default function BibliotecaPage() {
   const { q, categorias, resultados, loading } = usePictogramas([
     "Pessoas", "Animais", "Alimentos", "Ações", "Objetos"
@@ -27,13 +25,14 @@ export default function BibliotecaPage() {
         const result = await EstaLogado();
         setLogado(!!result?.success); // o primeiro ! inverte o valor, e o segundo transforma coisas que não são booleanos em booleanos também
       } // exemplo: valor inicial : null    1ª exclamação:  true    2ª exclamação: false
-      catch (e) {                   
+      catch (e) {
         console.error("Deu erro: ", e);
         setLogado(false);
       }
     };
     verificarLogin();
   }, []);
+
   // quando terminar de carregar E tiver uma busca, rola até os resultados
   useEffect(() => {
     if (!loading && q) {
@@ -44,7 +43,7 @@ export default function BibliotecaPage() {
   if (loading)
     return <div className="text-foreground text-center py-20">Carregando...</div>;
 
-  const qualBarraNavegacao = logado? <NavigationBlue /> : <NavBar/>;
+  const qualBarraNavegacao = logado ? <NavigationBlue /> : <NavBar />;
   console.log(logado);
   //se é true, navigationblue, se não é, navbar
 

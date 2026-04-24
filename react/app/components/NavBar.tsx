@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Navigation from "./Navigation";
 import Button from "./Button";
 
+
 export default function NavBar() {
   const router = useRouter();
   const links = ["Biblioteca", "Sobre", "Contato"];
@@ -18,25 +19,19 @@ export default function NavBar() {
   }, []);
 
   return (
-    <nav 
+    <nav
       /* A barra inteira fica preta ao rolar */
-      className={`fixed top-0 left-0 w-full z-[100] px-4 flex items-center justify-between pointer-events-none transition-all duration-300 ${
-        backgr ? "py-2 bg-black shadow-md" : "py-4 bg-transparent"
-      }`}
+      className={`fixed top-0 left-0 w-full z-[100] px-4 flex items-center justify-between pointer-events-none transition-all duration-300 
+        ${backgr ? "py-2 bg-background" : "py-4 bg-transparent"
+        }`}
     >
       {/* Lado Esquerdo: Logo */}
       <div className="pointer-events-auto">
         <Navigation />
       </div>
 
-      {/* Centro: Links (Pílula fica preta ao rolar) */}
-      <div 
-        className={`absolute left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-8 px-6 py-2 rounded-full border transition-all duration-300 pointer-events-auto ${
-          backgr 
-            ? "bg-black border-white/20 text-white" // PRETO SÓLIDO
-            : "bg-white/5 border-transparent text-foreground" // Transparente no topo
-        }`}
-      >
+      {/* Centro: Links */}
+      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4 sm:gap-8 bg-foreground/10 backdrop-blur-md px-6 py-2 rounded-full border border-foreground/5 pointer-events-auto">
         {links.map((link) =>
           link === "Biblioteca" ? (
             <button
