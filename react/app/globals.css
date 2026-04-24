@@ -61,6 +61,10 @@
     /* Inverte preto para branco no tema claro */
     filter: invert(0);
   }
+
+  .icon-home {
+    filter: invert(1);
+  }
 }
 
 @layer components {
@@ -163,6 +167,7 @@
   }
 }
 
+
 /* auto: detecta se o usuário está em modo escuro no sistema */
 @media (prefers-color-scheme: dark) {
   :root:not(.light):not(.dark):not(.olivaceo-theme) {
@@ -187,7 +192,12 @@
   :root:not(.light):not(.dark):not(.olivaceo-theme) .icon-adaptive {
     filter: invert(1);
   }
+
+  :root:not(.light):not(.dark):not(.olivaceo-theme) .icon-home {
+    filter: invert(0);
+  }
 }
+
 
 /* tema claro forçado */
 .light {
@@ -214,6 +224,11 @@
   filter: invert(0);
 }
 
+.light .icon-home {
+  filter: invert(1);
+}
+
+
 /* classe para trocar para o modo escuro msm se o usuario tiver modo claro no sistema */
 .dark {
   --background: var(--preto);
@@ -237,6 +252,11 @@
 .dark .icon-adaptive {
   filter: invert(1);
 }
+
+.dark .icon-home {
+  filter: invert(0);
+}
+
 
 /* tema olivaceo */
 .olivaceo-theme {
@@ -262,6 +282,11 @@
 .olivaceo-theme .icon-adaptive {
   filter: invert(0);
 }
+
+.olivaceo-theme .icon-home {
+  filter: invert(1);
+}
+
 
 /* estilo geral da página */
 html {

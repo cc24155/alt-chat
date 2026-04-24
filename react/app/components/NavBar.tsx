@@ -22,7 +22,7 @@ export default function NavBar() {
     <nav
       /* A barra inteira fica preta ao rolar */
       className={`fixed top-0 left-0 w-full z-[100] px-4 flex items-center justify-between pointer-events-none transition-all duration-300 
-        ${backgr ? "py-2 bg-background" : "py-4 bg-transparent"
+        ${backgr ? "py-4 bg-background" : "py-4 bg-transparent"
         }`}
     >
       {/* Lado Esquerdo: Logo */}
