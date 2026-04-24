@@ -71,7 +71,7 @@ const ContextoSection = () => {
 
               <div className="relative z-10 w-12 h-12 rounded-full bg-foreground flex items-center justify-center">
                 <span className="font-normal text-background">
-                  <img src={step.icon} alt={step.icon} className="icon-adaptive" />
+                  <img src={step.icon} alt={step.icon} className="icon-home" />
                 </span>
               </div>
               <h3 className="font-body font-normal tracking-[-1.2px] leading-[90%] text-foreground">

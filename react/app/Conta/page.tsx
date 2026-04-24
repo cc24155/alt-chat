@@ -137,10 +137,15 @@ export default function ContaPage() {
                 <Mensagem
                   title={"Adicione seu próprio pictograma"}
                   text={"Abrir galeria"}
+                  textButton="Abrir galeria"
                   onClick={() => {
                     console.log("Recuperar para:", forgotEmail);
                     setIsModalOpen(false);
-                  }} />
+                  }}
+                  onClose={() => {
+                    setIsModalOpen(false);
+                  }}
+                  />
               )}
 
             </div>

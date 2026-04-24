@@ -8,11 +8,11 @@ interface MensagemProps {
   showInput?: boolean;
   inputType?: string;
   inputPlaceholder?: string;
-  inputValue?: string; 
+  inputValue?: string;
   onInputChange?: (value: string) => void;
   textButton: string;
   onClick?: () => void;
-  onClose?: () => void;
+  onClose: () => void;
 }
 
 export default function Mensagem({ title, text, showInput, inputType, inputPlaceholder, inputValue, onInputChange, textButton, onClick, onClose }: MensagemProps) {
