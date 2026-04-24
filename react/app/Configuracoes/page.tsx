@@ -7,6 +7,17 @@ import Footer from "../components/Footer";
 
 import { supabase } from "@/lib/supabase";
 import { useRouter } from 'next/navigation';
+import { AtualizarDados } from "./actions";
+import { buscarDadosUsuario } from "../Conta/actions";
+
+
+interface Usuario {
+  username: string;
+  biografia: string;
+  avatar_url?: string; // a interface vai ajudar o react a reconhecer os dados desejados para exibição
+  nome?: string;
+  email?: string;
+}
 
 // import { createUser } from "./actions";
 
@@ -17,6 +28,8 @@ const Config = () => {
   const [email, setEmail] = useState("");
   const [biografia, setBiografia] = useState("");
   const [password, setPassword] = useState("");
+
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
 
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
@@ -30,76 +43,57 @@ const Config = () => {
     setTimeout(() => setMessage(""), 2500);
   };
 
-  // carrega os dados do bd ao abrir a página
-  useEffect(() => {
-    // async function carregarDados() {
-    //   try {
-    //     const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-
-    //     const { data, error } = await supabase
-    //       .from("usuario")
-    //       .select("nome, username, email, biografia")
-    //       .eq("id", user.id)
-    //       .single();
-
-    //     if (error)
-    //       throw error;
-
-    //     setName(data.nome ?? "");
-    //     setUser(data.username ?? "");
-    //     setEmail(data.email ?? "");
-    //     setBiografia(data.biografia ?? "");
-    //   }
-    //   catch (error) {
-    //     console.error("Erro ao buscar dados:", error);
-    //     notify("Erro ao carregar perfil.");
-    //   }
-    // }
-    // carregarDados();
-  }, []);
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
   };
 
+    useEffect(() => {
+      const carregarPerfil = async () => {
+        try {
+          const res = await buscarDadosUsuario();
+          if (res.success && res.dados) {
+            setUsuario(res.dados);
+            setBiografia(res.dados.biografia);
+          }
+          else {
+            setUsuario(null);
+          }
+  
+        } catch (err) {
+          console.error("Erro ao carregar perfil", err);
+        }
+      };
+  
+      carregarPerfil();
+    }, []);
+
   // atualiza os dados do usuário no bd
-  const handleSubmit = async () => {
-    // if (!name.trim() || !user.trim()) {
-    //   notify("Nome e usuário são obrigatórios.");
-    //   return;
-    // }
+  const handleSubmit = async (e?: React.SubmitEvent) => {
+  if (e) e.preventDefault();
 
-    // try {
-    //   const { data: { user } } = await supabase.auth.getUser();
+  if (password.trim() !== "") {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-    //   // atualiza perfil na tabela usuario
-    //   const { error } = await supabase
-    //     .from("usuario")
-    //     .update({ name, username: user, biografia })
-    //     .eq("id", user.id);
+    if (!passwordRegex.test(password)) {
+      notify("Senha inválida! A senha deve conter:\n- 8 caracteres;\n- Maiúsculas e minúsculas;\n- Números;\n- Caractere especial.");
+      return;
+    }
+  }
 
-    //   if (error) throw error;
-
-    //   // atualiza senha se preenchida
-    //   if (password) {
-    //     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    //     if (!passwordRegex.test(password)) {
-    //       notify("Senha inválida! A senha deve conter:\n- 8 caracteres;\n- Maiúsculas e minúsculas;\n- Números;\n- Caractere especial.");
-    //       return;
-    //     }
-    //     const { error: senhaError } = await supabase.auth.updateUser({ password: password });
-    //     if (senhaError) throw senhaError;
-    //   }
-
-    //   notify("Dados salvos com sucesso!", false);
-    // } catch (e: any) {
-    //   console.error("Erro:", e);
-    //   notify("Erro ao salvar: " + (e.message ?? "tente novamente."));
-    // }
-  };
+  try {
+    const result = await AtualizarDados(user, name, email, biografia, password);
+    
+    if (result.success) {
+      notify("Dados salvos com sucesso!", false);
+      setPassword(""); // Limpa o campo de senha após salvar por segurança
+    } else {
+      notify("Erro ao salvar: " + (result.error ?? "tente novamente."));
+    }
+  } catch (e: any) {
+    notify("Erro inesperado.");
+  }
+};
 
   const setTema = (tema: string) => {
     const html = document.documentElement;
@@ -129,7 +123,7 @@ const Config = () => {
           </span>
           <input
             type="text"
-            placeholder="name"
+            placeholder={usuario?.nome?.trim()}
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="max-w-[330px] ml-auto px-2 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
@@ -143,7 +137,7 @@ const Config = () => {
           </span>
           <input
             type="text"
-            placeholder="user"
+            placeholder={usuario?.username.trim()}
             value={user}
             onChange={(e) => setUser(e.target.value)}
             className="max-w-[330px] ml-auto px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
@@ -157,7 +151,7 @@ const Config = () => {
           </span>
           <input
             type="text"
-            placeholder="E-mail"
+            placeholder={usuario?.email?.trim()}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="max-w-[330px] ml-auto px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
