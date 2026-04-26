@@ -6,10 +6,9 @@ import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
 
 import { supabase } from "@/lib/supabase";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { AtualizarDados } from "./actions";
 import { buscarDadosUsuario } from "../Conta/actions";
-
 
 interface Usuario {
   username: string;
@@ -48,63 +47,68 @@ const Config = () => {
     router.push("/");
   };
 
-    useEffect(() => {
-      const carregarPerfil = async () => {
-        try {
-          const res = await buscarDadosUsuario();
-          if (res.success && res.dados) {
-            setUsuario(res.dados);
-            setBiografia(res.dados.biografia);
-          }
-          else {
-            setUsuario(null);
-          }
-  
-        } catch (err) {
-          console.error("Erro ao carregar perfil", err);
+  useEffect(() => {
+    const carregarPerfil = async () => {
+      try {
+        const res = await buscarDadosUsuario();
+        if (res.success && res.dadosUser) {
+          setUsuario(res.dadosUser);
+          setBiografia(res.dadosUser.biografia);
+        } else {
+          setUsuario(null);
         }
-      };
-  
-      carregarPerfil();
-    }, []);
+      } catch (err) {
+        console.error("Erro ao carregar perfil", err);
+      }
+    };
+
+    carregarPerfil();
+  }, []);
 
   // atualiza os dados do usuário no bd
   const handleSubmit = async (e?: React.SubmitEvent) => {
-  if (e) e.preventDefault();
+    if (e) e.preventDefault();
 
-  if (password.trim() !== "") {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (password.trim() !== "") {
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-    if (!passwordRegex.test(password)) {
-      notify("Senha inválida! A senha deve conter:\n- 8 caracteres;\n- Maiúsculas e minúsculas;\n- Números;\n- Caractere especial.");
-      return;
+      if (!passwordRegex.test(password)) {
+        notify(
+          "Senha inválida! A senha deve conter:\n- 8 caracteres;\n- Maiúsculas e minúsculas;\n- Números;\n- Caractere especial.",
+        );
+        return;
+      }
     }
-  }
 
-  try {
-    const result = await AtualizarDados(user, name, email, biografia, password);
-    
-    if (result.success) {
-      notify("Dados salvos com sucesso!", false);
-      setPassword(""); // Limpa o campo de senha após salvar por segurança
-    } else {
-      notify("Erro ao salvar: " + (result.error ?? "tente novamente."));
+    try {
+      const result = await AtualizarDados(
+        user,
+        name,
+        email,
+        biografia,
+        password,
+      );
+
+      if (result.success) {
+        notify("Dados salvos com sucesso!", false);
+        setPassword(""); // Limpa o campo de senha após salvar por segurança
+      } else {
+        notify("Erro ao salvar: " + (result.error ?? "tente novamente."));
+      }
+    } catch (e: any) {
+      notify("Erro inesperado.");
     }
-  } catch (e: any) {
-    notify("Erro inesperado.");
-  }
-};
+  };
 
   const setTema = (tema: string) => {
     const html = document.documentElement;
     // remove todos os temas antes
     html.classList.remove("light", "dark", "olivaceo-theme");
     // adiciona o novo
-    if (tema)
-      html.classList.add(tema);
+    if (tema) html.classList.add(tema);
     localStorage.setItem("tema-extra", tema);
   };
-
 
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">
@@ -115,12 +119,9 @@ const Config = () => {
 
       {/* Formulário Estilizado */}
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6 mt-4">
-
         {/* Campo nome */}
         <div className="flex flex-row items-end gap-2">
-          <span className="font-body">
-            Nome:
-          </span>
+          <span className="font-body">Nome:</span>
           <input
             type="text"
             placeholder={usuario?.nome?.trim()}
@@ -132,9 +133,7 @@ const Config = () => {
 
         {/* Campo usuario */}
         <div className="flex flex-row items-end gap-2">
-          <span className="font-body">
-            Usuário:
-          </span>
+          <span className="font-body">Usuário:</span>
           <input
             type="text"
             placeholder={usuario?.username.trim()}
@@ -146,9 +145,7 @@ const Config = () => {
 
         {/* Campo email */}
         <div className="flex flex-row items-end gap-2">
-          <span className="font-body">
-            E-mail:
-          </span>
+          <span className="font-body">E-mail:</span>
           <input
             type="text"
             placeholder={usuario?.email?.trim()}
@@ -160,9 +157,7 @@ const Config = () => {
 
         {/* Campo biografia */}
         <div className="flex flex-row items-end gap-2">
-          <span className="font-body">
-            Biografia:
-          </span>
+          <span className="font-body">Biografia:</span>
           <input
             type="text"
             placeholder="Biografia"
@@ -174,9 +169,7 @@ const Config = () => {
 
         {/* CAMPO SENHA */}
         <div className="relative w-full flex flex-row items-end gap-2">
-          <span className="font-body">
-            Senha:
-          </span>
+          <span className="font-body">Senha:</span>
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Senha"
@@ -198,38 +191,39 @@ const Config = () => {
         </div>
 
         {/* Campo tema */}
-        <span className="font-body">
-          Temas
-        </span>
+        <span className="font-body">Temas</span>
         <div className="relative w-full gap-4 flex">
           <Button
             text="Tema Oliváceo"
             onClick={() => setTema("olivaceo-theme")}
             className="!bg-[var(--azul-claro-olivaceo)] dark:!bg-[var(--azul-escuro-olivaceo)] hover:!bg-[var(--azul-escuro-olivaceo)] dark:hover:!bg-[var(--azul-claro-olivaceo)]"
-          >
-          </Button>
+          ></Button>
           <Button
             text="Tema Claro"
             onClick={() => setTema("light")}
             className="!text-[var(--preto)] !bg-[var(--off-white)] dark:!bg-[var(--off-white)] hover:!bg-neutral dark:hover:!bg-neutral"
-          >
-          </Button>
+          ></Button>
           <Button
             text="Tema Escuro"
             onClick={() => setTema("dark")}
             className="!text-[var(--off-white)] !bg-[var(--preto)] dark:!bg-[var(--preto)] hover:!bg-neutral dark:hover:!bg-neutral"
-          >
-          </Button>
+          ></Button>
         </div>
 
         {/* Mensagem de feedback */}
         {message && (
-          <div className={`font-bold text-center p-3 rounded-full border ${isError
-            ? "text-secondary border-secondary bg-secondary/10"
-            : "text-primary border-primary bg-primary/10"
-            } transition-all animate-bounce`}>
+          <div
+            className={`font-bold text-center p-3 rounded-full border ${
+              isError
+                ? "text-secondary border-secondary bg-secondary/10"
+                : "text-primary border-primary bg-primary/10"
+            } transition-all animate-bounce`}
+          >
             {message.split("\n").map((line, index) => (
-              <span key={index}>{line}<br /></span>
+              <span key={index}>
+                {line}
+                <br />
+              </span>
             ))}
           </div>
         )}
@@ -247,7 +241,6 @@ const Config = () => {
             onClick={handleSubmit}
           />
         </div>
-
       </form>
     </div>
   );
