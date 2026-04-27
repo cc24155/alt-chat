@@ -102,6 +102,27 @@ export default function ContaPage() {
                   className="w-full h-full object-cover icon-adaptive"
                   alt="Avatar"
                 />
+
+                {/* Overlay com lápis no hover */}
+                <label className="absolute inset-0 rounded-full flex items-center justify-center
+                       bg-foreground/0 hover:bg-foreground/40
+                       transition-all cursor-pointer group">
+                  <img
+                    src="/Edit-icon.png"
+                    alt="Editar foto"
+                    className="w-7 h-7 icon-adaptive opacity-0 group-hover:opacity-100 transition-all"
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) { }
+                      //handleUploadAvatar(file); // ← função que você vai criar
+                    }}
+                  />
+                </label>
               </div>
             </div>
 
