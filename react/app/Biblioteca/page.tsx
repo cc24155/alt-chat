@@ -7,8 +7,7 @@ import Contato from "../components/Contato";
 import Footer from "../components/Footer";
 import { EstaLogado } from "../actions";
 
-import { usePictogramas } from "../../arasaac api/arasaac";
-import { PictogramasGrid } from "../components/PictogramaSection";
+import { usePictogramas, PictogramasGrid } from "../components/PictogramaSection";
 import NavBar from "../components/NavBar";
 
 

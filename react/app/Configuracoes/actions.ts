@@ -12,7 +12,7 @@ export async function AtualizarDados(newUser: string, newName: string, newEmail:
     // --- 1. ATUALIZAÇÃO DA AUTENTICAÇÃO (Auth) ---
     // Criamos um objeto vazio e só preenchemos o que foi digitado
     const authData: any = {};
-    
+
     if (newEmail && newEmail.trim() !== "") authData.email = newEmail;
     if (newPassword && newPassword.trim() !== "") authData.password = newPassword;
 

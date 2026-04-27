@@ -9,6 +9,7 @@ import Footer from "../components/Footer";
 
 import { recuperarSenha } from "../Senha/actions";
 import NavBar from "../components/NavBar";
+import Mensagem from "../components/Mensagem";
 
 
 const Form = () => {
@@ -110,46 +111,28 @@ const Form = () => {
 
       {/* --- MODAL DE ESQUECI A SENHA --- */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/40 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="w-full max-w-md bg-background border border-foreground/20 p-8 rounded-[2rem] shadow-2xl flex flex-col gap-6">
-            <div className="text-center">
-              <h2 className="font-title text-2xl text-foreground">RECUPERAR SENHA</h2>
-              <p className="text-neutral font-body mt-2">Enviaremos um link para o seu e-mail.</p>
-            </div>
-
-            <input
-              type="email"
-              placeholder="Digite seu e-mail"
-              value={forgotEmail}
-              onChange={(e) => setForgotEmail(e.target.value)}
-              className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none font-body text-foreground"
-            />
-
-            <div className="flex flex-col gap-3">
-              <Button
-                text="ENVIAR LINK"
-                className="w-full py-4 !rounded-full font-bold bg-primary"
-                onClick={async () => {
-                  console.log("Recuperar para:", forgotEmail);
-                  setIsModalOpen(false);
-                  const rec = await recuperarSenha(forgotEmail);
-                  if (rec.success) {
-                    notify("Link enviado!", false);
-                  }
-                  else {
-                    notify("Erro: " + rec.error);
-                  }
-                }}
-              />
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-neutral hover:text-foreground cursor-pointer font-bold transition-all"
-              >
-                CANCELAR
-              </button>
-            </div>
-          </div>
-        </div>
+        <Mensagem
+          title="Adicione seu próprio pictograma"
+          text="Selecione uma imagem da sua galeria para criar um pictograma personalizado." // Prop obrigatória adicionada
+          showInput={true}
+          inputType="email"
+          inputPlaceholder="Digite seu e-mail"
+          inputValue={forgotEmail}
+          onInputChange={(value) => setForgotEmail(value)}
+          textButton="Enviar link"
+          onClick={async () => {
+            console.log("Recuperar para:", forgotEmail);
+            setIsModalOpen(false);
+            const rec = await recuperarSenha(forgotEmail);
+            if (rec.success) {
+              notify("Link enviado!", false);
+            }
+            else {
+              notify("Erro: " + rec.error);
+            }
+          }}
+          onClose={() => setIsModalOpen(false)}
+        />
       )}
 
       <p className="font-body text-neutral">

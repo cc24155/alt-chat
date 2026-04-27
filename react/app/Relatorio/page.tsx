@@ -13,6 +13,8 @@ import { supabase } from "@/lib/supabase";
 import { buscarDadosRelatorio } from "../Relatorio/actions";
 import { useRouter } from "next/router";
 import { EstaLogado } from "../actions";
+import Mensagem from "../components/Mensagem";
+
 
 interface Relatorio {
   tempo_medio_mensagem?: number;
@@ -22,24 +24,23 @@ interface Relatorio {
 
 export default function RelatorioPage() {
   const router = useRouter();
-    //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
-    useEffect(() => {
-        const verificarLogin = async () => {
-          try {
-            const result = await EstaLogado();
-            if (!result?.success){
-              router.push("/")
-            }
-  
-          }
-          catch (e) {
-            console.error("Deu erro: ", e);
-            
-          }
-        };
-        verificarLogin();
-      }, []);
-  
+  const [acessoNegado, setAcessoNegado] = useState(false);
+
+  //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
+  useEffect(() => {
+    const verificarLogin = async () => {
+      try {
+        const result = await EstaLogado();
+        if (!result?.success) {
+          setAcessoNegado(true);
+        }
+      }
+      catch (e) {
+        console.error("Deu erro: ", e);
+      }
+    };
+    verificarLogin();
+  }, []);
 
   const [usuario, setUsuario] = useState<Relatorio | null>(null);
 
@@ -53,8 +54,20 @@ export default function RelatorioPage() {
       console.error("Erro: ", e);
     }
   };
+
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
+      {acessoNegado && (
+        <Mensagem
+          title="Acesso Negado"
+          text="Você precisa estar logado para acessar sua conta."
+          textButton="Ir para Login"
+          onClick={() => router.push("/Login")}
+          onClose={() => router.push("/")}
+        />
+      )}
+
       <NavigationBlue />
 
       <main className="flex-grow py-20 flex flex-col gap-12 justify-center">

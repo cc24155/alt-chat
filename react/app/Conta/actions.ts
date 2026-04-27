@@ -40,14 +40,14 @@ export async function buscarDadosUsuario() {
           return await buscarPictogramaPorIdCerto(fav.pictograma_id);
         })
       );
-      
+
       // Remove nulos (caso algum ID não exista na API)
       pictogramasCompletos = pictogramasCompletos.filter(p => p !== null);
     }
 
-    return { 
-      success: true, 
-      dadosUser: dataUser, 
+    return {
+      success: true,
+      dadosUser: dataUser,
       favoritos: pictogramasCompletos as Pictograma[]
     };
 
@@ -60,12 +60,12 @@ export async function buscarDadosUsuario() {
 export async function buscarPictogramaPorIdCerto(id: number): Promise<Pictograma | null> {
   try {
     const res = await fetch(`https://api.arasaac.org/api/pictograms/pt/${id}`);
-    
-    if (!res.ok) 
-      return null; 
+
+    if (!res.ok)
+      return null;
 
     return await res.json();
-  } 
+  }
   catch (error) {
     console.error(`Erro ao buscar ID ${id}:`, error);
     return null;

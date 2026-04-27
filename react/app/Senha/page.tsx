@@ -6,26 +6,29 @@ import Navigation from "../components/Navigation";
 import Button from "../components/Button";
 import { supabase } from "@/lib/supabase";
 import { EstaLogado } from "../actions";
+import Mensagem from "../components/Mensagem";
 
 
 const Form = () => {
   const router = useRouter();
-    //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
-    useEffect(() => {
-        const verificarLogin = async () => {
-          try {
-            const result = await EstaLogado();
-            if (!result?.success){
-              router.push("/")
-            }
-          }
-          catch (e) {
-            console.error("Deu erro: ", e); 
-          }
-        };
-        verificarLogin();
-      }, []);
-  
+  const [acessoNegado, setAcessoNegado] = useState(false);
+
+  //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
+  useEffect(() => {
+    const verificarLogin = async () => {
+      try {
+        const result = await EstaLogado();
+        if (!result?.success) {
+          setAcessoNegado(true);
+        }
+      }
+      catch (e) {
+        console.error("Deu erro: ", e);
+      }
+    };
+    verificarLogin();
+  }, []);
+
   const [pass, setPass] = useState("");
   const [confirmPass, setConfirmNewPass] = useState("");
   const [message, setMessage] = useState("");
@@ -101,6 +104,16 @@ const Form = () => {
 
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">
+      {acessoNegado && (
+        <Mensagem
+          title="Acesso Negado"
+          text="Você precisa estar logado para acessar sua conta."
+          textButton="Ir para Login"
+          onClick={() => router.push("/Login")}
+          onClose={() => router.push("/")}
+        />
+      )}
+
       <div className="text-center flex flex-col gap-2">
         <h1 className="font-subtitle text-foreground">CRIE UMA NOVA SENHA</h1>
       </div>
@@ -147,8 +160,8 @@ const Form = () => {
 
 
         {message && (
-          <div className={`font-bold text-center p-3 rounded-full border ${isError 
-            ? "text-secondary border-secondary bg-secondary/10" 
+          <div className={`font-bold text-center p-3 rounded-full border ${isError
+            ? "text-secondary border-secondary bg-secondary/10"
             : "text-primary border-primary bg-primary/10"
             } transition-all animate-bounce`}>
             {message}

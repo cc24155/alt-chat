@@ -6,27 +6,29 @@ import PicCard from "../components/PictogramaSection";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EstaLogado } from "../actions";
+import Mensagem from "../components/Mensagem";
 
 
 export default function ModoAprendizadoPage() {
   const router = useRouter();
-    //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
-    useEffect(() => {
-        const verificarLogin = async () => {
-          try {
-            const result = await EstaLogado();
-            if (!result?.success){
-              router.push("/")
-            }
-          }
-          catch (e) {
-            console.error("Deu erro: ", e);
-            
-          }
-        };
-        verificarLogin();
-      }, []);
-  
+  const [acessoNegado, setAcessoNegado] = useState(false);
+
+  //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
+  useEffect(() => {
+    const verificarLogin = async () => {
+      try {
+        const result = await EstaLogado();
+        if (!result?.success) {
+          setAcessoNegado(true);
+        }
+      }
+      catch (e) {
+        console.error("Deu erro: ", e);
+      }
+    };
+    verificarLogin();
+  }, []);
+
   const picGato = { _id: 9879, keywords: [{ keyword: "Gato" }] };
   const picBurguer = { _id: 2419, keywords: [{ keyword: "Hambúrguer" }] };
   const picCasa = { _id: 8599, keywords: [{ keyword: "Guitarra Elétrica" }] };
@@ -65,6 +67,16 @@ export default function ModoAprendizadoPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background relative">
+      {acessoNegado && (
+        <Mensagem
+          title="Acesso Negado"
+          text="Você precisa estar logado para acessar sua conta."
+          textButton="Ir para Login"
+          onClick={() => router.push("/Login")}
+          onClose={() => router.push("/")}
+        />
+      )}
+
       <NavigationBlue />
 
       {/* POPUP RESPONSIVO */}
@@ -84,10 +96,10 @@ export default function ModoAprendizadoPage() {
             Exercício 1: Clique na imagem e depois na palavra correta.
           </span>
 
-          {/* CONTAINER RESPONSIVO: 
+          {/* CONTAINER RESPONSIVO:
               Celular: px-4 (pouco padding), gap-6 (pouco espaço no meio)
               Tablet (md): px-10, gap-20
-              PC (lg): px-40, gap-[200px] 
+              PC (lg): px-40, gap-[200px]
           */}
           <div className="flex flex-row justify-center w-full px-4 md:px-10 lg:px-40 gap-6 md:gap-20 lg:gap-[200px]">
 

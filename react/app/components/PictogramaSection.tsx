@@ -1,9 +1,37 @@
 "use client";
 import { useState, useEffect } from "react";
 
-import { buscarPictogramas, Pictograma } from "../../arasaac api/arasaac";
+import { buscarPictogramas, buscarCategorias, Pictograma } from "../../arasaac api/arasaac";
+import { useSearchParams } from "next/navigation";
+
 import Button from "./Button";
 
+
+export function usePictogramas(nomes: string[]) {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q");
+
+  const [categorias, setCategorias] = useState<{ nome: string; pictogramas: Pictograma[] }[]>([]);
+  const [resultados, setResultados] = useState<Pictograma[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetch_ = async () => {
+      setLoading(true);
+      if (q) {
+        setResultados(await buscarPictogramas(q));
+        setCategorias([]);
+      } else {
+        setCategorias(await buscarCategorias(nomes));
+        setResultados([]);
+      }
+      setLoading(false);
+    };
+    fetch_();
+  }, [q]);
+
+  return { q, categorias, resultados, loading };
+}
 
 // piccard
 

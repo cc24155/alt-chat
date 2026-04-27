@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { AtualizarDados } from "./actions";
 import { buscarDadosUsuario } from "../Conta/actions";
 import { EstaLogado } from "../actions";
+import Mensagem from "../components/Mensagem";
 
 interface Usuario {
   username: string;
@@ -23,23 +24,23 @@ interface Usuario {
 
 const Config = () => {
   const router = useRouter();
+  const [acessoNegado, setAcessoNegado] = useState(false);
+
   //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
   useEffect(() => {
-      const verificarLogin = async () => {
-        try {
-          const result = await EstaLogado();
-          if (!result?.success){
-            router.push("/")
-          }
-
+    const verificarLogin = async () => {
+      try {
+        const result = await EstaLogado();
+        if (!result?.success) {
+          setAcessoNegado(true);
         }
-        catch (e) {
-          console.error("Deu erro: ", e);
-          
-        }
-      };
-      verificarLogin();
-    }, []);
+      }
+      catch (e) {
+        console.error("Deu erro: ", e);
+      }
+    };
+    verificarLogin();
+  }, []);
 
   // estado para armazenar os dados do usuário
   const [name, setName] = useState("");
@@ -131,6 +132,16 @@ const Config = () => {
 
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">
+      {acessoNegado && (
+        <Mensagem
+          title="Acesso Negado"
+          text="Você precisa estar logado para acessar sua conta."
+          textButton="Ir para Login"
+          onClick={() => router.push("/Login")}
+          onClose={() => router.push("/")}
+        />
+      )}
+
       {/* Título e Subtítulo */}
       <div className="text-center flex flex-col gap-2">
         <h1 className="font-title text-foreground">CONFIGURAÇÕES</h1>
@@ -232,11 +243,10 @@ const Config = () => {
         {/* Mensagem de feedback */}
         {message && (
           <div
-            className={`font-bold text-center p-3 rounded-full border ${
-              isError
-                ? "text-secondary border-secondary bg-secondary/10"
-                : "text-primary border-primary bg-primary/10"
-            } transition-all animate-bounce`}
+            className={`font-bold text-center p-3 rounded-full border ${isError
+              ? "text-secondary border-secondary bg-secondary/10"
+              : "text-primary border-primary bg-primary/10"
+              } transition-all animate-bounce`}
           >
             {message.split("\n").map((line, index) => (
               <span key={index}>

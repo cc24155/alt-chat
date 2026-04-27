@@ -44,7 +44,7 @@ export default function NavBar() {
           ) : (
             <a
               key={link}
-              href={`#${link.toLowerCase()}`}
+              href={`/#${link.toLowerCase()}`}
               className="font-body font-semibold hover:opacity-50 transition-all tracking-wider"
             >
               {link}
