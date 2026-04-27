@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { AtualizarDados } from "./actions";
 import { buscarDadosUsuario } from "../Conta/actions";
+import { EstaLogado } from "../actions";
 
 interface Usuario {
   username: string;
@@ -21,6 +22,25 @@ interface Usuario {
 // import { createUser } from "./actions";
 
 const Config = () => {
+  const router = useRouter();
+  //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
+  useEffect(() => {
+      const verificarLogin = async () => {
+        try {
+          const result = await EstaLogado();
+          if (!result?.success){
+            router.push("/")
+          }
+
+        }
+        catch (e) {
+          console.error("Deu erro: ", e);
+          
+        }
+      };
+      verificarLogin();
+    }, []);
+
   // estado para armazenar os dados do usuário
   const [name, setName] = useState("");
   const [user, setUser] = useState("");
@@ -31,7 +51,6 @@ const Config = () => {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
 
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
 
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
@@ -96,7 +115,7 @@ const Config = () => {
       } else {
         notify("Erro ao salvar: " + (result.error ?? "tente novamente."));
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       notify("Erro inesperado.");
     }
   };

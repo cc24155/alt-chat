@@ -3,12 +3,16 @@ import { supabase } from "@/lib/supabase";
 //import { error } from "console";
 
 export async function EstaLogado() {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError) {
-        console.error("Deu erro: ", userError);
-        return { success: false };
+    try{
+       const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError || !user) {
+            return { success: false };
+        }
+
+        return { success: true }; 
     }
-    if (user) {
-        return { success: true };
+    catch(e){
+        console.error("Deu erro: ", e);
     }
 }

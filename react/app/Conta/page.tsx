@@ -11,6 +11,7 @@ import { Pictograma } from "../Conta/actions";
 import { PictogramasGrid } from "../components/PictogramaSection";
 import Button from "../components/Button";
 import Mensagem from "../components/Mensagem";
+import { EstaLogado } from "../actions";
 
 interface Usuario {
   username: string;
@@ -19,9 +20,9 @@ interface Usuario {
 }
 
 export default function ContaPage() {
+  const router = useRouter();
   const [favoritos, setFavoritos] = useState<Pictograma[]>([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [usuario, setUsuario] = useState<Usuario | null>(null);
 
@@ -42,7 +43,7 @@ export default function ContaPage() {
           }
         } else {
           // Se não houver sucesso (ex: deslogado), manda para o login
-          router.push("/Login");
+          router.push("/");
         }
       } catch (err) {
         console.error("Erro ao carregar dados da conta:", err);

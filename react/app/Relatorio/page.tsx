@@ -11,6 +11,8 @@ import { Pictograma, buscarFavoritos } from "../../arasaac api/arasaac";
 import { PictogramasGrid } from "../components/PictogramaSection";
 import { supabase } from "@/lib/supabase";
 import { buscarDadosRelatorio } from "../Relatorio/actions";
+import { useRouter } from "next/router";
+import { EstaLogado } from "../actions";
 
 interface Relatorio {
   tempo_medio_mensagem?: number;
@@ -19,6 +21,26 @@ interface Relatorio {
 }
 
 export default function RelatorioPage() {
+  const router = useRouter();
+    //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
+    useEffect(() => {
+        const verificarLogin = async () => {
+          try {
+            const result = await EstaLogado();
+            if (!result?.success){
+              router.push("/")
+            }
+  
+          }
+          catch (e) {
+            console.error("Deu erro: ", e);
+            
+          }
+        };
+        verificarLogin();
+      }, []);
+  
+
   const [usuario, setUsuario] = useState<Relatorio | null>(null);
 
   async () => {

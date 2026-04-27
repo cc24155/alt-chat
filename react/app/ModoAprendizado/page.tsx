@@ -5,11 +5,28 @@ import NavigationBlue from "../components/NavigationBlue";
 import PicCard from "../components/PictogramaSection";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { EstaLogado } from "../actions";
 
 
 export default function ModoAprendizadoPage() {
   const router = useRouter();
-
+    //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
+    useEffect(() => {
+        const verificarLogin = async () => {
+          try {
+            const result = await EstaLogado();
+            if (!result?.success){
+              router.push("/")
+            }
+          }
+          catch (e) {
+            console.error("Deu erro: ", e);
+            
+          }
+        };
+        verificarLogin();
+      }, []);
+  
   const picGato = { _id: 9879, keywords: [{ keyword: "Gato" }] };
   const picBurguer = { _id: 2419, keywords: [{ keyword: "Hambúrguer" }] };
   const picCasa = { _id: 8599, keywords: [{ keyword: "Guitarra Elétrica" }] };

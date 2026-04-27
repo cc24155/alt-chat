@@ -5,16 +5,33 @@ import { atualizarSenha } from "./actions"; // Ajuste o caminho se necessário
 import Navigation from "../components/Navigation";
 import Button from "../components/Button";
 import { supabase } from "@/lib/supabase";
+import { EstaLogado } from "../actions";
 
 
 const Form = () => {
+  const router = useRouter();
+    //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
+    useEffect(() => {
+        const verificarLogin = async () => {
+          try {
+            const result = await EstaLogado();
+            if (!result?.success){
+              router.push("/")
+            }
+          }
+          catch (e) {
+            console.error("Deu erro: ", e); 
+          }
+        };
+        verificarLogin();
+      }, []);
+  
   const [pass, setPass] = useState("");
   const [confirmPass, setConfirmNewPass] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     // Quando a página carrega, o Supabase olha para o link (#access_token)
