@@ -73,7 +73,7 @@ const Config = () => {
         const res = await buscarDadosUsuario();
         if (res.success && res.dadosUser) {
           setUsuario(res.dadosUser);
-          setBiografia(res.dadosUser.biografia);
+          setBiografia(res.dadosUser.biografia ?? "");
         } else {
           setUsuario(null);
         }
@@ -166,7 +166,7 @@ const Config = () => {
           <span className="font-body">Usuário:</span>
           <input
             type="text"
-            placeholder={usuario?.username.trim()}
+            placeholder={usuario?.username?.trim()}
             value={user}
             onChange={(e) => setUser(e.target.value)}
             className="max-w-[330px] ml-auto px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"

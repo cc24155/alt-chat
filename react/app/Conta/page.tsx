@@ -98,8 +98,8 @@ export default function ContaPage() {
             <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-20">
               <div className="w-[120px] h-[120px] md:w-[140px] md:h-[140px] rounded-full flex items-center justify-center bg-background shadow-figma border-4 border-transparent overflow-hidden">
                 <img
-                  src={usuario?.avatar_url || "/AvatarDefault.png"}
-                  className="w-full h-full object-cover"
+                  src={usuario?.avatar_url || "/User.png"}
+                  className="w-full h-full object-cover icon-adaptive"
                   alt="Avatar"
                 />
               </div>
@@ -131,7 +131,7 @@ export default function ContaPage() {
           <div className="border border-foreground/10 rounded-3xl p-8 md:p-10 flex flex-col gap-8">
             <div className="flex flex-row items-center justify-between w-full gap-4 flex-nowrap">
               <h2 className="font-subtitle leading-[90%] text-foreground shrink">
-                Meus Pictogramas
+                Pictogramas Favoritos
               </h2>
 
               <div className="shrink-0">
@@ -212,7 +212,7 @@ export default function ContaPage() {
               />
             ) : (
               <div className="text-center py-16 font-body text-neutral opacity-60">
-                Você ainda não favoritou nenhum pictograma.
+                Você ainda não criou nenhum pictograma.
               </div>
             )}
           </div>
@@ -221,7 +221,7 @@ export default function ContaPage() {
           <div className="border border-foreground/10 rounded-3xl p-8 md:p-10 flex flex-col gap-8">
             <div className="flex flex-row items-center justify-between w-full gap-4 flex-nowrap">
               <h2 className="font-subtitle leading-[90%] text-foreground shrink">
-                Meus Pictogramas
+                Pictogramas Mais Usados
               </h2>
             </div>
 

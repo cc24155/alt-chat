@@ -9,8 +9,6 @@ export async function AtualizarDados(newUser: string, newName: string, newEmail:
       return { success: false, error: "Sessão expirada ou inválida." };
     }
 
-    // --- 1. ATUALIZAÇÃO DA AUTENTICAÇÃO (Auth) ---
-    // Criamos um objeto vazio e só preenchemos o que foi digitado
     const authData: any = {};
 
     if (newEmail && newEmail.trim() !== "") authData.email = newEmail;
@@ -24,8 +22,6 @@ export async function AtualizarDados(newUser: string, newName: string, newEmail:
       }
     }
 
-    // --- 2. ATUALIZAÇÃO DA TABELA (Database) ---
-    // Mesma lógica: criamos um objeto dinâmico para os dados do perfil
     const profileData: any = {};
 
     if (newUser && newUser.trim() !== "") profileData.username = newUser;
