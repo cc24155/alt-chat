@@ -153,6 +153,8 @@ function PicModal({ pic, onClose }: PicModalProps) {
   const keyword = pic.keywords?.[0]?.keyword ?? "sem nome";         // primeira keyword como titulo
   const allKeywords = pic.keywords?.map((k) => k.keyword) ?? [];   // cria uma lista com todas as outras
 
+  const [favoritado, setFavoritado] = useState(false);
+
   // trava a rolagem da pagina que fica atras
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -199,10 +201,25 @@ function PicModal({ pic, onClose }: PicModalProps) {
         {/* Info */}
         <div className="px-8 py-6 flex flex-col gap-6">
 
-          {/* Nome principal */}
-          <h2 className="font-subtitle capitalize tracking-[-1.2px] leading-[90%] text-foreground">
-            {keyword}
-          </h2>
+          <div className="w-full flex items-center justify-between gap-4">
+            {/* Nome principal */}
+            <h2 className="font-subtitle capitalize tracking-[-1.2px] leading-[90%] text-foreground">
+              {keyword}
+            </h2>
+
+            {/* Coracao */}
+            <button
+              onClick={() => setFavoritado(!favoritado)}
+              className="flex items-center justify-center hover:scale-110 transition-all"
+            >
+              <img
+                src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}
+                alt="Favoritar"
+                className={`w-6 h-6 transition-all icon-adaptive ${favoritado ? "shadow-figma" : ""
+                  }`}
+              />
+            </button>
+          </div>
 
           {/* Palavras-chave */}
           <div className="flex flex-col gap-2">
