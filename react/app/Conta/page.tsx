@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
-import { buscarDadosUsuario } from "./actions";
+import { buscarDadosUsuario, criarNovoPic } from "./actions";
 
 import { Pictograma } from "../Conta/actions";
 import { PictogramasGrid } from "../components/PictogramaSection";
@@ -23,8 +23,13 @@ export default function ContaPage() {
   const router = useRouter();
   const [favoritos, setFavoritos] = useState<Pictograma[]>([]);
   const [loading, setLoading] = useState(true);
+  const [descPic, setDescPic] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenNewPic, setIsModalOpenNewPic] = useState(false);
   const [usuario, setUsuario] = useState<Usuario | null>(null);
+  //tem que fazer tipo um usuario para mostrar os pictogramas feitos pelo usuário na pagina
   const [acessoNegado, setAcessoNegado] = useState(false);
 
   useEffect(() => {
@@ -55,6 +60,33 @@ export default function ContaPage() {
 
     carregarTudo();
   }, [router]);
+
+  const handleButtonClick = async (e?: React.MouseEvent) =>{
+    if (e) e.preventDefault();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();   //pega por ref o input declarado la emvaixo
+    } 
+    else {
+      console.error("A referência do input não foi encontrada!");
+    }
+  }
+
+  const handleSalvar = async () => {
+    if (!selectedFile || !descPic) {
+      alert("Preencha a descrição e selecione uma imagem!");
+      return;
+    }
+
+    const resultado = await criarNovoPic(descPic, selectedFile);
+
+    if (resultado.success) {
+      alert("Salvo com sucesso!");
+      setIsModalOpenNewPic(false);
+      // Opcional: atualizar a lista de pictogramas na tela aqui
+    } else {
+      alert("Erro: " + resultado.error);
+    }
+  };
 
   if (loading) {
     return (
@@ -202,7 +234,7 @@ export default function ContaPage() {
 
               <div className="shrink-0">
                 <Button
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => setIsModalOpenNewPic(true)}
                   text={
                     <img
                       src="/Plus.png"
@@ -213,14 +245,40 @@ export default function ContaPage() {
                   className="bg-background text-foreground font-body font-semibold px-4 py-2 rounded-full shadow-figma hover:shadow-figma-hover hover:opacity-90 active:scale-95 transition-all cursor-pointer"
                 />
               </div>
-              {isModalOpen && (
-                <Mensagem
-                  title="Adicione seu próprio pictograma"
-                  text="Selecione uma imagem da sua galeria para criar um pictograma personalizado." // Prop obrigatória adicionada
-                  textButton="Abrir galeria"
-                  onClick={() => setIsModalOpen(false)} // por enquanto só fecha a mensagem, depois pode abrir a galeria do dispositivo
-                  onClose={() => setIsModalOpen(false)}
-                />
+              {isModalOpenNewPic && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50"> 
+                {/* Adicionei classes de overlay acima para ele flutuar na tela */}
+                <div className="bg-background p-8 rounded-3xl shadow-figma border border-foreground/10">
+                  <h2 className="font-subtitle mb-4 text-title">NOVO PICTOGRAMA</h2>
+                  <form className="flex flex-col gap-4">
+                    <label className="font-body">Descrição do pictograma:</label>
+                    <input 
+                      className="bg-transparent border-b border-foreground p-2"
+                      value={descPic} 
+                      onChange={(e) => setDescPic(e.target.value)} 
+                      type="text" 
+                    />
+                    <label className="font-body">Imagem do pictograma:</label>
+                    <input 
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
+                      accept="image/*" 
+                      onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    />
+                    <button 
+                      type="button" // Importante: ser type button para não dar submit no form
+                      onClick={handleButtonClick}
+                      className="bg-secondary/20 text-foreground p-3 rounded-xl border border-dashed border-foreground/30 hover:bg-secondary/30 transition-all">
+                      {selectedFile ? `Arquivo: ${selectedFile.name}` : "Selecionar Imagem"}
+                    </button>
+                    <div className="flex gap-4 mt-4">
+                      <Button text="Cancelar" onClick={() => setIsModalOpenNewPic(false)} />
+                      <Button text="Salvar" onClick={handleSalvar} className="bg-primary text-background" />
+                    </div>
+                  </form>
+                </div>
+                </div> 
               )}
             </div>
             {/* Exibição dos favoritos ou mensagem de vazio */}

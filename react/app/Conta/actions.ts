@@ -71,3 +71,75 @@ export async function buscarPictogramaPorIdCerto(id: number): Promise<Pictograma
     return null;
   }
 }
+
+export async function criarNovoPic(desc: string, img: File) {
+  try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Usuário não autenticado." };
+    }
+
+    // 1. Fazer o Upload da imagem para o Storage
+    // Criamos um nome único para evitar conflitos (ex: timestamp + nome original)
+    const fileName = `${Date.now()}-${img.name}`;
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('pictogramas') //bucket do supabase (a gnt só aceita)
+      .upload(`usuarios/${user.id}/${fileName}`, img);
+
+    if (uploadError) {
+      console.error("Erro no upload:", uploadError);
+      return { success: false, error: "Falha ao enviar imagem." };
+    }
+
+    // 2. Pegar a URL pública da imagem recém enviada
+    const { data: { publicUrl } } = supabase.storage
+      .from('pictogramas')
+      .getPublicUrl(`usuarios/${user.id}/${fileName}`);
+
+    // 3. Inserir na tabela usuario_pictograma
+    const { error: dbError } = await supabase
+      .from('usuario_pictograma')
+      .insert([
+        {
+          id_user: user.id,
+          descricao: desc,
+          url_imagem: publicUrl,
+        }
+      ]);
+
+    if (dbError) {
+      console.error("Erro ao salvar no banco:", dbError);
+      return { success: false, error: "Erro ao registrar pictograma no banco." };
+    }
+
+    return { success: true, url: publicUrl };
+
+  } catch (e) {
+    console.error("Deu erro geral:", e);
+    return { success: false, error: "Ocorreu um erro inesperado." };
+  }
+}
+
+export async function pegarPicUser() {
+  try{
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Usuário não autenticado." };
+    }
+
+    const { data: data, error: error } = await supabase
+      .from("usuario_pictograma")
+      .select("url_imagem")
+      .eq("id_user", user.id)
+
+    if (data && !error){
+      return{ success: true, data: data };
+    }
+    return {success: false, data: null};
+  }
+  catch(e){
+    console.error("Deu erro: ", e);
+  }
+}
