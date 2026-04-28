@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
-import { buscarDadosUsuario, criarNovoPic } from "./actions";
+import { buscarDadosUsuario, criarNovoPic, pegarPicUser } from "./actions";
 
 import { Pictograma } from "../Conta/actions";
 import { PictogramasGrid } from "../components/PictogramaSection";
@@ -22,6 +22,7 @@ interface Usuario {
 export default function ContaPage() {
   const router = useRouter();
   const [favoritos, setFavoritos] = useState<Pictograma[]>([]);
+  const [meusPic, setMeusPic] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [descPic, setDescPic] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,16 +37,26 @@ export default function ContaPage() {
     const carregarTudo = async () => {
       try {
         setLoading(true);
-        const res = await buscarDadosUsuario();
+        const resUser = await buscarDadosUsuario();
+        const resMeusPic = await pegarPicUser();
 
-        if (res.success) {
+        if (resMeusPic?.success){
+          if (resMeusPic.data) {
+            setMeusPic(resMeusPic.data);
+          }
+          else{
+            console.log("Não conseguiu pegar os meus pictogramas");
+          }
+        }
+
+        if (resUser.success) {
           // 1. Define os dados do perfil
-          if (res.dadosUser) {
-            setUsuario(res.dadosUser);
+          if (resUser.dadosUser) {
+            setUsuario(resUser.dadosUser);
           }
           // 2. Define os favoritos que a Action buscou na API Arasaac
-          if (res.favoritos) {
-            setFavoritos(res.favoritos);
+          if (resUser.favoritos) {
+            setFavoritos(resUser.favoritos);
           }
         } else {
           // Se não houver sucesso (ex: deslogado), manda para o login
@@ -282,10 +293,10 @@ export default function ContaPage() {
               )}
             </div>
             {/* Exibição dos favoritos ou mensagem de vazio */}
-            {favoritos.length > 0 ? (
+            {meusPic.length > 0 ? (
               <PictogramasGrid
                 q={null}
-                resultados={favoritos}
+                resultados={meusPic}
                 categorias={[]}
                 limite={4}
               />

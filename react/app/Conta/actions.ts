@@ -131,7 +131,7 @@ export async function pegarPicUser() {
 
     const { data: data, error: error } = await supabase
       .from("usuario_pictograma")
-      .select("url_imagem")
+      .select("url_imagem, id")
       .eq("id_user", user.id)
 
     if (data && !error){
