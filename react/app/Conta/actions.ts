@@ -1,13 +1,10 @@
 "use server";
+import { Pictograma } from "@/arasaac api/arasaac";
 import { supabase } from "@/lib/supabase";
 //import { buscarPictogramaPorId } from "@/arasaac api/arasaac";
 
 // Interface para garantir que o TS não reclame dos pictogramas
-export interface Pictograma {
-  _id: number;
-  keywords: { keyword: string }[];
-  // adicione outros campos da API se necessário
-}
+
 
 export async function buscarDadosUsuario() {
   try {

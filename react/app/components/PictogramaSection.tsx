@@ -37,6 +37,9 @@ export function usePictogramas(nomes: string[]) {
 
 export default function PicCard({ pic }: { pic: Pictograma }) {
   const [open, setOpen] = useState(false);
+  const imagemExibida = pic.url_imagem 
+    ? pic.url_imagem // Imagem do seu Supabase
+    : `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`; // Imagem da Arasaac
 
   return (
     <>
@@ -45,7 +48,7 @@ export default function PicCard({ pic }: { pic: Pictograma }) {
         className="border border-foreground/10 rounded-2xl p-4 flex items-center justify-center aspect-square bg-neutral hover:border-foreground/30 hover:scale-[1.03] transition-all cursor-pointer shadow-figma">
 
         <img
-          src={`https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`}
+          src={imagemExibida}
           alt={pic.keywords?.[0]?.keyword ?? "pictograma"}
           className="w-full h-full object-contain"
         />

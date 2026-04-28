@@ -2,6 +2,8 @@
 export interface Pictograma {
   _id: number;
   keywords: { keyword: string }[];
+  url_imagem?: string;
+  nome?: string;
 }
 
 export async function buscarPictogramas(q: string): Promise<Pictograma[]> {

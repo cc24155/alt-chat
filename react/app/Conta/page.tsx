@@ -7,11 +7,12 @@ import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
 import { buscarDadosUsuario, criarNovoPic, pegarPicUser } from "./actions";
 
-import { Pictograma } from "../Conta/actions";
+
 import { PictogramasGrid } from "../components/PictogramaSection";
 import Button from "../components/Button";
 import Mensagem from "../components/Mensagem";
 import { EstaLogado } from "../actions";
+import { Pictograma } from "@/arasaac api/arasaac";
 
 interface Usuario {
   username: string;
@@ -43,6 +44,8 @@ export default function ContaPage() {
         if (resMeusPic?.success){
           if (resMeusPic.data) {
             setMeusPic(resMeusPic.data);
+            const apenasUrls = meusPic.map(pic => pic.url_imagem);
+            const apenasDescricoes = meusPic.map(pic => pic.descricao);
           }
           else{
             console.log("Não conseguiu pegar os meus pictogramas");
@@ -258,7 +261,6 @@ export default function ContaPage() {
               </div>
               {isModalOpenNewPic && (
                 <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50"> 
-                {/* Adicionei classes de overlay acima para ele flutuar na tela */}
                 <div className="bg-background p-8 rounded-3xl shadow-figma border border-foreground/10">
                   <h2 className="font-subtitle mb-4 text-title">NOVO PICTOGRAMA</h2>
                   <form className="flex flex-col gap-4">
@@ -292,7 +294,7 @@ export default function ContaPage() {
                 </div> 
               )}
             </div>
-            {/* Exibição dos favoritos ou mensagem de vazio */}
+            {/* Exibição dos MEUS PICTOGRAMAS ou mensagem de vazio */}
             {meusPic.length > 0 ? (
               <PictogramasGrid
                 q={null}
