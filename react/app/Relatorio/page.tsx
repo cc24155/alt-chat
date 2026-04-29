@@ -11,7 +11,7 @@ import { Pictograma, buscarFavoritos } from "../../arasaac api/arasaac";
 import { PictogramasGrid } from "../components/PictogramaSection";
 import { supabase } from "@/lib/supabase";
 import { buscarDadosRelatorio } from "../Relatorio/actions";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { EstaLogado } from "../actions";
 import Mensagem from "../components/Mensagem";
 
