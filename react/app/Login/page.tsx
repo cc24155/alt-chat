@@ -112,8 +112,8 @@ const Form = () => {
       {/* --- MODAL DE ESQUECI A SENHA --- */}
       {isModalOpen && (
         <Mensagem
-          title="Adicione seu próprio pictograma"
-          text="Selecione uma imagem da sua galeria para criar um pictograma personalizado." // Prop obrigatória adicionada
+          title="Redefinir senha"
+          text="Digite seu e-mail para receber o link de redefinição de senha."
           showInput={true}
           inputType="email"
           inputPlaceholder="Digite seu e-mail"

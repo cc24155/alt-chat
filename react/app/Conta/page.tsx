@@ -78,7 +78,7 @@ export default function ContaPage() {
     if (e) e.preventDefault();
     if (fileInputRef.current) {
       fileInputRef.current.click();   //pega por ref o input declarado la emvaixo
-    } 
+    }
     else {
       console.error("A referência do input não foi encontrada!");
     }
@@ -232,29 +232,6 @@ export default function ContaPage() {
               <h2 className="font-subtitle leading-[90%] text-foreground shrink">
                 Pictogramas Favoritos
               </h2>
-
-              <div className="shrink-0">
-                <Button
-                  onClick={() => setIsModalOpen(true)}
-                  text={
-                    <img
-                      src="/Plus.png"
-                      alt="Adicionar"
-                      className="w-[18px] h-[18px] icon-adaptive"
-                    />
-                  }
-                  className="bg-background text-foreground font-body font-semibold px-4 py-2 rounded-full shadow-figma hover:shadow-figma-hover hover:opacity-90 active:scale-95 transition-all cursor-pointer"
-                />
-              </div>
-              {isModalOpen && (
-                <Mensagem
-                  title="Adicione seu próprio pictograma"
-                  text="Selecione uma imagem da sua galeria para criar um pictograma personalizado." // Prop obrigatória adicionada
-                  textButton="Abrir galeria"
-                  onClick={() => setIsModalOpen(false)} // por enquanto só fecha a mensagem, depois pode abrir a galeria do dispositivo
-                  onClose={() => setIsModalOpen(false)}
-                />
-              )}
             </div>
             {/* Exibição dos favoritos ou mensagem de vazio */}
             {favoritos.length > 0 ? (
