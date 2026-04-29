@@ -1,21 +1,23 @@
 "use client";
 
+import { ReactNode } from "react";
 import Button from "./Button";
 
 interface MensagemProps {
-  title: string;
-  text: string;
+  title: string;                                  //
+  text: string;                                  //
   showInput?: boolean;
   inputType?: string;
   inputPlaceholder?: string;
   inputValue?: string;
   onInputChange?: (value: string) => void;
-  textButton: string;
+  textButton: string;                                  //
   onClick?: () => void;
-  onClose: () => void;
+  onClose: () => void;                                  //
+  children?: ReactNode;
 }
 
-export default function Mensagem({ title, text, showInput, inputType, inputPlaceholder, inputValue, onInputChange, textButton, onClick, onClose }: MensagemProps) {
+export default function Mensagem({ title, text, showInput, inputType, inputPlaceholder, inputValue, onInputChange, textButton, onClick, onClose, children }: MensagemProps) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/40 backdrop-blur-md animate-in fade-in duration-300">
       <div className="w-full max-w-md bg-background border border-foreground/20 p-8 rounded-[2rem] shadow-2xl flex flex-col gap-6">
@@ -33,6 +35,9 @@ export default function Mensagem({ title, text, showInput, inputType, inputPlace
             className="w-full px-6 py-4 bg-transparent border border-foreground rounded-full outline-none font-body text-foreground"
           />
         )}
+
+        {/* Conteúdo customizado (ex: formulário de novo pictograma) */}
+        {children}
 
         <div className="flex flex-col gap-3">
           <Button

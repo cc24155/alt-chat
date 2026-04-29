@@ -7,7 +7,6 @@ import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
 import { buscarDadosUsuario, criarNovoPic, pegarPicUser } from "./actions";
 
-
 import { PictogramasGrid } from "../components/PictogramaSection";
 import Button from "../components/Button";
 import Mensagem from "../components/Mensagem";
@@ -91,12 +90,39 @@ export default function ContaPage() {
       return;
     }
 
-    const resultado = await criarNovoPic(descPic, selectedFile);
+    // 1. Pega o usuário logado no cliente
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) {
+      alert("Usuário não autenticado.");
+      return;
+    }
+
+    // 2. Upload direto do browser pro Supabase Storage (não passa pelo Next.js)
+    const fileName = `${Date.now()}-${selectedFile.name}`;
+    const { error: uploadError } = await supabaseClient.storage
+      .from('pictogramas')
+      .upload(`usuarios/${user.id}/${fileName}`, selectedFile);
+
+    if (uploadError) {
+      alert("Erro no upload: " + uploadError.message);
+      return;
+    }
+
+    // 3. Pega a URL pública
+    const { data: { publicUrl } } = supabaseClient.storage
+      .from('pictogramas')
+      .getPublicUrl(`usuarios/${user.id}/${fileName}`);
+
+    // 4. Salva só a URL (string) na Server Action
+    const resultado = await criarNovoPic(descPic, publicUrl);
 
     if (resultado.success) {
       alert("Salvo com sucesso!");
       setIsModalOpenNewPic(false);
-      // Opcional: atualizar a lista de pictogramas na tela aqui
+      setDescPic("");
+      setSelectedFile(null);
+      const resMeusPic = await pegarPicUser();
+      if (resMeusPic?.success && resMeusPic.data) setMeusPic(resMeusPic.data);
     } else {
       alert("Erro: " + resultado.error);
     }
@@ -142,21 +168,26 @@ export default function ContaPage() {
 
             {/* Avatar Centralizado na Borda */}
             <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-20">
-              <div className="w-[120px] h-[120px] md:w-[140px] md:h-[140px] rounded-full flex items-center justify-center bg-background shadow-figma border-4 border-transparent overflow-hidden">
-                <img
-                  src={usuario?.avatar_url || "/User.png"}
-                  className="w-full h-full object-cover icon-adaptive"
-                  alt="Avatar"
-                />
+              <div className="relative w-[120px] h-[120px] md:w-[140px] md:h-[140px]">
 
-                {/* Overlay com lápis no hover */}
-                <label className="absolute inset-0 rounded-full flex items-center justify-center
-                       bg-foreground/0 hover:bg-foreground/40
-                       transition-all cursor-pointer group">
+                {/* Foto */}
+                <div className="w-full h-full rounded-full flex items-center justify-center bg-background shadow-figma border-4 border-transparent overflow-hidden">
                   <img
-                    src="/Edit-icon.png"
+                    src={usuario?.avatar_url || "/User.png"}
+                    className="w-full h-full object-cover icon-adaptive"
+                    alt="Avatar"
+                  />
+                </div>
+
+                {/* Lápis grudado no canto inferior direito */}
+                <label className="absolute bottom-1 right-1 w-9 h-9
+                       bg-background rounded-full shadow-figma
+                       flex items-center justify-center
+                       hover:bg-neutral transition-all cursor-pointer">
+                  <img
+                    src="/Edit-pencil.png"
                     alt="Editar foto"
-                    className="w-7 h-7 icon-adaptive opacity-0 group-hover:opacity-100 transition-all"
+                    className="w-5 h-5 icon-adaptive"
                   />
                   <input
                     type="file"
@@ -164,8 +195,9 @@ export default function ContaPage() {
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      if (file) { }
-                      //handleUploadAvatar(file); // ← função que você vai criar
+                      if (file) {
+                        // handleUploadAvatar(file);
+                      }
                     }}
                   />
                 </label>
@@ -259,39 +291,39 @@ export default function ContaPage() {
                   className="bg-background text-foreground font-body font-semibold px-4 py-2 rounded-full shadow-figma hover:shadow-figma-hover hover:opacity-90 active:scale-95 transition-all cursor-pointer"
                 />
               </div>
+
               {isModalOpenNewPic && (
-                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50"> 
-                <div className="bg-background p-8 rounded-3xl shadow-figma border border-foreground/10">
-                  <h2 className="font-subtitle mb-4 text-title">NOVO PICTOGRAMA</h2>
-                  <form className="flex flex-col gap-4">
-                    <label className="font-body">Descrição do pictograma:</label>
-                    <input 
-                      className="bg-transparent border-b border-foreground p-2"
-                      value={descPic} 
-                      onChange={(e) => setDescPic(e.target.value)} 
-                      type="text" 
-                    />
-                    <label className="font-body">Imagem do pictograma:</label>
-                    <input 
-                      type="file"
-                      ref={fileInputRef}
-                      className="hidden"
-                      accept="image/*" 
-                      onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                    />
-                    <button 
-                      type="button" // Importante: ser type button para não dar submit no form
-                      onClick={handleButtonClick}
-                      className="bg-secondary/20 text-foreground p-3 rounded-xl border border-dashed border-foreground/30 hover:bg-secondary/30 transition-all">
-                      {selectedFile ? `Arquivo: ${selectedFile.name}` : "Selecionar Imagem"}
-                    </button>
-                    <div className="flex gap-4 mt-4">
-                      <Button text="Cancelar" onClick={() => setIsModalOpenNewPic(false)} />
-                      <Button text="Salvar" onClick={handleSalvar} className="bg-primary text-background" />
-                    </div>
-                  </form>
-                </div>
-                </div> 
+                <Mensagem
+                  title="NOVO PICTOGRAMA"
+                  text={"Adicione seu próprio pictograma"}
+                  textButton="Salvar"
+                  onClick={handleSalvar}
+                  onClose={() => setIsModalOpenNewPic(false)}
+                  >
+                  
+                  <label className="font-body">Descrição do pictograma:</label>
+                  <input
+                    className="bg-transparent border-b border-foreground p-2"
+                    value={descPic}
+                    onChange={(e) => setDescPic(e.target.value)}
+                    type="text"
+                  />
+
+                  <label className="font-body">Imagem do pictograma:</label>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleButtonClick}
+                    className="bg-secondary/20 text-foreground p-3 rounded-xl border border-dashed border-foreground/30 hover:bg-secondary/30 transition-all">
+                    {selectedFile ? `Arquivo: ${selectedFile.name}` : "Selecionar Imagem"}
+                  </button>
+                </Mensagem>
               )}
             </div>
             {/* Exibição dos MEUS PICTOGRAMAS ou mensagem de vazio */}
