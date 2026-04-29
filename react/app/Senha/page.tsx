@@ -14,20 +14,20 @@ const Form = () => {
   const [acessoNegado, setAcessoNegado] = useState(false);
 
   //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
-  useEffect(() => {
-    const verificarLogin = async () => {
-      try {
-        const result = await EstaLogado();
-        if (!result?.success) {
-          setAcessoNegado(true);
-        }
-      }
-      catch (e) {
-        console.error("Deu erro: ", e);
-      }
-    };
-    verificarLogin();
-  }, []);
+  // useEffect(() => {
+  //   const verificarLogin = async () => {
+  //     try {
+  //       const result = await EstaLogado();
+  //       if (!result?.success) {
+  //         setAcessoNegado(true);
+  //       }
+  //     }
+  //     catch (e) {
+  //       console.error("Deu erro: ", e);
+  //     }
+  //   };
+  //   verificarLogin();
+  // }, []);
 
   const [pass, setPass] = useState("");
   const [confirmPass, setConfirmNewPass] = useState("");
