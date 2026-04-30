@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState, useRef } from "react";
@@ -187,7 +188,7 @@ export default function ContaPage() {
                 <div className="w-full h-full rounded-full flex items-center justify-center bg-background shadow-figma border-4 border-transparent overflow-hidden">
                   <img
                     src={usuario?.avatar_url || "/User.png"}
-                    className="w-full h-full object-cover icon-adaptive"
+                    className={`w-full h-full object-cover ${!usuario?.avatar_url ? "icon-adaptive" : ""}`}
                     alt="Avatar"
                   />
                 </div>
