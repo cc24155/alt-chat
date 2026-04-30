@@ -44,17 +44,20 @@ export default function RelatorioPage() {
 
   const [usuario, setUsuario] = useState<Relatorio | null>(null);
 
-  async () => {
+useEffect(() => {
+  const carregarDados = async () => {
     try {
       const result = await buscarDadosRelatorio();
-      if (result.success && result.dadosUser) {
+      if (result.success && result.dados) {
         setUsuario(result.dados);
-      } else setUsuario(null);
+      }
     } catch (e) {
-      console.error("Erro: ", e);
+      console.error("Erro ao buscar dados:", e);
     }
   };
 
+  carregarDados();
+}, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
