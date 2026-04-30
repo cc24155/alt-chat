@@ -5,13 +5,15 @@ import { useRouter } from "next/navigation";
 
 import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
-import { buscarDadosUsuario, criarNovoPic, pegarPicUser } from "./actions";
+import { buscarDadosUsuario, criarNovoPic, pegarFavoritosUser, pegarPicUser } from "./actions";
 
 import { PictogramasGrid } from "../components/PictogramaSection";
 import Button from "../components/Button";
 import Mensagem from "../components/Mensagem";
 import { EstaLogado } from "../actions";
 import { Pictograma } from "@/arasaac api/arasaac";
+import { throws } from "assert";
+//import { error } from "console";
 
 interface Usuario {
   username: string;
@@ -22,9 +24,14 @@ interface Usuario {
 export default function ContaPage() {
   const router = useRouter();
   const [favoritos, setFavoritos] = useState<Pictograma[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [meusPic, setMeusPic] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [maisUsados, setMaisUsados] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [descPic, setDescPic] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [fav, setFav] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,34 +46,39 @@ export default function ContaPage() {
         setLoading(true);
         const resUser = await buscarDadosUsuario();
         const resMeusPic = await pegarPicUser();
-
+        const resFavoritos = await pegarFavoritosUser();
+        
+        //lógica para meus pictogramas
         if (resMeusPic?.success){
           if (resMeusPic.data) {
             setMeusPic(resMeusPic.data);
-            const apenasUrls = meusPic.map(pic => pic.url_imagem);
+            const apenasUrls = meusPic.map(pic => pic.url_imaxgem);
             const apenasDescricoes = meusPic.map(pic => pic.descricao);
           }
           else{
             console.log("Não conseguiu pegar os meus pictogramas");
           }
         }
-
+        
+        //lógica para dados do usuário
         if (resUser.success) {
-          // 1. Define os dados do perfil
           if (resUser.dadosUser) {
             setUsuario(resUser.dadosUser);
           }
-          // 2. Define os favoritos que a Action buscou na API Arasaac
-          if (resUser.favoritos) {
-            setFavoritos(resUser.favoritos);
-          }
         } else {
-          // Se não houver sucesso (ex: deslogado), manda para o login
           setAcessoNegado(true);
         }
+
+        if (resFavoritos.success){
+          console.log("entrou no favoritos.success")
+          if (resFavoritos.data) setFavoritos(resFavoritos.data);
+          else console.log("Deu erro: o resFavoritos.data ta dando")
+        }
+
       } catch (err) {
         console.error("Erro ao carregar dados da conta:", err);
-      } finally {
+      }  
+      finally {
         setLoading(false);
       }
     };
@@ -77,7 +89,7 @@ export default function ContaPage() {
   const handleButtonClick = async (e?: React.MouseEvent) =>{
     if (e) e.preventDefault();
     if (fileInputRef.current) {
-      fileInputRef.current.click();   //pega por ref o input declarado la emvaixo
+      fileInputRef.current.click();   //pega por ref o input declarado la embaixo
     }
     else {
       console.error("A referência do input não foi encontrada!");
@@ -91,32 +103,32 @@ export default function ContaPage() {
     }
 
     // 1. Pega o usuário logado no cliente
-    const { data: { user } } = await supabaseClient.auth.getUser();
+    /*const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) {
       alert("Usuário não autenticado.");
       return;
-    }
+    }*/
 
     // 2. Upload direto do browser pro Supabase Storage (não passa pelo Next.js)
     const fileName = `${Date.now()}-${selectedFile.name}`;
-    const { error: uploadError } = await supabaseClient.storage
+    /*const { error: uploadError } = await supabaseClient.storage
       .from('pictogramas')
       .upload(`usuarios/${user.id}/${fileName}`, selectedFile);
 
     if (uploadError) {
       alert("Erro no upload: " + uploadError.message);
       return;
-    }
+    }*/
 
     // 3. Pega a URL pública
-    const { data: { publicUrl } } = supabaseClient.storage
+    /*const { data: { publicUrl } } = supabaseClient.storage
       .from('pictogramas')
       .getPublicUrl(`usuarios/${user.id}/${fileName}`);
-
+    */
     // 4. Salva só a URL (string) na Server Action
-    const resultado = await criarNovoPic(descPic, publicUrl);
+    //const resultado = await criarNovoPic(descPic, publicUrl);
 
-    if (resultado.success) {
+    /*if (resultado.success) {
       alert("Salvo com sucesso!");
       setIsModalOpenNewPic(false);
       setDescPic("");
@@ -126,7 +138,8 @@ export default function ContaPage() {
     } else {
       alert("Erro: " + resultado.error);
     }
-  };
+  };*/}
+  
 
   if (loading) {
     return (
@@ -226,7 +239,7 @@ export default function ContaPage() {
             </div>
           </div>
 
-          {/* Seção Meus Pictogramas Favoritos*/}
+          {/* Seção Pictogramas Favoritos*/}
           <div className="border border-foreground/10 rounded-3xl p-8 md:p-10 flex flex-col gap-8">
             <div className="flex flex-row items-center justify-between w-full gap-4 flex-nowrap">
               <h2 className="font-subtitle leading-[90%] text-foreground shrink">
@@ -326,11 +339,11 @@ export default function ContaPage() {
               </h2>
             </div>
 
-            {/* Exibição dos favoritos ou mensagem de vazio */}
-            {favoritos.length > 0 ? (
+            {/* Exibição dos mais usados ou mensagem de vazio */}
+            {maisUsados.length > 0 ? (
               <PictogramasGrid
                 q={null}
-                resultados={favoritos}
+                resultados={maisUsados}
                 categorias={[]}
                 limite={4}
               />

@@ -1,6 +1,7 @@
 "use server";
-import { Pictograma } from "@/arasaac api/arasaac";
+import { buscarPictogramaPorId, Pictograma } from "@/arasaac api/arasaac";
 import { supabase } from "@/lib/supabase";
+import { error } from "console";
 //import { buscarPictogramaPorId } from "@/arasaac api/arasaac";
 
 // Interface para garantir que o TS não reclame dos pictogramas
@@ -138,5 +139,48 @@ export async function pegarPicUser() {
   }
   catch(e){
     console.error("Deu erro: ", e);
+  }
+}
+
+export async function pegarFavoritosUser() {
+  try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { success: false, error: "Usuário não autenticado." };
+    }
+
+    const { data: favoritos, error: errorDb } = await supabase
+      .from("favorito")
+      .select("pictograma_id")
+      .eq("user_id", user.id);
+
+    if (errorDb) throw errorDb;
+
+    if (!favoritos || favoritos.length === 0) {
+      return { success: true, data: [] };
+    }
+
+    // pega os ids recebidos da nossa api e vai atrás das imagens na api da arasaac
+    const listaPromessas = favoritos.map(async (fav) => {
+      const dados = await buscarPictogramaPorId(fav.pictograma_id);
+      return dados; 
+    });
+
+    const resultadosArasaac = await Promise.all(listaPromessas);
+
+    //filtra o que é nulo (caso o fetch da arasaac tenha falhado ou retornado !res.ok)
+    const favoritosCompletos = resultadosArasaac.filter((item): item is Pictograma => item !== null);
+
+    if (favoritosCompletos)
+    return { success: true, data: favoritosCompletos }; 
+    
+    else return { success: false }
+  }
+  //FAVOR NÃO TIRAR ESSES COMENTÁRIOS "ESTRANHOS", MARIANA MARIETTI. ESTOU DE OLHO
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   catch (e: any) {
+    console.error("Erro ao pegar favoritos:", e);
+    return { success: false, error: e.message || "Erro inesperado" };
   }
 }
