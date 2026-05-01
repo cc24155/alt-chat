@@ -1,7 +1,7 @@
 "use server";
 import { buscarPictogramaPorId, Pictograma } from "@/arasaac api/arasaac";
 import { supabase } from "@/lib/supabase";
-import { error } from "console";
+
 //import { buscarPictogramaPorId } from "@/arasaac api/arasaac";
 
 // Interface para garantir que o TS não reclame dos pictogramas

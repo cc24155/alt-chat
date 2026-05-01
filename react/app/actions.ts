@@ -7,7 +7,7 @@ export async function EstaLogado() {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
 
         if (userError || !user) {
-            return { success: false };
+            return { success: false, id: user?.id };
         }
 
         return { success: true };

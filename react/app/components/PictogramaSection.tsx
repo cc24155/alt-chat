@@ -5,6 +5,7 @@ import { buscarPictogramas, buscarCategorias, Pictograma } from "../../arasaac a
 import { useSearchParams } from "next/navigation";
 
 import Button from "./Button";
+import { adicionarFavorito, excluirFavoritos } from "./actions";
 
 
 export function usePictogramas(nomes: string[]) {
@@ -100,7 +101,7 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
         ) : categorias && categorias.length > 0 ? (
           // Todas as categorias
           <div className="flex flex-col gap-12">
-            {categorias.map((cat) => (
+            {categorias.map((cat) => (  //tem que implementar algo para pegar a descrição(nome) se o pictograma for criado pelo user aqui
               <div key={cat.nome} className="max-w-[1200px] mx-auto w-full rounded-2xl p-6 flex items-center justify-center flex flex-col gap-4 bg-background shadow-figma transition-all cursor-pointer">
                 {/* categoria */}
                 <div
@@ -149,6 +150,7 @@ interface PicModalProps {
 }
 
 function PicModal({ pic, onClose }: PicModalProps) {
+  const [deuCerto, setDeuCerto] = useState(false);
   const imageUrl = `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`;
   const keyword = pic.keywords?.[0]?.keyword ?? "sem nome";         // primeira keyword como titulo
   const allKeywords = pic.keywords?.map((k) => k.keyword) ?? [];   // cria uma lista com todas as outras
@@ -160,6 +162,40 @@ function PicModal({ pic, onClose }: PicModalProps) {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);
+
+  async function handleToggleFavorite() {
+  console.log("CLICOU")
+ 
+  const estadoAnterior = favoritado;
+  const novoEstado = !favoritado;
+  
+  setFavoritado(novoEstado);
+
+  try {
+    const id = pic._id;
+    let res;
+
+    if (novoEstado) {
+      res = await adicionarFavorito(id);
+      console.log("Tentando adicionar...");
+    } else {
+      res = await excluirFavoritos(id);
+      console.log("Tentando excluir...");
+    }
+
+    if (!res.success) {
+      console.error("Deu erro: ", res.error);
+      throw new Error("Não deu certo");
+    }
+
+  } catch (error) {
+    console.error("Erro na operação:", error);
+    // Reverte o estado visual se a operação falhar
+    setFavoritado(estadoAnterior);
+    alert("Não foi possível salvar seu favorito. Tente novamente.");
+  }
+}
+ 
 
   return (
     <div
@@ -209,11 +245,11 @@ function PicModal({ pic, onClose }: PicModalProps) {
 
             {/* Coracao */}
             <button
-              onClick={() => setFavoritado(!favoritado)}
+              onClick={() => handleToggleFavorite()}
               className="flex items-center justify-center hover:scale-110 transition-all"
             >
               <img
-                src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}
+                src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
                 alt="Favoritar"
                 className={`w-6 h-6 transition-all icon-adaptive ${favoritado ? "shadow-figma" : ""
                   }`}
