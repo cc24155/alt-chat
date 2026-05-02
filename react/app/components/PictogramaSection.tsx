@@ -8,6 +8,8 @@ import Button from "./Button";
 import { adicionarFavorito, excluirFavoritos } from "./actions";
 
 
+
+
 export function usePictogramas(nomes: string[]) {
   const searchParams = useSearchParams();
   const q = searchParams.get("q");
@@ -36,8 +38,13 @@ export function usePictogramas(nomes: string[]) {
 
 // piccard
 
-export default function PicCard({ pic }: { pic: Pictograma }) {
+export default function PicCard({ pic, onUpdate }: { pic: Pictograma, onUpdate?: () => void }) {
   const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+    if (onUpdate) onUpdate(); // Avisa a página para recarregar
+
+  };
   const imagemExibida = pic.url_imagem 
     ? pic.url_imagem // Imagem do seu Supabase
     : `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`; // Imagem da Arasaac
@@ -59,9 +66,10 @@ export default function PicCard({ pic }: { pic: Pictograma }) {
       {open &&
         // chama a funcao (sobrepoe a tela e passa qual imagem deve abrir)
         <PicModal pic={pic}
+        isFavorited = {pic.favorito}
           // quando alquem clicar no botao de fechar, mude a variavel
-          onClose={() =>
-            setOpen(false)} />}
+          onClose={handleClose}
+      />}
     </>
   );
 }
@@ -147,15 +155,16 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
 interface PicModalProps {
   pic: Pictograma;
   onClose: () => void;
+  isFavorited?: boolean;
 }
 
-function PicModal({ pic, onClose }: PicModalProps) {
+function PicModal({ pic, onClose, isFavorited }: PicModalProps) {
   const [deuCerto, setDeuCerto] = useState(false);
   const imageUrl = `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`;
   const keyword = pic.keywords?.[0]?.keyword ?? "sem nome";         // primeira keyword como titulo
   const allKeywords = pic.keywords?.map((k) => k.keyword) ?? [];   // cria uma lista com todas as outras
 
-  const [favoritado, setFavoritado] = useState(false);
+  const [favoritado, setFavoritado] = useState(isFavorited ?? !!pic.favorito);
 
   // trava a rolagem da pagina que fica atras
   useEffect(() => {
@@ -164,18 +173,16 @@ function PicModal({ pic, onClose }: PicModalProps) {
   }, []);
 
   async function handleToggleFavorite() {
-  console.log("CLICOU")
- 
   const estadoAnterior = favoritado;
   const novoEstado = !favoritado;
   
-  setFavoritado(novoEstado);
+  setFavoritado(!novoEstado);
 
   try {
     const id = pic._id;
     let res;
 
-    if (novoEstado) {
+    if (!novoEstado) {
       res = await adicionarFavorito(id);
       console.log("Tentando adicionar...");
     } else {
@@ -186,6 +193,9 @@ function PicModal({ pic, onClose }: PicModalProps) {
     if (!res.success) {
       console.error("Deu erro: ", res.error);
       throw new Error("Não deu certo");
+    }
+    if (!novoEstado) {
+      onClose();
     }
 
   } catch (error) {
@@ -249,7 +259,7 @@ function PicModal({ pic, onClose }: PicModalProps) {
               className="flex items-center justify-center hover:scale-110 transition-all"
             >
               <img
-                src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
+                src={!favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
                 alt="Favoritar"
                 className={`w-6 h-6 transition-all icon-adaptive ${favoritado ? "shadow-figma" : ""
                   }`}

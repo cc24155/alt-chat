@@ -1,6 +1,7 @@
 "use server";
 import { supabase } from "@/lib/supabase";
 import { EstaLogado } from "../actions";
+import { Pictograma } from "@/arasaac api/arasaac";
 
 export async function adicionarFavorito(idPic: number) {
     try {
@@ -9,6 +10,9 @@ export async function adicionarFavorito(idPic: number) {
         if (!user) {
             return { success: false, error: "Sessão expirada." };
         }
+
+        const ehFav = await EFavorito(idPic);       //se é favorito não pode favoritar dnv
+        if (ehFav?.success) return { success: false, error: "Já é favorito." }
 
         const { error } = await supabase
             .from("favorito")
@@ -44,7 +48,7 @@ export async function excluirFavoritos(idPic: number) {
     }
 }
 
-export async function name(picId:number) {
+export async function EFavorito(picId:number) {
     try{
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return { success: false, error: "Sessão expirada." };
@@ -62,4 +66,28 @@ export async function name(picId:number) {
     catch (e: any) {
         return { success: false, error: e.message };
     }
+}
+
+export async function marcarFavoritos(pictogramas: Pictograma[]): Promise<Pictograma[]> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return pictogramas; // Se não estiver logado, ninguém é favorito
+
+    // Busca todos os IDs favoritos do usuário de uma vez só (Performance!)
+    const { data: favs } = await supabase
+      .from("favorito")
+      .select("pictograma_id")
+      .eq("user_id", user.id);
+
+    const idsFavoritos = new Set(favs?.map(f => f.pictograma_id) || []);
+
+    // Retorna os pictogramas com o campo 'favorito' preenchido
+    return pictogramas.map(pic => ({
+      ...pic,
+      favorito: idsFavoritos.has(pic._id)
+    }));
+  } catch (e) {
+    console.error("Erro ao marcar favoritos:", e);
+    return pictogramas;
+  }
 }

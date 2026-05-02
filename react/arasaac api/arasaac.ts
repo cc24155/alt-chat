@@ -4,6 +4,7 @@ export interface Pictograma {
   keywords: { keyword: string }[];
   url_imagem?: string;
   nome?: string;
+  favorito?: boolean;
 }
 
 export async function buscarPictogramas(q: string): Promise<Pictograma[]> {
