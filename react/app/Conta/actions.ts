@@ -170,7 +170,12 @@ export async function pegarFavoritosUser() {
     const resultadosArasaac = await Promise.all(listaPromessas);
 
     //filtra o que é nulo (caso o fetch da arasaac tenha falhado ou retornado !res.ok)
-    const favoritosCompletos = resultadosArasaac.filter((item): item is Pictograma => item !== null);
+    const favoritosCompletos = resultadosArasaac
+      .filter((item): item is Pictograma => item !== null)
+      .map((item) => ({
+        ...item,
+        favorito: true,
+      }));
 
     if (favoritosCompletos)
     return { success: true, data: favoritosCompletos }; 

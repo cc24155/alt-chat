@@ -76,15 +76,15 @@ export async function marcarFavoritos(pictogramas: Pictograma[]): Promise<Pictog
     // Busca todos os IDs favoritos do usuário de uma vez só (Performance!)
     const { data: favs } = await supabase
       .from("favorito")
-      .select("pictograma_id")
+      .select("pictograma_id")  
       .eq("user_id", user.id);
 
-    const idsFavoritos = new Set(favs?.map(f => f.pictograma_id) || []);
+    const idsFavoritos = new Set(favs?.map(f => String(f.pictograma_id)) || []);
 
     // Retorna os pictogramas com o campo 'favorito' preenchido
     return pictogramas.map(pic => ({
       ...pic,
-      favorito: idsFavoritos.has(pic._id)
+      favorito: idsFavoritos.has(String(pic._id))
     }));
   } catch (e) {
     console.error("Erro ao marcar favoritos:", e);

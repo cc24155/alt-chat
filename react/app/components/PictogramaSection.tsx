@@ -2,10 +2,10 @@
 import { useState, useEffect } from "react";
 
 import { buscarPictogramas, buscarCategorias, Pictograma } from "../../arasaac api/arasaac";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import Button from "./Button";
-import { adicionarFavorito, excluirFavoritos } from "./actions";
+import { adicionarFavorito, excluirFavoritos, marcarFavoritos } from "./actions";
 
 
 
@@ -22,11 +22,19 @@ export function usePictogramas(nomes: string[]) {
     const fetch_ = async () => {
       setLoading(true);
       if (q) {
-        setResultados(await buscarPictogramas(q));
-        setCategorias([]);
+        const rawPics = await buscarPictogramas(q);
+      // AQUI ENTRA ELA: Transforma a lista básica em uma lista com "status"
+        const picsComStatus = await marcarFavoritos(rawPics); 
+        setResultados(picsComStatus);
+        setCategorias([])
       } else {
-        setCategorias(await buscarCategorias(nomes));
-        setResultados([]);
+        const cats = await buscarCategorias(nomes);
+      // Para as categorias, você teria que percorrer cada uma:
+      const catsComStatus = await Promise.all(cats.map(async (cat) => ({
+        ...cat,
+        pictogramas: await marcarFavoritos(cat.pictogramas)
+      })));
+      setCategorias(catsComStatus);
       }
       setLoading(false);
     };
@@ -81,9 +89,10 @@ interface PictogramasGridProps {
   resultados: Pictograma[];
   categorias: { nome: string; pictogramas: Pictograma[] }[];
   limite?: number; // <- opcional, limita quantos aparecem
+  onUpdate?: () => void;
 }
 
-export function PictogramasGrid({ q, resultados, categorias, limite }: PictogramasGridProps) {
+export function PictogramasGrid({ q, resultados, categorias, limite, onUpdate }: PictogramasGridProps) {
   const [categoriaAberta, setCategoriaAberta] = useState<string | null>(null);
 
   return (
@@ -101,7 +110,7 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
             ) : (
               <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
                 {(limite ? resultados.slice(0, limite) : resultados).map((pic) => (
-                  <PicCard key={pic._id} pic={pic} />
+                  <PicCard key={pic._id} pic={pic} onUpdate={onUpdate} />
                 ))}
               </div>
             )}
@@ -125,7 +134,7 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
                   <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
                     {(limite ? cat.pictogramas.slice(0, limite) : cat.pictogramas).map((pic, index) => (
                       <div key={pic._id} className={index >= 4 ? "hidden md:block" : ""}>
-                        <PicCard pic={pic} />
+                        <PicCard pic={pic} onUpdate={onUpdate} />
                       </div>
                     ))}
                   </div>
@@ -137,7 +146,7 @@ export function PictogramasGrid({ q, resultados, categorias, limite }: Pictogram
           // MODO FAVORITOS: Se não for busca nem categoria, renderiza apenas a grade simples
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {(limite ? resultados.slice(0, limite) : resultados).map((pic) => (
-              <PicCard key={pic._id} pic={pic} />
+              <PicCard key={pic._id} pic={pic} onUpdate={onUpdate} />
             ))}
           </div>
         )}
@@ -164,7 +173,14 @@ function PicModal({ pic, onClose, isFavorited }: PicModalProps) {
   const keyword = pic.keywords?.[0]?.keyword ?? "sem nome";         // primeira keyword como titulo
   const allKeywords = pic.keywords?.map((k) => k.keyword) ?? [];   // cria uma lista com todas as outras
 
-  const [favoritado, setFavoritado] = useState(isFavorited ?? !!pic.favorito);
+  const [favoritado, setFavoritado] = useState(Boolean(isFavorited));
+  const router = useRouter();
+
+  useEffect(() => {
+    setFavoritado(Boolean(isFavorited));
+  }, [isFavorited]);
+
+  //precisa ver se tá favorito com o marcar favorito
 
   // trava a rolagem da pagina que fica atras
   useEffect(() => {
@@ -176,13 +192,13 @@ function PicModal({ pic, onClose, isFavorited }: PicModalProps) {
   const estadoAnterior = favoritado;
   const novoEstado = !favoritado;
   
-  setFavoritado(!novoEstado);
+  setFavoritado(novoEstado);
 
   try {
     const id = pic._id;
     let res;
 
-    if (!novoEstado) {
+    if (novoEstado) {
       res = await adicionarFavorito(id);
       console.log("Tentando adicionar...");
     } else {
@@ -194,15 +210,16 @@ function PicModal({ pic, onClose, isFavorited }: PicModalProps) {
       console.error("Deu erro: ", res.error);
       throw new Error("Não deu certo");
     }
-    if (!novoEstado) {
+    if (!novoEstado && window.location.pathname.includes('Conta')) {
       onClose();
     }
 
-  } catch (error) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     console.error("Erro na operação:", error);
     // Reverte o estado visual se a operação falhar
     setFavoritado(estadoAnterior);
-    alert("Não foi possível salvar seu favorito. Tente novamente.");
+    alert("Não foi possível salvar seu favorito. Tente novamente."+ error.message);
   }
 }
  
@@ -259,7 +276,7 @@ function PicModal({ pic, onClose, isFavorited }: PicModalProps) {
               className="flex items-center justify-center hover:scale-110 transition-all"
             >
               <img
-                src={!favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
+                src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
                 alt="Favoritar"
                 className={`w-6 h-6 transition-all icon-adaptive ${favoritado ? "shadow-figma" : ""
                   }`}
@@ -320,8 +337,10 @@ export function CategoriaModal({ nome, onClose }: CategoriaModalProps) {
 
   useEffect(() => {
     buscarPictogramas(nome).then((data) => {
-      setPics(data);
-      setLoading(false);
+      marcarFavoritos(data).then((picsComStatus) => {
+        setPics(picsComStatus);
+        setLoading(false);
+      });
     });
   }, [nome]);
 

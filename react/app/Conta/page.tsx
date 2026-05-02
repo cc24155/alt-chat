@@ -14,6 +14,7 @@ import Mensagem from "../components/Mensagem";
 import { EstaLogado } from "../actions";
 import { Pictograma } from "@/arasaac api/arasaac";
 import { throws } from "assert";
+import { marcarFavoritos } from "../components/actions";
 //import { error } from "console";
 
 interface Usuario {
@@ -52,9 +53,12 @@ export default function ContaPage() {
         //lógica para meus pictogramas
         if (resMeusPic?.success){
           if (resMeusPic.data) {
-            setMeusPic(resMeusPic.data);
-            const apenasUrls = meusPic.map(pic => pic.url_imaxgem);
-            const apenasDescricoes = meusPic.map(pic => pic.descricao);
+            const formatados = resMeusPic.data.map(p => ({
+              _id: p.id,
+              url_imagem: p.url_imagem,
+              keywords: [{ keyword: "Meu Pictograma" }] // keywords é obrigatório na sua interface
+            }));
+            setMeusPic(formatados);
           }
           else{
             console.log("Não conseguiu pegar os meus pictogramas");
@@ -86,6 +90,45 @@ export default function ContaPage() {
 
     carregarTudo();
   }, [router]);
+
+  // page.tsx
+  // Dentro da função ContaPage no seu arquivo page.tsx
+
+const atualizarDados = async () => {
+  // 1. Busca Favoritos
+  const resFavoritos = await pegarFavoritosUser();
+  if (resFavoritos.success && resFavoritos.data) {
+    // Forçamos favorito: true porque vêm da tabela de favoritos
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const favsFormatados = resFavoritos.data.map((p: any) => ({
+      ...p,
+      favorito: true
+    }));
+    setFavoritos(favsFormatados);
+  }
+
+  // 2. Busca Meus Pictogramas (Aqui corrigimos o erro da sua imagem)
+  const resMeusPic = await pegarPicUser();
+  if (resMeusPic?.success && resMeusPic.data) {
+    // MAPEAMENTO: Transformamos o retorno do banco no tipo Pictograma
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const meusPicsFormatados: Pictograma[] = resMeusPic.data.map((p: any) => ({
+      _id: p.id, // Transforma 'id' em '_id'
+      url_imagem: p.url_imagem,
+      keywords: [{ keyword: p.nome || "Meu Pictograma" }], // Cria a propriedade keywords exigida
+      favorito: false // Ou use marcarFavoritos(resMeusPic.data) se quiser checar
+    }));
+    
+    // Agora passamos pela moidinha para saber se algum "meu pic" foi favoritado
+    const marcados = await marcarFavoritos(meusPicsFormatados);
+    setMeusPic(marcados);
+  }
+};
+
+// O useEffect apenas chama a função ao carregar a página
+useEffect(() => {
+  atualizarDados();
+}, []);
 
   const handleButtonClick = async (e?: React.MouseEvent) =>{
     if (e) e.preventDefault();
@@ -254,6 +297,7 @@ export default function ContaPage() {
                 resultados={favoritos}
                 categorias={[]}
                 limite={4}
+                onUpdate={atualizarDados}
               />
             ) : (
               <div className="text-center py-16 font-body text-neutral opacity-60">
@@ -324,6 +368,7 @@ export default function ContaPage() {
                 resultados={meusPic}
                 categorias={[]}
                 limite={4}
+                onUpdate={atualizarDados}
               />
             ) : (
               <div className="text-center py-16 font-body text-neutral opacity-60">
@@ -347,6 +392,7 @@ export default function ContaPage() {
                 resultados={maisUsados}
                 categorias={[]}
                 limite={4}
+                onUpdate={atualizarDados}
               />
             ) : (
               <div className="text-center py-16 font-body text-neutral opacity-60">
