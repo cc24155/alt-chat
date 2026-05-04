@@ -49,9 +49,9 @@ export default function ContaPage() {
         const resUser = await buscarDadosUsuario();
         const resMeusPic = await pegarPicUser();
         const resFavoritos = await pegarFavoritosUser();
-        
+
         //lógica para meus pictogramas
-        if (resMeusPic?.success){
+        if (resMeusPic?.success) {
           if (resMeusPic.data) {
             const formatados = resMeusPic.data.map(p => ({
               _id: p.id,
@@ -60,11 +60,11 @@ export default function ContaPage() {
             }));
             setMeusPic(formatados);
           }
-          else{
+          else {
             console.log("Não conseguiu pegar os meus pictogramas");
           }
         }
-        
+
         //lógica para dados do usuário
         if (resUser.success) {
           if (resUser.dadosUser) {
@@ -74,15 +74,16 @@ export default function ContaPage() {
           setAcessoNegado(true);
         }
 
-        if (resFavoritos.success){
-          console.log("entrou no favoritos.success")
-          if (resFavoritos.data) setFavoritos(resFavoritos.data);
-          else console.log("Deu erro: o resFavoritos.data ta dando")
+        if (resFavoritos.success) {
+          if (resFavoritos.data) 
+            setFavoritos(resFavoritos.data);
+          else 
+            console.log("Deu erro: o resFavoritos.data ta dando")
         }
 
       } catch (err) {
         console.error("Erro ao carregar dados da conta:", err);
-      }  
+      }
       finally {
         setLoading(false);
       }
@@ -91,46 +92,43 @@ export default function ContaPage() {
     carregarTudo();
   }, [router]);
 
-  // page.tsx
-  // Dentro da função ContaPage no seu arquivo page.tsx
+  const atualizarDados = async () => {
+    // 1. Busca Favoritos
+    const resFavoritos = await pegarFavoritosUser();
+    if (resFavoritos.success && resFavoritos.data) {
+      // Forçamos favorito: true porque vêm da tabela de favoritos
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const favsFormatados = resFavoritos.data.map((p: any) => ({
+        ...p,
+        favorito: true
+      }));
+      setFavoritos(favsFormatados);
+    }
 
-const atualizarDados = async () => {
-  // 1. Busca Favoritos
-  const resFavoritos = await pegarFavoritosUser();
-  if (resFavoritos.success && resFavoritos.data) {
-    // Forçamos favorito: true porque vêm da tabela de favoritos
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const favsFormatados = resFavoritos.data.map((p: any) => ({
-      ...p,
-      favorito: true
-    }));
-    setFavoritos(favsFormatados);
-  }
+    // 2. Busca Meus Pictogramas
+    const resMeusPic = await pegarPicUser();
+    if (resMeusPic?.success && resMeusPic.data) {
+      // MAPEAMENTO: Transformamos o retorno do banco no tipo Pictograma
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const meusPicsFormatados: Pictograma[] = resMeusPic.data.map((p: any) => ({
+        _id: p.id, // Transforma 'id' em '_id'
+        url_imagem: p.url_imagem,
+        keywords: [{ keyword: p.nome || "Meu Pictograma" }], // Cria a propriedade keywords exigida
+        favorito: false // Ou use marcarFavoritos(resMeusPic.data) se quiser checar
+      }));
 
-  // 2. Busca Meus Pictogramas (Aqui corrigimos o erro da sua imagem)
-  const resMeusPic = await pegarPicUser();
-  if (resMeusPic?.success && resMeusPic.data) {
-    // MAPEAMENTO: Transformamos o retorno do banco no tipo Pictograma
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const meusPicsFormatados: Pictograma[] = resMeusPic.data.map((p: any) => ({
-      _id: p.id, // Transforma 'id' em '_id'
-      url_imagem: p.url_imagem,
-      keywords: [{ keyword: p.nome || "Meu Pictograma" }], // Cria a propriedade keywords exigida
-      favorito: false // Ou use marcarFavoritos(resMeusPic.data) se quiser checar
-    }));
-    
-    // Agora passamos pela moidinha para saber se algum "meu pic" foi favoritado
-    const marcados = await marcarFavoritos(meusPicsFormatados);
-    setMeusPic(marcados);
-  }
-};
+      // Agora passamos pela moidinha para saber se algum "meu pic" foi favoritado
+      const marcados = await marcarFavoritos(meusPicsFormatados);
+      setMeusPic(marcados);
+    }
+  };
 
-// O useEffect apenas chama a função ao carregar a página
-useEffect(() => {
-  atualizarDados();
-}, []);
+  // O useEffect apenas chama a função ao carregar a página
+  useEffect(() => {
+    atualizarDados();
+  }, []);
 
-  const handleButtonClick = async (e?: React.MouseEvent) =>{
+  const handleButtonClick = async (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     if (fileInputRef.current) {
       fileInputRef.current.click();   //pega por ref o input declarado la embaixo
@@ -183,7 +181,6 @@ useEffect(() => {
       alert("Erro: " + resultado.error);
     }
   };*/}
-  
 
   if (loading) {
     return (
@@ -193,6 +190,7 @@ useEffect(() => {
     );
   }
 
+  
   return (
     <div className="w-full min-h-screen bg-background">
       {acessoNegado && (
@@ -334,8 +332,8 @@ useEffect(() => {
                   textButton="Salvar"
                   onClick={handleSalvar}
                   onClose={() => setIsModalOpenNewPic(false)}
-                  >
-                  
+                >
+
                   <label className="font-body">Descrição do pictograma:</label>
                   <input
                     className="bg-transparent border-b border-foreground p-2"

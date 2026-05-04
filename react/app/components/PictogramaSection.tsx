@@ -8,8 +8,6 @@ import Button from "./Button";
 import { adicionarFavorito, excluirFavoritos, marcarFavoritos } from "./actions";
 
 
-
-
 export function usePictogramas(nomes: string[]) {
   const searchParams = useSearchParams();
   const q = searchParams.get("q");
@@ -23,18 +21,18 @@ export function usePictogramas(nomes: string[]) {
       setLoading(true);
       if (q) {
         const rawPics = await buscarPictogramas(q);
-      // AQUI ENTRA ELA: Transforma a lista básica em uma lista com "status"
-        const picsComStatus = await marcarFavoritos(rawPics); 
+        // Transforma a lista básica em uma lista com "status"
+        const picsComStatus = await marcarFavoritos(rawPics);
         setResultados(picsComStatus);
         setCategorias([])
       } else {
         const cats = await buscarCategorias(nomes);
-      // Para as categorias, você teria que percorrer cada uma:
-      const catsComStatus = await Promise.all(cats.map(async (cat) => ({
-        ...cat,
-        pictogramas: await marcarFavoritos(cat.pictogramas)
-      })));
-      setCategorias(catsComStatus);
+        // Para as categorias, você teria que percorrer cada uma:
+        const catsComStatus = await Promise.all(cats.map(async (cat) => ({
+          ...cat,
+          pictogramas: await marcarFavoritos(cat.pictogramas)
+        })));
+        setCategorias(catsComStatus);
       }
       setLoading(false);
     };
@@ -50,10 +48,8 @@ export default function PicCard({ pic, onUpdate }: { pic: Pictograma, onUpdate?:
   const [open, setOpen] = useState(false);
   const handleClose = () => {
     setOpen(false);
-    if (onUpdate) onUpdate(); // Avisa a página para recarregar
-
   };
-  const imagemExibida = pic.url_imagem 
+  const imagemExibida = pic.url_imagem
     ? pic.url_imagem // Imagem do seu Supabase
     : `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`; // Imagem da Arasaac
 
@@ -73,11 +69,12 @@ export default function PicCard({ pic, onUpdate }: { pic: Pictograma, onUpdate?:
       {/* se estiver aberto*/}
       {open &&
         // chama a funcao (sobrepoe a tela e passa qual imagem deve abrir)
-        <PicModal pic={pic}
-        isFavorited = {pic.favorito}
-          // quando alquem clicar no botao de fechar, mude a variavel
-          onClose={handleClose}
-      />}
+        <PicModal 
+          pic={pic}
+          isFavorited={pic.favorito}
+          onClose={handleClose} // quando alquem clicar no botao de fechar, mude a variavel
+          onUpdate={onUpdate}
+        />}
     </>
   );
 }
@@ -164,10 +161,11 @@ export function PictogramasGrid({ q, resultados, categorias, limite, onUpdate }:
 interface PicModalProps {
   pic: Pictograma;
   onClose: () => void;
+  onUpdate?: () => void;
   isFavorited?: boolean;
 }
 
-function PicModal({ pic, onClose, isFavorited }: PicModalProps) {
+function PicModal({ pic, onClose, isFavorited, onUpdate }: PicModalProps) {
   const [deuCerto, setDeuCerto] = useState(false);
   const imageUrl = `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`;
   const keyword = pic.keywords?.[0]?.keyword ?? "sem nome";         // primeira keyword como titulo
@@ -189,40 +187,34 @@ function PicModal({ pic, onClose, isFavorited }: PicModalProps) {
   }, []);
 
   async function handleToggleFavorite() {
-  const estadoAnterior = favoritado;
-  const novoEstado = !favoritado;
-  
-  setFavoritado(novoEstado);
+    const estadoAnterior = favoritado;
+    const novoEstado = !favoritado;
 
-  try {
-    const id = pic._id;
-    let res;
+    setFavoritado(novoEstado);
 
-    if (novoEstado) {
-      res = await adicionarFavorito(id);
-      console.log("Tentando adicionar...");
-    } else {
-      res = await excluirFavoritos(id);
-      console.log("Tentando excluir...");
+    try {  
+      const res = novoEstado
+      ? await adicionarFavorito(pic._id)
+      : await excluirFavoritos(pic._id);
+
+      if (!res.success) {
+        setFavoritado(estadoAnterior);
+        throw new Error("Não deu certo");
+      }
+      if (!novoEstado && window.location.pathname.includes('Conta')) {
+        onClose();
+         if (onUpdate) onUpdate();
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error("Erro na operação:", error);
+      // Reverte o estado visual se a operação falhar
+      setFavoritado(estadoAnterior);
+      alert("Não foi possível salvar seu favorito. Tente novamente. " + error.message);
     }
-
-    if (!res.success) {
-      console.error("Deu erro: ", res.error);
-      throw new Error("Não deu certo");
-    }
-    if (!novoEstado && window.location.pathname.includes('Conta')) {
-      onClose();
-    }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    console.error("Erro na operação:", error);
-    // Reverte o estado visual se a operação falhar
-    setFavoritado(estadoAnterior);
-    alert("Não foi possível salvar seu favorito. Tente novamente."+ error.message);
   }
-}
- 
+
 
   return (
     <div

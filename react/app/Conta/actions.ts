@@ -120,7 +120,7 @@ export async function criarNovoPic(desc: string, img: File) {
 }
 
 export async function pegarPicUser() {
-  try{
+  try {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
     if (userError || !user) {
@@ -132,12 +132,12 @@ export async function pegarPicUser() {
       .select("url_imagem, id")
       .eq("id_user", user.id)
 
-    if (data && !error){
-      return{ success: true, data: data };
+    if (data && !error) {
+      return { success: true, data: data };
     }
-    return {success: false, data: null};
+    return { success: false, data: null };
   }
-  catch(e){
+  catch (e) {
     console.error("Deu erro: ", e);
   }
 }
@@ -152,7 +152,7 @@ export async function pegarFavoritosUser() {
 
     const { data: favoritos, error: errorDb } = await supabase
       .from("favorito")
-      .select("pictograma_id")
+      .select("pictograma_id, usuario_pictograma_id")
       .eq("user_id", user.id);
 
     if (errorDb) throw errorDb;
@@ -164,7 +164,7 @@ export async function pegarFavoritosUser() {
     // pega os ids recebidos da nossa api e vai atrás das imagens na api da arasaac
     const listaPromessas = favoritos.map(async (fav) => {
       const dados = await buscarPictogramaPorId(fav.pictograma_id);
-      return dados; 
+      return dados;
     });
 
     const resultadosArasaac = await Promise.all(listaPromessas);
@@ -178,13 +178,13 @@ export async function pegarFavoritosUser() {
       }));
 
     if (favoritosCompletos)
-    return { success: true, data: favoritosCompletos }; 
-    
+      return { success: true, data: favoritosCompletos };
+
     else return { success: false }
   }
   //FAVOR NÃO TIRAR ESSES COMENTÁRIOS "ESTRANHOS", MARIANA MARIETTI. ESTOU DE OLHO
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   catch (e: any) {
+  catch (e: any) {
     console.error("Erro ao pegar favoritos:", e);
     return { success: false, error: e.message || "Erro inesperado" };
   }
