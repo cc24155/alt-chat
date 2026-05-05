@@ -225,7 +225,7 @@ export default function ContaPage() {
   }
 
 
-  const handleUploadAvatar = async () => {
+  const handleUploadAvatar = async (file: File) => {
     if (!selectedFile || !descPic) {
       alert("Preencha a descrição e selecione uma imagem!");
       return;
