@@ -42,7 +42,7 @@ export default function Mensagem({ title, text, showInput, inputType, inputPlace
         <div className="flex flex-col gap-3">
           <Button
             text={textButton}
-            className="w-full py-4 !rounded-full font-bold bg-primary"
+            className="w-full py-4 !rounded-full font-bold bg-primary !text-background"
             onClick={onClick}
           />
 

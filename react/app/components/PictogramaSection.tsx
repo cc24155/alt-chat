@@ -2,10 +2,10 @@
 import { useState, useEffect } from "react";
 
 import { buscarPictogramas, buscarCategorias, Pictograma } from "../../arasaac api/arasaac";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import Button from "./Button";
-import { adicionarFavorito, excluirFavoritos, marcarFavoritos } from "./actions";
+import { adicionarFavorito, excluirFavoritos, marcarFavoritos, excluirPicProprio } from "./actions";
 
 
 export function usePictogramas(nomes: string[]) {
@@ -69,7 +69,7 @@ export default function PicCard({ pic, onUpdate }: { pic: Pictograma, onUpdate?:
       {/* se estiver aberto*/}
       {open &&
         // chama a funcao (sobrepoe a tela e passa qual imagem deve abrir)
-        <PicModal 
+        <PicModal
           pic={pic}
           isFavorited={pic.favorito}
           onClose={handleClose} // quando alquem clicar no botao de fechar, mude a variavel
@@ -166,13 +166,11 @@ interface PicModalProps {
 }
 
 function PicModal({ pic, onClose, isFavorited, onUpdate }: PicModalProps) {
-  const [deuCerto, setDeuCerto] = useState(false);
-  const imageUrl = `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`;
   const keyword = pic.keywords?.[0]?.keyword ?? "sem nome";         // primeira keyword como titulo
   const allKeywords = pic.keywords?.map((k) => k.keyword) ?? [];   // cria uma lista com todas as outras
+  const origem = pic.origem ?? (pic.url_imagem ? "usuario" : "arasaac");
 
   const [favoritado, setFavoritado] = useState(Boolean(isFavorited));
-  const router = useRouter();
 
   useEffect(() => {
     setFavoritado(Boolean(isFavorited));
@@ -186,16 +184,30 @@ function PicModal({ pic, onClose, isFavorited, onUpdate }: PicModalProps) {
     return () => { document.body.style.overflow = ""; };
   }, []);
 
+  useEffect(() => {
+    async function verificarFavorito() {
+      if (!pic._id) return;
+      const { EFavorito } = await import("./actions");
+      const res = await EFavorito(pic._id, origem);
+      if (res?.success) {
+        setFavoritado(true);
+      } else if (!isFavorited) {
+        setFavoritado(false);
+      }
+    }
+    verificarFavorito();
+  }, [pic._id, origem, isFavorited]); // roda toda vez que um modal abre
+
   async function handleToggleFavorite() {
     const estadoAnterior = favoritado;
     const novoEstado = !favoritado;
 
     setFavoritado(novoEstado);
 
-    try {  
+    try {
       const res = novoEstado
-      ? await adicionarFavorito(pic._id)
-      : await excluirFavoritos(pic._id);
+        ? await adicionarFavorito(pic._id, origem)
+        : await excluirFavoritos(pic._id, origem);
 
       if (!res.success) {
         setFavoritado(estadoAnterior);
@@ -203,7 +215,9 @@ function PicModal({ pic, onClose, isFavorited, onUpdate }: PicModalProps) {
       }
       if (!novoEstado && window.location.pathname.includes('Conta')) {
         onClose();
-         if (onUpdate) onUpdate();
+        if (onUpdate) onUpdate();
+      } else {
+        if (onUpdate) onUpdate();
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -215,6 +229,24 @@ function PicModal({ pic, onClose, isFavorited, onUpdate }: PicModalProps) {
     }
   }
 
+  async function handleDelete() {
+    try {
+      const res = await excluirPicProprio(pic._id);
+      if (res.success) {
+        onClose();
+        if (onUpdate) onUpdate();
+      } else {
+        alert("Erro ao excluir: " + res.error);
+      }
+    } catch (error) {
+      console.error("Erro ao deletar:", error);
+    }
+  }
+
+  const imagemExibida = pic.url_imagem
+    ? pic.url_imagem
+    : `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`;
+  
 
   return (
     <div
@@ -247,7 +279,7 @@ function PicModal({ pic, onClose, isFavorited, onUpdate }: PicModalProps) {
         {/* Imagem */}
         <div className="flex items-center justify-center bg-neutral/10 mx-8 rounded-2xl p-8 aspect-square max-h-72">
           <img
-            src={imageUrl}
+            src={imagemExibida}
             alt={keyword}
             className="w-full h-full object-contain"
           />
@@ -262,20 +294,38 @@ function PicModal({ pic, onClose, isFavorited, onUpdate }: PicModalProps) {
               {keyword}
             </h2>
 
-            {/* Coracao */}
-            <button
-              onClick={() => handleToggleFavorite()}
-              className="flex items-center justify-center hover:scale-110 transition-all"
-            >
-              <img
-                src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
-                alt="Favoritar"
-                className={`w-6 h-6 transition-all icon-adaptive ${favoritado ? "shadow-figma" : ""
-                  }`}
-              />
-            </button>
-          </div>
+            <div className="flex items-center gap-2">
+              {/* Coracao */}
+              <button
+                onClick={() => handleToggleFavorite()}
+                className="flex items-center justify-center hover:scale-110 transition-all"
+              >
+                <img
+                  src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
+                  alt="Favoritar"
+                  className={`w-6 h-6 transition-all icon-adaptive ${favoritado ? "shadow-figma" : ""
+                    }`}
+                />
+              </button>
 
+              {/* Lixeira */}
+              {origem === "usuario" && (
+                <button
+                  onClick={handleDelete}
+                  className="flex items-center justify-center hover:scale-110 transition-all p-2 rounded-full"
+                  title="Excluir pictograma"
+                >
+                  <img
+                    src="/Trash.png" // Certifique-se de ter esse ícone na pasta public
+                    alt="Excluir"
+                    className="w-6 h-6 icon-adaptive
+                  hover:content-[url('/Trash-open.png')]"
+                  />
+                </button>
+              )}
+            </div>
+          </div>
+            
           {/* Palavras-chave */}
           <div className="flex flex-col gap-2">
             <InfoBox label="Palavras-chave" value={

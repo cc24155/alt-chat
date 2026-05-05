@@ -43,7 +43,7 @@ export default function BibliotecaPage() {
     return <div className="text-foreground text-center py-20">Carregando...</div>;
 
   const qualBarraNavegacao = logado ? <NavigationBlue /> : <NavBar />;
-  console.log(logado);
+
   //se é true, navigationblue, se não é, navbar
 
   return (

@@ -81,7 +81,7 @@ export async function criarNovoPic(desc: string, img: File) {
     // 1. Fazer o Upload da imagem para o Storage
     // Criamos um nome único para evitar conflitos (ex: timestamp + nome original)
     const fileName = `${Date.now()}-${img.name}`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('pictogramas') //bucket do supabase (a gnt só aceita)
       .upload(`usuarios/${user.id}/${fileName}`, img);
 
@@ -129,13 +129,22 @@ export async function pegarPicUser() {
 
     const { data: data, error: error } = await supabase
       .from("usuario_pictograma")
-      .select("url_imagem, id")
+      .select("url_imagem, id, descricao")
       .eq("id_user", user.id)
 
-    if (data && !error) {
-      return { success: true, data: data };
+    if (error || !data) {
+      return { success: false, error: error?.message || "Erro ao buscar pictogramas" };
     }
-    return { success: false, data: null };
+
+    const formatados = data.map((p: { id: number | string; url_imagem: string; descricao: string | null; }) => ({
+      _id: p.id,    // transformamos id em _id para o componente PicCard
+      url_imagem: p.url_imagem,
+      keywords: [{ keyword: p.descricao || "Meu Pictograma" }],
+      favorito: false,
+      origem: "usuario" as const
+    }));
+
+    return { success: true, data: formatados };
   }
   catch (e) {
     console.error("Deu erro: ", e);
@@ -163,8 +172,34 @@ export async function pegarFavoritosUser() {
 
     // pega os ids recebidos da nossa api e vai atrás das imagens na api da arasaac
     const listaPromessas = favoritos.map(async (fav) => {
-      const dados = await buscarPictogramaPorId(fav.pictograma_id);
-      return dados;
+      // Se tem usuario_pictograma_id, busca do Supabase
+      if (fav.usuario_pictograma_id) {
+        const { data } = await supabase
+          .from("usuario_pictograma")
+          .select("id, url_imagem, descricao")
+          .eq("id", fav.usuario_pictograma_id)
+          .single();
+
+        if (!data) return null;
+
+        // Monta um objeto no formato Pictograma para ser compatível com o PicCard
+        return {
+          _id: data.id,
+          url_imagem: data.url_imagem,
+          keywords: [{ keyword: data.descricao ?? "pictograma próprio" }],
+          favorito: true,
+          origem: "usuario",
+        } as Pictograma;
+      }
+
+      // Se tem pictograma_id, busca da Arasaac
+      if (fav.pictograma_id) {
+        const dados = await buscarPictogramaPorId(fav.pictograma_id);
+        if (!dados) return null;
+        return { ...dados, favorito: true, origem: "arasaac" } as Pictograma;
+      }
+
+      return null;
     });
 
     const resultadosArasaac = await Promise.all(listaPromessas);
@@ -172,10 +207,9 @@ export async function pegarFavoritosUser() {
     //filtra o que é nulo (caso o fetch da arasaac tenha falhado ou retornado !res.ok)
     const favoritosCompletos = resultadosArasaac
       .filter((item): item is Pictograma => item !== null)
-      .map((item) => ({
-        ...item,
-        favorito: true,
-      }));
+      .filter((item, index, self) =>
+        index === self.findIndex(p => String(p._id) === String(item._id))
+      );
 
     if (favoritosCompletos)
       return { success: true, data: favoritosCompletos };

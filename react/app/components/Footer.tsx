@@ -18,7 +18,9 @@ export default function Footer({ }: FooterProps) {
             <img className="theme-image w-20" alt="logotipo" />
           </Link>
           <span className="font-body font-normal tracking-[-0.075px] text-foreground">
-            © 2026 ALT-CHAT. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} ALT-CHAT. Todos os direitos reservados.
+            <br />
+            Créditos à ARASAAC por fornecer os pictogramas utilizados neste projeto.
           </span>
         </div>
       </div>

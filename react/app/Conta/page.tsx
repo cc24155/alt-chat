@@ -54,10 +54,11 @@ export default function ContaPage() {
         if (resMeusPic?.success) {
           if (resMeusPic.data) {
             const formatados = resMeusPic.data.map(p => ({
-              _id: p.id,
-              url_imagem: p.url_imagem,
-              keywords: [{ keyword: "Meu Pictograma" }] // keywords é obrigatório na sua interface
-            }));
+                _id: p._id,
+                url_imagem: p.url_imagem,
+                keywords: p.keywords ?? [{ keyword: "Meu Pictograma" }], // keywords é obrigatório na sua interface
+                origem: "usuario" as const
+              }));
             setMeusPic(formatados);
           }
           else {
@@ -93,33 +94,41 @@ export default function ContaPage() {
   }, [router]);
 
   const atualizarDados = async () => {
-    // 1. Busca Favoritos
-    const resFavoritos = await pegarFavoritosUser();
-    if (resFavoritos.success && resFavoritos.data) {
-      // Forçamos favorito: true porque vêm da tabela de favoritos
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const favsFormatados = resFavoritos.data.map((p: any) => ({
-        ...p,
-        favorito: true
-      }));
-      setFavoritos(favsFormatados);
-    }
+    setLoading(true);
+    try {
+      // 1. Busca Favoritos
+      const resFavoritos = await pegarFavoritosUser();
+      if (resFavoritos.success && resFavoritos.data) {
+        // Forçamos favorito: true porque vêm da tabela de favoritos
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const favsFormatados = resFavoritos.data.map((p: any) => ({
+          ...p,
+          favorito: true
+        }));
+        setFavoritos(favsFormatados);
+      }
 
-    // 2. Busca Meus Pictogramas
-    const resMeusPic = await pegarPicUser();
-    if (resMeusPic?.success && resMeusPic.data) {
-      // MAPEAMENTO: Transformamos o retorno do banco no tipo Pictograma
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const meusPicsFormatados: Pictograma[] = resMeusPic.data.map((p: any) => ({
-        _id: p.id, // Transforma 'id' em '_id'
-        url_imagem: p.url_imagem,
-        keywords: [{ keyword: p.nome || "Meu Pictograma" }], // Cria a propriedade keywords exigida
-        favorito: false // Ou use marcarFavoritos(resMeusPic.data) se quiser checar
-      }));
+      // 2. Busca Meus Pictogramas
+      const resMeusPic = await pegarPicUser();
+      if (resMeusPic?.success && resMeusPic.data) {
+        // MAPEAMENTO: Transformamos o retorno do banco no tipo Pictograma
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const meusPicsFormatados: Pictograma[] = resMeusPic.data.map((p: any) => ({
+          _id: p._id,
+          url_imagem: p.url_imagem,
+          keywords: p.keywords ?? [{ keyword: p.descricao || "Meu Pictograma" }], // Cria a propriedade keywords exigida
+          favorito: false, // Ou use marcarFavoritos(resMeusPic.data) se quiser checar
+          origem: "usuario"
+        }));
 
-      // Agora passamos pela moidinha para saber se algum "meu pic" foi favoritado
-      const marcados = await marcarFavoritos(meusPicsFormatados);
-      setMeusPic(marcados);
+        // Agora passamos pela moidinha para saber se algum "meu pic" foi favoritado
+        const marcados = await marcarFavoritos(meusPicsFormatados);
+        setMeusPic(marcados);
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar dados:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -144,6 +153,31 @@ export default function ContaPage() {
       return;
     }
 
+    try {
+      setLoading(true); // Opcional: mostrar loading durante o envio
+
+      // Chama a função do servidor passando a descrição e o arquivo File
+      const resultado = await criarNovoPic(descPic, selectedFile);
+
+      if (resultado.success) {
+        alert("Salvo com sucesso!");
+        setIsModalOpenNewPic(false);
+        setDescPic("");
+        setSelectedFile(null);
+
+        // Atualiza a lista na tela imediatamente
+        await atualizarDados();
+      } else {
+        alert("Erro: " + resultado.error);
+      }
+    } catch (err) {
+      console.error("Erro ao salvar:", err);
+      alert("Erro inesperado ao salvar pictograma.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
     // 1. Pega o usuário logado no cliente
     /*const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) {
@@ -152,7 +186,7 @@ export default function ContaPage() {
     }*/
 
     // 2. Upload direto do browser pro Supabase Storage (não passa pelo Next.js)
-    const fileName = `${Date.now()}-${selectedFile.name}`;
+    // const fileName = `${Date.now()}-${selectedFile.name}`;
     /*const { error: uploadError } = await supabaseClient.storage
       .from('pictogramas')
       .upload(`usuarios/${user.id}/${fileName}`, selectedFile);
@@ -180,7 +214,7 @@ export default function ContaPage() {
     } else {
       alert("Erro: " + resultado.error);
     }
-  };*/}
+  };*/
 
   if (loading) {
     return (
@@ -190,7 +224,39 @@ export default function ContaPage() {
     );
   }
 
-  
+
+  const handleUploadAvatar = async () => {
+    if (!selectedFile || !descPic) {
+      alert("Preencha a descrição e selecione uma imagem!");
+      return;
+    }
+
+    try {
+      setLoading(true); // Opcional: mostrar loading durante o envio
+
+      // Chama a função do servidor passando a descrição e o arquivo File
+      const resultado = await criarNovoPic(descPic, selectedFile);
+
+      if (resultado.success) {
+        alert("Salvo com sucesso!");
+        setIsModalOpenNewPic(false);
+        setDescPic("");
+        setSelectedFile(null);
+
+        // Atualiza a lista na tela imediatamente
+        await atualizarDados();
+      } else {
+        alert("Erro: " + resultado.error);
+      }
+    } catch (err) {
+      console.error("Erro ao salvar:", err);
+      alert("Erro inesperado ao salvar pictograma.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div className="w-full min-h-screen bg-background">
       {acessoNegado && (
@@ -251,7 +317,7 @@ export default function ContaPage() {
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        // handleUploadAvatar(file);
+                        handleUploadAvatar(file);
                       }
                     }}
                   />
@@ -333,7 +399,6 @@ export default function ContaPage() {
                   onClick={handleSalvar}
                   onClose={() => setIsModalOpenNewPic(false)}
                 >
-
                   <label className="font-body">Descrição do pictograma:</label>
                   <input
                     className="bg-transparent border-b border-foreground p-2"
@@ -365,7 +430,7 @@ export default function ContaPage() {
                 q={null}
                 resultados={meusPic}
                 categorias={[]}
-                limite={4}
+                //limite={4}
                 onUpdate={atualizarDados}
               />
             ) : (

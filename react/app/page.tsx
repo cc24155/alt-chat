@@ -7,6 +7,8 @@ import Contato from "../app/components/Contato";
 import Footer from "../app/components/Footer";
 import Link from "next/link";
 import NavBar from "./components/NavBar";
+import NavigationBlue from "./components/NavigationBlue";
+import { EstaLogado } from "./actions";
 
 
 // navbar
@@ -336,9 +338,27 @@ const CitacaoSection = () => {
 
 
 export const Box = (): JSX.Element => {
+  const [logado, setLogado] = useState<boolean | null>(null); // null significa "carregando"
+
+  useEffect(() => {
+    const verificarLogin = async () => {
+      try {
+        const result = await EstaLogado();
+        setLogado(!!result?.success); // o primeiro ! inverte o valor, e o segundo transforma coisas que não são booleanos em booleanos também
+      } // exemplo: valor inicial : null    1ª exclamação:  true    2ª exclamação: false
+      catch (e) {
+        console.error("Deu erro: ", e);
+        setLogado(false);
+      }
+    };
+    verificarLogin();
+  }, []);
+
+  const qualBarraNavegacao = logado ? <NavigationBlue /> : <NavBar />;
+  
   return (
     <div className="w-full min-h-screen bg-background">
-      <NavBar />
+      {qualBarraNavegacao}
       <main>
         <HeroSection />
         <ContextoSection />
