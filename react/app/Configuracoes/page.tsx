@@ -157,7 +157,7 @@ const Config = () => {
             placeholder={usuario?.nome?.trim()}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="max-w-[330px] ml-auto px-2 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
+            className="max-w-[330px] ml-auto px-4 py-2 flex-1 w-full bg-transparent border-b border-foreground focus:ring-foreground placeholder:text-neutral font-body text-foreground"
           />
         </div>
 

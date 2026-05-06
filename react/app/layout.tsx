@@ -51,7 +51,20 @@ export default function RootLayout({
           `}} />
       </head>
       {/* garante que o corpo ocupe pelo menos a altura da tela/layout flex vertical */}
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/* Video de fundo */}
+        {/* <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="fixed top-0 left-0 w-full h-full object-cover -z-20 opacity-10"
+        >
+          <source src="/background.mp4" type="video/mp4" />
+        </video> */}
+
+        {children}
+      </body>
     </html>
   );
 };
