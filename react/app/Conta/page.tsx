@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
-import { buscarDadosUsuario, criarNovoPic, pegarFavoritosUser, pegarPicUser } from "./actions";
+import { buscarDadosUsuario, criarNovoPic, pegarFavoritosUser, pegarPicUser, trocarFotoPerfil } from "./actions";
 
 import { PictogramasGrid } from "../components/PictogramaSection";
 import Button from "../components/Button";
@@ -15,6 +15,7 @@ import { EstaLogado } from "../actions";
 import { Pictograma } from "@/arasaac api/arasaac";
 import { throws } from "assert";
 import { marcarFavoritos } from "../components/actions";
+import { supabase } from "@/lib/supabase";
 //import { error } from "console";
 
 interface Usuario {
@@ -41,6 +42,7 @@ export default function ContaPage() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   //tem que fazer tipo um usuario para mostrar os pictogramas feitos pelo usuário na pagina
   const [acessoNegado, setAcessoNegado] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const carregarTudo = async () => {
@@ -70,6 +72,7 @@ export default function ContaPage() {
         if (resUser.success) {
           if (resUser.dadosUser) {
             setUsuario(resUser.dadosUser);
+            setUserId(resUser.userId);
           }
         } else {
           setAcessoNegado(true);
@@ -96,6 +99,11 @@ export default function ContaPage() {
   const atualizarDados = async () => {
     setLoading(true);
     try {
+      const resUser = await buscarDadosUsuario();
+      if (resUser.success && resUser.dadosUser) {
+        setUsuario(resUser.dadosUser);
+      }
+      
       // 1. Busca Favoritos
       const resFavoritos = await pegarFavoritosUser();
       if (resFavoritos.success && resFavoritos.data) {
@@ -178,44 +186,6 @@ export default function ContaPage() {
     }
   };
 
-    // 1. Pega o usuário logado no cliente
-    /*const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) {
-      alert("Usuário não autenticado.");
-      return;
-    }*/
-
-    // 2. Upload direto do browser pro Supabase Storage (não passa pelo Next.js)
-    // const fileName = `${Date.now()}-${selectedFile.name}`;
-    /*const { error: uploadError } = await supabaseClient.storage
-      .from('pictogramas')
-      .upload(`usuarios/${user.id}/${fileName}`, selectedFile);
-
-    if (uploadError) {
-      alert("Erro no upload: " + uploadError.message);
-      return;
-    }*/
-
-    // 3. Pega a URL pública
-    /*const { data: { publicUrl } } = supabaseClient.storage
-      .from('pictogramas')
-      .getPublicUrl(`usuarios/${user.id}/${fileName}`);
-    */
-    // 4. Salva só a URL (string) na Server Action
-    //const resultado = await criarNovoPic(descPic, publicUrl);
-
-    /*if (resultado.success) {
-      alert("Salvo com sucesso!");
-      setIsModalOpenNewPic(false);
-      setDescPic("");
-      setSelectedFile(null);
-      const resMeusPic = await pegarPicUser();
-      if (resMeusPic?.success && resMeusPic.data) setMeusPic(resMeusPic.data);
-    } else {
-      alert("Erro: " + resultado.error);
-    }
-  };*/
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
@@ -224,33 +194,41 @@ export default function ContaPage() {
     );
   }
 
-
   const handleUploadAvatar = async (file: File) => {
-    if (!selectedFile || !descPic) {
-      alert("Preencha a descrição e selecione uma imagem!");
-      return;
-    }
-
     try {
-      setLoading(true); // Opcional: mostrar loading durante o envio
+      setLoading(true);
 
-      // Chama a função do servidor passando a descrição e o arquivo File
-      const resultado = await criarNovoPic(descPic, selectedFile);
+      if (!userId) {
+        alert("Usuário não autenticado.");
+        return;
+      }
+
+      const ext = file.name.split('.').pop();
+      const fileName = `usuarios/${userId}/avatar-${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('pictogramas')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) {
+        alert("Erro no upload: " + uploadError.message);
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('pictogramas')
+        .getPublicUrl(fileName);
+
+      const resultado = await trocarFotoPerfil(publicUrl);
 
       if (resultado.success) {
-        alert("Salvo com sucesso!");
-        setIsModalOpenNewPic(false);
-        setDescPic("");
-        setSelectedFile(null);
-
-        // Atualiza a lista na tela imediatamente
         await atualizarDados();
       } else {
         alert("Erro: " + resultado.error);
       }
     } catch (err) {
       console.error("Erro ao salvar:", err);
-      alert("Erro inesperado ao salvar pictograma.");
+      alert("Erro inesperado.");
     } finally {
       setLoading(false);
     }

@@ -46,7 +46,8 @@ export async function buscarDadosUsuario() {
     return {
       success: true,
       dadosUser: dataUser,
-      favoritos: pictogramasCompletos as Pictograma[]
+      favoritos: pictogramasCompletos as Pictograma[],
+      userId: user.id
     };
 
   } catch (e) {
@@ -221,5 +222,25 @@ export async function pegarFavoritosUser() {
   catch (e: any) {
     console.error("Erro ao pegar favoritos:", e);
     return { success: false, error: e.message || "Erro inesperado" };
+  }
+}
+
+
+export async function trocarFotoPerfil(publicUrl: string) {
+  try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return { success: false, error: "Usuário não autenticado." };
+    }
+    const { error: dbError } = await supabase
+      .from('usuario')
+      .update({ avatar_url: publicUrl })
+      .eq('id', user.id);
+
+    if (dbError) return { success: false, error: "Erro ao salvar no banco." };
+
+    return { success: true, url: publicUrl };
+  } catch (e) {
+    return { success: false, error: "Erro inesperado." };
   }
 }
