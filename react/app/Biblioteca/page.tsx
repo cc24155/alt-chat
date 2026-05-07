@@ -9,9 +9,13 @@ import { EstaLogado } from "../actions";
 
 import { usePictogramas, PictogramasGrid } from "../components/PictogramaSection";
 import NavBar from "../components/NavBar";
+import Button from "../components/Button";
+import { useRouter } from "next/navigation";
 
 
 export default function BibliotecaPage() {
+  const router = useRouter();
+
   const { q, categorias, resultados, loading } = usePictogramas([
     "Pessoas", "Animais", "Alimentos", "Ações", "Objetos"
   ]);
@@ -46,6 +50,8 @@ export default function BibliotecaPage() {
 
   //se é true, navigationblue, se não é, navbar
 
+  
+
   return (
     <section className="w-full bg-background px-8 py-12 flex flex-col gap-8">
       {qualBarraNavegacao}
@@ -54,6 +60,10 @@ export default function BibliotecaPage() {
         title="Biblioteca"
         redirectTo="/Biblioteca"
         showScroll={false}
+      />
+      <Button 
+        text="Pesquise frases"
+        onClick={() => router.push("/Login")}
       />
 
       {/* PICTOGRAMAS */}
