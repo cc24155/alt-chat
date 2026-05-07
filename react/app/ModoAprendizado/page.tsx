@@ -7,9 +7,23 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EstaLogado } from "../actions";
 import Mensagem from "../components/Mensagem";
-
+import { registrarAcerto } from "./actions";
 
 export default function ModoAprendizadoPage() {
+const handleInsert = async () => {
+    try {
+      // Chama a sua função de inserir no banco e "fodase" a repetição haha
+      const result = await registrarAcerto();
+      
+      if (result?.success) {
+        console.log("Acerto inserido com sucesso!");
+      } else {
+        console.error("Erro ao inserir:", result?.error);
+      }
+    } catch (error) {
+      console.error("Erro ao chamar a função de insert:", error);
+    }
+  };
   const router = useRouter();
   const [acessoNegado, setAcessoNegado] = useState(false);
 
@@ -43,15 +57,17 @@ export default function ModoAprendizadoPage() {
 
   const verificarResposta = (idDaPalavraClicada: number) => {
     if (!selecionado) {
-      mostrarPopup("Clique em uma imagem na esquerda primeiro!", "bg-secondary");
+      mostrarPopup("Clique em uma imagem na esquerda primeiro!", "bg-background");
       return;
     }
 
     if (selecionado === idDaPalavraClicada) {
-      mostrarPopup("Boa! Você acertou! 🎉", "bg-seconday");
+      mostrarPopup("Boa! Você acertou! 🎉", "bg-background");
       setAcertos([...acertos, idDaPalavraClicada]);
+      handleInsert()
+      
     } else {
-      mostrarPopup("Ops! Não é essa. Tente de novo! 🤔", "bg-secondary");
+      mostrarPopup("Ops! Não é essa. Tente de novo! 🤔", "bg-background");
     }
 
     setSelecionado(null);
@@ -137,7 +153,7 @@ export default function ModoAprendizadoPage() {
             <div className="flex flex-col gap-6 md:gap-8">
               <div
                 onClick={() => !acertos.includes(picBurguer._id) && verificarResposta(picBurguer._id)}
-                className={`w-[100px] h-[100px] md:w-[120px] md:h-[120px] flex items-center justify-center border-2 rounded-xl cursor-pointer transition-all ${acertos.includes(picBurguer._id) ? "bg-seconday border-secondary text-secondary pointer-events-none" : "border-dashed border-neutral hover:border-primary"}`}
+                className={`w-[100px] h-[100px] md:w-[120px] md:h-[120px] flex items-center justify-center border-2 rounded-xl cursor-pointer transition-all ${acertos.includes(picBurguer._id) ? "bg-background border-secondary text-primary pointer-events-none" : "border-dashed border-neutral hover:border-primary"}`}
               >
                 <span className="font-body font-bold text-center px-1">
                   {picBurguer.keywords[0].keyword}
@@ -146,7 +162,7 @@ export default function ModoAprendizadoPage() {
 
               <div
                 onClick={() => !acertos.includes(picCasa._id) && verificarResposta(picCasa._id)}
-                className={`w-[100px] h-[100px] md:w-[120px] md:h-[120px] flex items-center justify-center border-2 rounded-xl cursor-pointer transition-all ${acertos.includes(picCasa._id) ? "bg-secondary border-secondary text-secondary pointer-events-none" : "border-dashed border-neutral hover:border-primary"}`}
+                className={`w-[100px] h-[100px] md:w-[120px] md:h-[120px] flex items-center justify-center border-2 rounded-xl cursor-pointer transition-all ${acertos.includes(picCasa._id) ? "bg-background border-secondary text-secondary pointer-events-none" : "border-dashed border-neutral hover:border-primary"}`}
               >
                 <span className="font-body font-bold text-center px-1">
                   {picCasa.keywords[0].keyword}
@@ -155,7 +171,7 @@ export default function ModoAprendizadoPage() {
 
               <div
                 onClick={() => !acertos.includes(picGato._id) && verificarResposta(picGato._id)}
-                className={`w-[100px] h-[100px] md:w-[120px] md:h-[120px] flex items-center justify-center border-2 rounded-xl cursor-pointer transition-all ${acertos.includes(picGato._id) ? "bg-secondary border-secondary text-secondary pointer-events-none" : "border-dashed border-neutral hover:border-primary"}`}
+                className={`w-[100px] h-[100px] md:w-[120px] md:h-[120px] flex items-center justify-center border-2 rounded-xl cursor-pointer transition-all ${acertos.includes(picGato._id) ? "bg-background border-secondary text-secondary pointer-events-none" : "border-dashed border-neutral hover:border-primary"}`}
               >
                 <span className="font-body font-bold text-center px-1">
                   {picGato.keywords[0].keyword}

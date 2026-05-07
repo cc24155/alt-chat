@@ -338,7 +338,6 @@ export default function ContaPage() {
                 q={null}
                 resultados={favoritos}
                 categorias={[]}
-                limite={4}
                 onUpdate={atualizarDados}
               />
             ) : (

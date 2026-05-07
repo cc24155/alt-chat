@@ -1,63 +1,51 @@
 "use client";
 import { useEffect, useState } from "react";
-
 import NavigationBlue from "../components/NavigationBlue";
 import Footer from "../components/Footer";
-import Link from "next/link";
-import Button from "../components/Button";
-import HeroSection from "../components/HeroSection";
-
-import { Pictograma, buscarFavoritos } from "../../arasaac api/arasaac";
-import { PictogramasGrid } from "../components/PictogramaSection";
-import { supabase } from "@/lib/supabase";
-import { buscarDadosRelatorio } from "../Relatorio/actions";
 import { useRouter } from "next/navigation";
 import { EstaLogado } from "../actions";
+import { buscarDadosRelatorio } from "./actions"; 
 import Mensagem from "../components/Mensagem";
-
 
 interface Relatorio {
   tempo_medio_mensagem?: number;
   acertos_modo_aprendizado?: number;
-  pic?: Pictograma;
+  total_usos?: number; 
 }
 
 export default function RelatorioPage() {
   const router = useRouter();
+  
   const [acessoNegado, setAcessoNegado] = useState(false);
-
-  //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
-  useEffect(() => {
-    const verificarLogin = async () => {
-      try {
-        const result = await EstaLogado();
-        if (!result?.success) {
-          setAcessoNegado(true);
-        }
-      }
-      catch (e) {
-        console.error("Deu erro: ", e);
-      }
-    };
-    verificarLogin();
-  }, []);
-
   const [usuario, setUsuario] = useState<Relatorio | null>(null);
 
-useEffect(() => {
-  const carregarDados = async () => {
-    try {
-      const result = await buscarDadosRelatorio();
-      if (result.success && result.dados) {
-        setUsuario(result.dados);
+  useEffect(() => {
+    const carregarTudo = async () => {
+      // 1. Verifica login
+      const resultLogin = await EstaLogado();
+      if (!resultLogin?.success) {
+        setAcessoNegado(true);
+        return;
       }
-    } catch (e) {
-      console.error("Erro ao buscar dados:", e);
-    }
-  };
 
-  carregarDados();
-}, []);
+      // 2. Pede pro servidor (que já sabe quem tá logado) buscar os dados!
+      const resultRelatorio = await buscarDadosRelatorio();
+      
+      if (resultRelatorio.success && resultRelatorio.dados) {
+        console.log("🔥 AGORA VAI! Dados do servidor:", resultRelatorio.dados);
+        setUsuario(resultRelatorio.dados as Relatorio);
+      } else {
+        console.error("Erro ao buscar no servidor:", resultRelatorio.error);
+      }
+    };
+
+    carregarTudo();
+  }, []);
+
+  // --- LÓGICA DE CÁLCULO DA BARRA DE ACERTOS ---
+  const META_ACERTOS = 3; 
+  const totalAcertos = usuario?.acertos_modo_aprendizado || 0;
+  const porcentagemAcertos = Math.min((totalAcertos / META_ACERTOS) * 100, 100);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -77,42 +65,29 @@ useEffect(() => {
         <span className="text-center font-title uppercase">Relatório</span>
 
         <div className="max-w-2xl mx-auto bg-background rounded-3xl p-10 shadow-figma gap-20">
-          {/* Grid: Coluna 1 (Texto) | Coluna 2 (Barra) */}
           <div className="grid grid-cols-[1fr_200px] items-center gap-y-6 gap-x-4">
-            <span className="font-body text-foreground/80 text-center">
-              Tempo médio de uso
-            </span>
-            <div className="w-full h-6 bg-foreground/10 rounded-full overflow-hidden ">
-              {" "}
-              {/* Fundo temporário */}
-              <div
-                className="bg-primary h-full rounded-full"
-                style={{ width: "45%" }}
-              />
-            </div>
-
+            
             <span className="font-body text-foreground/80 text-center">
               Pictogramas diários
             </span>
             <div className="w-full h-6 bg-foreground/10 rounded-full overflow-hidden">
-              {" "}
-              {/* Fundo temporário */}
               <div
                 className="bg-primary h-full rounded-full"
-                style={{ width: "55%" }}
+                style={{ width: "55%" }} 
               />
             </div>
 
             <span className="font-body text-foreground/80 text-center">
               Acertos no Modo Aprendizado
             </span>
-            <div className="w-full h-6 bg-foreground/10 rounded-full overflow-hidden">
-              {" "}
-              {/* Fundo temporário */}
+            <div className="w-full h-6 bg-foreground/10 rounded-full overflow-hidden relative">
               <div
-                className="bg-primary h-full rounded-full"
-                style={{ width: "75%" }}
+                className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${porcentagemAcertos}%` }}
               />
+              <span className="absolute inset-0 flex justify-center items-center text-xs font-bold text-background">
+                {totalAcertos > 0 ? `${totalAcertos} acertos` : ""}
+              </span>
             </div>
           </div>
         </div>

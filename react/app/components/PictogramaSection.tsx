@@ -303,8 +303,7 @@ function PicModal({ pic, onClose, isFavorited, onUpdate }: PicModalProps) {
                 <img
                   src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
                   alt="Favoritar"
-                  className={`w-6 h-6 transition-all icon-adaptive ${favoritado ? "shadow-figma" : ""
-                    }`}
+                  className={`w-6 h-6 transition-all icon-adaptive}`}
                 />
               </button>
 

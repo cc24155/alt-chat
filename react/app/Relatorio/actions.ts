@@ -3,28 +3,28 @@ import { supabase } from "@/lib/supabase";
 
 export async function buscarDadosRelatorio() {
   try {
-    // o auth.getUser() pega o user que logou no navegador q "fica salvo" no localStorage
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
     if (userError || !user) {
       return { success: false, error: "Usuário não autenticado." };
     }
 
-    const { data, error } = await supabase  //da tabela usuario pega o username, a biografia e o avatar_url
+    const { data, error } = await supabase 
       .from('relatorio')
-      .select('acertos_modo_aprendizado, tempo_medio_mensagem, total_usos')
-      .eq('usuario_id', user.id)    //pega esses dados todos onde o campo id for igual ao id do user q acabou de logar
-      .single();            //ao invés de acessar os dados como uma array (result.dados[0].username) acessa tipo result.dados.username            
+      .select('acertos_modo_aprendizado, total_usos')
+      .eq('usuario_id', user.id) 
+      .order('gerado_em', { ascending: false }) // Pega o relatório mais recente
+      .limit(1)                                 // Evita o erro de múltiplas linhas
+      .single();                                
 
-    if (error) {
-      console.error("Erro ao buscar no banco:", error.message);
-      return { success: false, error: "Dados não encontrados." };
-    }
+if (error) {
+    console.error("Erro no banco:", error.message);
+    return { success: false, error: error.message }; 
+}
 
     return { success: true, dados: data };
 
-  }
-  catch (e) {
+  } catch (e) {
     console.error("Erro: ", e);
     return { success: false, error: "Erro inesperado." };
   }
