@@ -61,11 +61,7 @@ export default function BibliotecaPage() {
         redirectTo="/Biblioteca"
         showScroll={false}
       />
-      <Button 
-        text="Pesquise frases"
-        onClick={() => router.push("/Frases")}
-      />
-
+      
       {/* PICTOGRAMAS */}
       <div id="resultados">
         <PictogramasGrid q={q} resultados={resultados} categorias={categorias} />

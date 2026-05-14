@@ -9,6 +9,7 @@ interface HeroSectionProps {
   heroImage?: string;
   redirectTo?: string;
   showScroll?: boolean;
+  textButton: string;
 }
 
 export default function HeroSection(
@@ -18,6 +19,7 @@ export default function HeroSection(
     heroImage = "/Hero.png",
     redirectTo = "/Biblioteca",
     showScroll = true,
+    textButton = 
   }: HeroSectionProps) {
 
   const router = useRouter();
@@ -41,6 +43,12 @@ export default function HeroSection(
         <p className="font-body font-normal tracking-[-0.075px] leading-[140%] text-foreground max-w-[560px]">
           {subtitle}
         </p>
+
+        <Button
+          text="Pesquise frases"
+          onClick={() => router.push("/Frases")}
+          className="!w-40"
+        />
 
         <div className="relative">
           <img src={heroImage} alt="Hero" className="w-full max-w-[800px] h-auto" />
