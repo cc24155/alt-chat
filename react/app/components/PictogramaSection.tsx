@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 
 import { buscarPictogramas, buscarCategorias, Pictograma } from "../../arasaac api/arasaac";
 import { useSearchParams } from "next/navigation";
+import { registrarUsoPictograma } from "../actions";
+import { EFavorito } from "./actions";
 
 import Button from "./Button";
 import { adicionarFavorito, excluirFavoritos, marcarFavoritos, excluirPicProprio } from "./actions";
@@ -184,19 +186,43 @@ function PicModal({ pic, onClose, isFavorited, onUpdate }: PicModalProps) {
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  useEffect(() => {
-    async function verificarFavorito() {
-      if (!pic._id) return;
-      const { EFavorito } = await import("./actions");
-      const res = await EFavorito(pic._id, origem);
-      if (res?.success) {
-        setFavoritado(true);
-      } else if (!isFavorited) {
-        setFavoritado(false);
+useEffect(() => {
+  console.log("useeffect entrou tucs");
+  async function registrar(){
+    console.log("entrou na function");
+    try{
+      const {success, error} = await registrarUsoPictograma(pic._id);
+      if(success && !error){
+        console.log("Deu certo da silva!");
+      }
+      else{
+        console.log("Deu erradilson");
       }
     }
+    catch(e){
+      console.log("Vish mano deu erro meio severo no servidor" + e);
+   }
+  }
+    
+        
+    async function verificarFavorito() {
+        if (!pic._id) return;
+        
+        try{
+          const res = await EFavorito(pic._id, origem);
+          if (res?.success) {
+            setFavoritado(true);
+          } else if (!isFavorited) {
+            setFavoritado(false);
+          }
+        }
+        catch(e){
+          console.log("Vish mano deu erro meio severo no servidor" + e);
+        }
+    }
     verificarFavorito();
-  }, [pic._id, origem, isFavorited]); // roda toda vez que um modal abre
+    registrar();
+}, [pic._id, origem, isFavorited]);
 
   async function handleToggleFavorite() {
     const estadoAnterior = favoritado;
