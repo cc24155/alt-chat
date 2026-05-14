@@ -78,7 +78,7 @@ export async function registrarAcerto() {
         // 1. Tenta buscar o relatório desse usuário
         const { data: relatorioExistente, error: erroBusca } = await supabase
             .from("relatorio")
-            .select("id, acertos_modo_aprendizado")
+            .select("id, acertos_modo_aprendizado") 
             .eq("usuario_id", user.id)
             .single();
 

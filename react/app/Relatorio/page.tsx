@@ -21,18 +21,16 @@ export default function RelatorioPage() {
 
   useEffect(() => {
     const carregarTudo = async () => {
-      // 1. Verifica login
       const resultLogin = await EstaLogado();
       if (!resultLogin?.success) {
         setAcessoNegado(true);
         return;
       }
 
-      // 2. Pede pro servidor (que já sabe quem tá logado) buscar os dados!
       const resultRelatorio = await buscarDadosRelatorio();
       
       if (resultRelatorio.success && resultRelatorio.dados) {
-        console.log("🔥 AGORA VAI! Dados do servidor:", resultRelatorio.dados);
+        console.log(" Dados do servidor:", resultRelatorio.dados);
         setUsuario(resultRelatorio.dados as Relatorio);
       } else {
         console.error("Erro ao buscar no servidor:", resultRelatorio.error);
@@ -42,7 +40,6 @@ export default function RelatorioPage() {
     carregarTudo();
   }, []);
 
-  // --- LÓGICA DE CÁLCULO DA BARRA DE ACERTOS ---
   const META_ACERTOS = 3; 
   const totalAcertos = usuario?.acertos_modo_aprendizado || 0;
   const porcentagemAcertos = Math.min((totalAcertos / META_ACERTOS) * 100, 100);
