@@ -57,9 +57,11 @@ export default function BibliotecaPage() {
       {qualBarraNavegacao}
 
       <HeroSection
-        title="Biblioteca"
-        redirectTo="/Biblioteca"
-        showScroll={false}
+        title="Frases"
+        redirectTo="/Frases"
+        showScroll={false} 
+        textButton={"Pesquise pictogramas"} 
+        routerPushButton={"/Biblioteca"}     
       />
       
       {/* PICTOGRAMAS */}

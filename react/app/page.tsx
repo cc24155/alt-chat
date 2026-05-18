@@ -360,7 +360,10 @@ export const Box = (): JSX.Element => {
     <div className="w-full min-h-screen bg-background">
       {qualBarraNavegacao}
       <main>
-        <HeroSection />
+        <HeroSection 
+          textButton={"Pesquise frases"} 
+          routerPushButton={"/Frases"} 
+        />
         <ContextoSection />
         <ObjetivosSection />
         <FuncionalidadesSection />

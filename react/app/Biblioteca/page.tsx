@@ -59,8 +59,10 @@ export default function BibliotecaPage() {
       <HeroSection
         title="Biblioteca"
         redirectTo="/Biblioteca"
-        showScroll={false}
-      />
+        showScroll={false} 
+        textButton={"Pesquise frases"} 
+        routerPushButton={"/Frases"}      
+        />
       <Button 
         text="Pesquise frases"
         onClick={() => router.push("/Frases")}

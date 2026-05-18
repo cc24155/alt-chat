@@ -10,16 +10,18 @@ interface HeroSectionProps {
   redirectTo?: string;
   showScroll?: boolean;
   textButton: string;
+  routerPushButton: string;
 }
 
 export default function HeroSection(
   {
     title = "ALT-CHAT",
-    subtitle = "PESQUISE QUALQUER PICTOGRAMA",
+    subtitle = "PESQUISE QUALQUER COISA",
     heroImage = "/Hero.png",
     redirectTo = "/Biblioteca",
     showScroll = true,
-    textButton = 
+    textButton = "Pesquise frases",
+    routerPushButton = "/Frases"
   }: HeroSectionProps) {
 
   const router = useRouter();
@@ -44,9 +46,10 @@ export default function HeroSection(
           {subtitle}
         </p>
 
+        {/* em frase sera pesquise pictogramas */}
         <Button
-          text="Pesquise frases"
-          onClick={() => router.push("/Frases")}
+          text={textButton}
+          onClick={() => router.push(routerPushButton)}
           className="!w-40"
         />
 
