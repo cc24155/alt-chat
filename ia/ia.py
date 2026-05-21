@@ -69,6 +69,3 @@ class SugerirRequest(BaseModel):
 def sugerir(req: SugerirRequest):
     sugestoes = sugestor.sugerir(req.contexto)
     return {"sugestoes": sugestoes}
-
-
-            x
