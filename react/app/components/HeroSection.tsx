@@ -9,15 +9,19 @@ interface HeroSectionProps {
   heroImage?: string;
   redirectTo?: string;
   showScroll?: boolean;
+  textButton: string;
+  routerPushButton: string;
 }
 
 export default function HeroSection(
   {
     title = "ALT-CHAT",
-    subtitle = "PESQUISE QUALQUER PICTOGRAMA",
+    subtitle = "PESQUISE QUALQUER COISA",
     heroImage = "/Hero.png",
     redirectTo = "/Biblioteca",
     showScroll = true,
+    textButton = "Pesquise frases",
+    routerPushButton = "/Frases"
   }: HeroSectionProps) {
 
   const router = useRouter();
@@ -41,6 +45,13 @@ export default function HeroSection(
         <p className="font-body font-normal tracking-[-0.075px] leading-[140%] text-foreground max-w-[560px]">
           {subtitle}
         </p>
+
+        {/* em frase sera pesquise pictogramas */}
+        <Button
+          text={textButton}
+          onClick={() => router.push(routerPushButton)}
+          className="!w-40"
+        />
 
         <div className="relative">
           <img src={heroImage} alt="Hero" className="w-full max-w-[800px] h-auto" />

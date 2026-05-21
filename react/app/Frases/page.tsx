@@ -57,17 +57,13 @@ export default function BibliotecaPage() {
       {qualBarraNavegacao}
 
       <HeroSection
-        title="Biblioteca"
-        redirectTo="/Biblioteca"
+        title="Frases"
+        redirectTo="/Frases"
         showScroll={false} 
-        textButton={"Pesquise frases"} 
-        routerPushButton={"/Frases"}      
-        />
-      <Button 
-        text="Pesquise frases"
-        onClick={() => router.push("/Frases")}
+        textButton={"Pesquise pictogramas"} 
+        routerPushButton={"/Biblioteca"}     
       />
-
+      
       {/* PICTOGRAMAS */}
       <div id="resultados">
         <PictogramasGrid q={q} resultados={resultados} categorias={categorias} />
