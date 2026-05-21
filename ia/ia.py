@@ -1,0 +1,3 @@
+import ia
+
+ia.run()
