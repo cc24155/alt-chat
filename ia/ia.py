@@ -69,3 +69,81 @@ class SugerirRequest(BaseModel):
 def sugerir(req: SugerirRequest):
     sugestoes = sugestor.sugerir(req.contexto)
     return {"sugestoes": sugestoes}
+
+
+# GEMINI:
+
+# Ordem Sintática (Sequência): Peso 5 (É o mais importante para a frase fazer sentido).
+# Frequência Geral (Ordem de Uso): Peso 3 (Coisas que o usuário ama usar no geral).
+# Hora do Dia: Peso 2 (Se combina com o horário atual, ganha um bônus).
+# Dia da Semana: Peso 1 (Se combina com o dia atual, ganha um bônus menor).
+
+# $$\text{Pontuação} = (\text{Votos da Sequência} \times 5) + (\text{Votos de Uso} \times 3) + (\text{Bônus Hora} \times 2) + (\text{Bônus Dia} \times 1)$$
+
+# import os
+# import pickle
+# from collections import defaultdict
+# from fastapi import FastAPI, HTTPException
+# from fastapi.middleware.cors import CORSMiddleware
+# from pydantic import BaseModel
+
+# app = FastAPI(title="IA de Digitação Preditiva - CAA")
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+
+# class SugestorPictograma:
+#     def __init__(self):
+#         self.modelo = defaultdict(lambda: defaultdict(int)) 
+
+#     def sugerir(self, contexto: list[int], top_n: int = 2) -> list[int]:
+#         if not contexto:
+#             return []
+#         ultimo = contexto[-1]
+#         candidatos = self.modelo.get(ultimo, {})
+#         return sorted(candidatos, key=candidatos.get, reverse=True)[:top_n]
+
+# sugestor = SugestorPictograma()
+
+# class RequestSugestao(BaseModel):
+#     id_atual: int  # Recebe o ID numérico (_id) do card digitado
+
+# @app.post("/sugerir")
+# def sugerir_proximo(req: RequestSugestao):
+#     ids_sugeridos = sugestor.sugerir(contexto=[req.id_atual])
+    
+#     # Se a IA ainda não aprendeu nada no banco, deixamos o modo de teste robusto:
+#     if not ids_sugeridos:
+#         # AGORA COBRE QUALQUER ID: Se receber o ID de "querer", "eu" ou qualquer outro, 
+#         # ele vai injetar as opções de continuação na tela para o front-end funcionar!
+#         return {
+#             "sugestoes": [
+#                 {
+#                     "_id": 2435, 
+#                     "keywords": [{"keyword": "comer"}],
+#                     "origem": "arasaac"
+#                 },
+#                 {
+#                     "_id": 2555, 
+#                     "keywords": [{"keyword": "brincar"}],
+#                     "origem": "arasaac"
+#                 }
+#             ]
+#         }
+        
+#     # Quando o banco estiver integrado e o modelo treinado, essa parte cria a lista dinâmica
+#     resposta = []
+#     for _id in ids_sugeridos:
+#         resposta.append({
+#             "_id": _id,
+#             "keywords": [{"keyword": "sugestão"}],
+#             "origem": "arasaac"
+#         })
+#     return {"sugestoes": resposta}
+    
+# Execute com: uvicorn app_ia:app --reload

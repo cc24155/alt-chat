@@ -14,3 +14,5 @@ Certifique-se de ter instalado:
 E então:
 
 ``npm run dev``
+
+python -m pip install fastapi uvicorn pydantic
