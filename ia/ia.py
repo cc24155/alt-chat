@@ -1,3 +1,0 @@
-import ia
-
-ia.run()
