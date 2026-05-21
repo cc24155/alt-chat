@@ -62,10 +62,6 @@ export default function BibliotecaPage() {
         showScroll={false} 
         textButton={"Pesquise frases"} 
         routerPushButton={"/Frases"}      
-        />
-      <Button 
-        text="Pesquise frases"
-        onClick={() => router.push("/Frases")}
       />
 
       {/* PICTOGRAMAS */}
