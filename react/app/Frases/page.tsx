@@ -31,6 +31,44 @@ export default function FrasesPage() {
 
   const [logado, setLogado] = useState<boolean | null>(null); // null significa "carregando"
   const [sugestoesIA, setSugestoesIA] = useState<Pictograma[]>([]);
+  const [fraseSelecionada, setFraseSelecionada] = useState<Pictograma[]>([]);
+  const [pictogramaInicial, setPictogramaInicial] = useState<Pictograma | null>(null);
+
+  async function buscarSugestoesIA(contexto: number[]) {
+    const response = await fetch("http://localhost:8000/sugerir", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contexto }),
+    });
+
+    const dados = await response.json();
+    setSugestoesIA(Array.isArray(dados.sugestoes) ? dados.sugestoes : sugestoesPadraoIA);
+  }
+
+  function idsNumericos(pictogramas: Pictograma[]) {
+    return pictogramas
+      .map((pic) => Number(pic._id))
+      .filter((id) => !isNaN(id));
+  }
+
+  async function selecionarSugestao(pic: Pictograma) {
+    const proximaFrase = [...fraseSelecionada, pic];
+    setFraseSelecionada(proximaFrase);
+
+    const contexto = idsNumericos([
+      ...(pictogramaInicial ? [pictogramaInicial] : []),
+      ...proximaFrase,
+    ]);
+
+    if (contexto.length === 0) return;
+
+    try {
+      await buscarSugestoesIA(contexto);
+    } catch (erro) {
+      console.error("Erro ao chamar a IA:", erro);
+      setSugestoesIA(sugestoesPadraoIA);
+    }
+  }
 
   useEffect(() => {
     const verificarLogin = async () => {
@@ -67,19 +105,15 @@ export default function FrasesPage() {
         if (isNaN(idNumerico)) return;
 
         try {
-          const response = await fetch("http://localhost:8000/sugerir", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id_atual: idNumerico }),
-          });
-
-          const dados = await response.json();
-          setSugestoesIA(Array.isArray(dados.sugestoes) ? dados.sugestoes : sugestoesPadraoIA);
+          setPictogramaInicial(cardCorreto);
+          setFraseSelecionada([]);
+          await buscarSugestoesIA([idNumerico]);
         } catch (erro) {
           console.error("Erro ao chamar a IA:", erro);
           setSugestoesIA(sugestoesPadraoIA);
         }
       } else {
+        setPictogramaInicial(null);
         setSugestoesIA([]);
       }
     };
@@ -99,6 +133,12 @@ export default function FrasesPage() {
     return <div className="text-foreground text-center py-20">Carregando...</div>;
 
   const qualBarraNavegacao = logado ? <NavigationBlue /> : <NavBar />;
+  const pictogramaPrincipal = fraseSelecionada.length > 0
+    ? fraseSelecionada[fraseSelecionada.length - 1]
+    : pictogramaInicial;
+  const fraseMontada = pictogramaInicial
+    ? [pictogramaInicial, ...fraseSelecionada]
+    : fraseSelecionada;
 
   //se é true, navigationblue, se não é, navbar
 
@@ -106,6 +146,45 @@ export default function FrasesPage() {
   return (
     <section className="w-full bg-background px-8 py-12 flex flex-col gap-8">
       {qualBarraNavegacao}
+
+      {fraseMontada.length > 0 && (
+        <div className="fixed right-4 bottom-4 z-[150] w-[min(92vw,420px)] bg-background border border-foreground/10 rounded-2xl shadow-figma p-4 flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <span className="font-body uppercase tracking-widest text-neutral opacity-60 text-xs">
+              Frase
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setPictogramaInicial(null);
+                setFraseSelecionada([]);
+                setSugestoesIA([]);
+              }}
+              className="font-body text-xs text-neutral hover:text-foreground transition-colors"
+            >
+              Limpar
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {fraseMontada.map((pic, index) => (
+              <div
+                key={`${pic._id}-${index}`}
+                className="w-20 border border-foreground/10 rounded-xl p-2 bg-neutral/5 flex flex-col items-center text-center"
+              >
+                <img
+                  src={`https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`}
+                  alt={pic.keywords?.[0]?.keyword ?? "pictograma"}
+                  className="w-12 h-12 object-contain"
+                />
+                <span className="font-body text-[10px] uppercase text-foreground truncate w-full">
+                  {pic.keywords?.[0]?.keyword}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <HeroSection
         title="Frases"
@@ -117,7 +196,7 @@ export default function FrasesPage() {
 
       {/* SEÇÃO DA COSTRUÇÃO DE FRASES + PREDITIVO */}
       <div id="busca-frases" className="max-w-[1200px] mx-auto w-full flex flex-col gap-8 scroll-mt-24">
-        {q && resultados && resultados.length > 0 && (
+        {q && resultados && resultados.length > 0 && pictogramaPrincipal && (
           <div className="w-full bg-neutral/5 p-6 rounded-2xl border border-foreground/10 flex flex-col gap-3">
           <span className="font-body uppercase tracking-widest text-neutral opacity-60 text-xs">
             Construindo sua Frase
@@ -127,12 +206,12 @@ export default function FrasesPage() {
             {/* Card Principal (O que o usuário digitou) */}
             <div className="border border-green-400 rounded-2xl p-4 flex flex-col items-center justify-center w-32 bg-background shadow-figma text-center">
               <img
-                src={`https://static.arasaac.org/pictograms/${resultados[0]._id}/${resultados[0]._id}_300.png`}
-                alt={resultados[0].keywords?.[0]?.keyword ?? "card"}
+                src={`https://static.arasaac.org/pictograms/${pictogramaPrincipal._id}/${pictogramaPrincipal._id}_300.png`}
+                alt={pictogramaPrincipal.keywords?.[0]?.keyword ?? "card"}
                 className="w-16 h-16 object-contain mb-2"
               />
               <span className="font-body text-xs font-bold uppercase text-emerald-600 block truncate w-full">
-                {resultados[0].keywords?.[0]?.keyword}
+                {pictogramaPrincipal.keywords?.[0]?.keyword}
               </span>
             </div>
 
@@ -146,7 +225,7 @@ export default function FrasesPage() {
               <div 
                 key={pic._id} 
                 className="border-2 border-dashed border-primary/40 rounded-2xl p-4 flex flex-col items-center justify-center w-32 bg-background hover:border-primary transition-all cursor-pointer shadow-sm text-center group"
-                onClick={() => alert(`Clicou na sugestão: ${pic.keywords?.[0]?.keyword}`)}
+                onClick={() => selecionarSugestao(pic)}
               >
                 <img
                   src={`https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`}

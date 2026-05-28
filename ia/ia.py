@@ -72,6 +72,12 @@ def sugerir(req: SugerirRequest):
     return {"sugestoes": [montar_pictograma(_id) for _id in ids_sugeridos]}
 
 
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=8000)
+
+
 # GEMINI:
 
 # Ordem Sintática (Sequência): Peso 5 (É o mais importante para a frase fazer sentido).
