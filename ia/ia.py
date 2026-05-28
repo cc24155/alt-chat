@@ -1,5 +1,4 @@
 # ia/data_loader.py
-import psycopg2  # ou supabase-py
 
 class DataLoader:
     def __init__(self, db_url: str):
@@ -17,58 +16,60 @@ class DataLoader:
         pass
 
 # ia/sugestor.py
-import pickle
-from collections import defaultdict
 
-class SugestorPictograma:
-    def __init__(self):
-        self.modelo = defaultdict(lambda: defaultdict(int))
-        # {"QUERO": {"COMER": 5, "IR": 2, "BEBER": 3}}
 
-    def treinar(self, sequencias: list[list[int]]):
-        for sequencia in sequencias:
-            for i in range(len(sequencia) - 1):
-                contexto = sequencia[i]
-                proximo = sequencia[i + 1]
-                self.modelo[contexto][proximo] += 1
+from pathlib import Path
 
-    def sugerir(self, contexto: list[int], top_n: int = 5) -> list[int]:
-        if not contexto:
-            return []
-        ultimo = contexto[-1]
-        candidatos = self.modelo.get(ultimo, {})
-        ordenados = sorted(candidatos, key=candidatos.get, reverse=True)
-        return ordenados[:top_n]
-
-    def personalizar(self, sugestoes: list[int], historico: dict) -> list[int]:
-        # Reordena sugestoes dando peso extra para pics muito usados pelo usuário
-        pass
-
-    def salvar(self, caminho: str):
-        with open(caminho, "wb") as f:
-            pickle.dump(self.modelo, f)
-
-    def carregar(self, caminho: str):
-        with open(caminho, "rb") as f:
-            self.modelo = pickle.load(f)
-
-# ia/api.py
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sugestor import SugestorPictograma
+
+try:
+    from .sugestor import SugestorPictograma
+except ImportError:
+    from sugestor import SugestorPictograma
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 sugestor = SugestorPictograma()
-sugestor.carregar("modelo.pkl")
+modelo_path = Path(__file__).with_name("modelo.pkl")
+
+if modelo_path.exists():
+    sugestor.carregar(str(modelo_path))
 
 class SugerirRequest(BaseModel):
-    contexto: list[int]
-    usuario_id: str
+    contexto: list[int] | None = None
+    usuario_id: str | None = None
+    id_atual: int | None = None
+
+def montar_pictograma(_id: int, palavra: str = "sugestao") -> dict:
+    return {
+        "_id": _id,
+        "keywords": [{"keyword": palavra}],
+        "origem": "arasaac",
+    }
+
+SUGESTOES_PADRAO = [
+    montar_pictograma(2435, "comer"),
+    montar_pictograma(2555, "brincar"),
+]
 
 @app.post("/sugerir")
 def sugerir(req: SugerirRequest):
-    sugestoes = sugestor.sugerir(req.contexto)
-    return {"sugestoes": sugestoes}
+    contexto = req.contexto or ([req.id_atual] if req.id_atual is not None else [])
+    ids_sugeridos = sugestor.sugerir(contexto)
+
+    if not ids_sugeridos:
+        return {"sugestoes": SUGESTOES_PADRAO}
+
+    return {"sugestoes": [montar_pictograma(_id) for _id in ids_sugeridos]}
 
 
 # GEMINI:

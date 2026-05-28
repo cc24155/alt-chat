@@ -9,14 +9,22 @@ import { EstaLogado } from "../actions";
 
 import { usePictogramas, PictogramasGrid } from "../components/PictogramaSection";
 import NavBar from "../components/NavBar";
-import Button from "../components/Button";
-import { useRouter } from "next/navigation";
 import { Pictograma } from "@/arasaac api/arasaac";
 
+const sugestoesPadraoIA: Pictograma[] = [
+  {
+    _id: 2435,
+    keywords: [{ keyword: "comer" }],
+    origem: "arasaac",
+  },
+  {
+    _id: 2555,
+    keywords: [{ keyword: "brincar" }],
+    origem: "arasaac",
+  },
+];
 
 export default function FrasesPage() {
-  const router = useRouter();
-
   const { q, categorias, resultados, loading } = usePictogramas([
     "Pessoas", "Animais", "Alimentos", "Ações", "Objetos"
   ]);
@@ -66,9 +74,10 @@ export default function FrasesPage() {
           });
 
           const dados = await response.json();
-          setSugestoesIA(dados.sugestoes);
+          setSugestoesIA(Array.isArray(dados.sugestoes) ? dados.sugestoes : sugestoesPadraoIA);
         } catch (erro) {
           console.error("Erro ao chamar a IA:", erro);
+          setSugestoesIA(sugestoesPadraoIA);
         }
       } else {
         setSugestoesIA([]);
@@ -82,7 +91,7 @@ export default function FrasesPage() {
   // quando terminar de carregar E tiver uma busca, rola até os resultados
   useEffect(() => {
     if (!loading && q) {
-      document.getElementById("resultados")?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("busca-frases")?.scrollIntoView({ behavior: "smooth" });
     }
   }, [loading, q]);
 
@@ -107,8 +116,9 @@ export default function FrasesPage() {
       />
 
       {/* SEÇÃO DA COSTRUÇÃO DE FRASES + PREDITIVO */}
-      {q && resultados && resultados.length > 0 && (
-        <div className="max-w-[1200px] mx-auto w-full bg-neutral/5 p-6 rounded-2xl border border-foreground/10 flex flex-col gap-3">
+      <div id="busca-frases" className="max-w-[1200px] mx-auto w-full flex flex-col gap-8 scroll-mt-24">
+        {q && resultados && resultados.length > 0 && (
+          <div className="w-full bg-neutral/5 p-6 rounded-2xl border border-foreground/10 flex flex-col gap-3">
           <span className="font-body uppercase tracking-widest text-neutral opacity-60 text-xs">
             Construindo sua Frase
           </span>
@@ -150,12 +160,13 @@ export default function FrasesPage() {
               </div>
             ))}
           </div>
-        </div>
-      )}
+          </div>
+        )}
       
-      {/* PICTOGRAMAS */}
-      <div id="resultados">
-        <PictogramasGrid q={q} resultados={resultados} categorias={categorias} />
+        {/* PICTOGRAMAS */}
+        <div id="resultados">
+          <PictogramasGrid q={q} resultados={resultados} categorias={categorias} />
+        </div>
       </div>
 
       <Contato />

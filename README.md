@@ -16,3 +16,7 @@ E então:
 ``npm run dev``
 
 python -m pip install fastapi uvicorn pydantic
+
+Para rodar a API da IA:
+
+``python -m uvicorn ia.ia:app --reload --host 127.0.0.1 --port 8000``
