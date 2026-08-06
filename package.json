@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.1",
+    "install": "^0.13.0",
+    "npm": "^11.19.0",
+    "supabase": "^2.111.0"
+  }
+}
