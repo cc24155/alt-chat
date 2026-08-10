@@ -36,9 +36,9 @@ class Pictograma:
                 case 1:
                     self.classe_gramatical = "pronome"
                 case 2:
-                    self.classe_gramatical = "verbo"       # 2 é Verbo!
+                    self.classe_gramatical = "substantivo"      
                 case 3:
-                    self.classe_gramatical = "substantivo" # 3 é Substantivo!
+                    self.classe_gramatical = "verbo" 
                 case 4:
                     self.classe_gramatical = "adjetivo"
                 case 5:
