@@ -13,9 +13,9 @@
 
 ### 📌 Sobre a Plataforma
 
-O **ALT-CHAT** é uma plataforma digital de Comunicação Aumentativa e Alternativa (CAA) desenvolvida como Trabalho de Conclusão de Curso (TCC) no Colégio Técnico de Campinas (COTUCA/UNICAMP). 
+O **ALT-CHAT** é uma plataforma digital de Comunicação Aumentativa e Alternativa (CAA) desenvolvida como Trabalho de Conclusão de Curso (TCC) no Colégio Técnico de Campinas (COTUCA/UNICAMP). O projeto busca superar as limitações das soluções físicas tradicionalmente utilizadas, como as pranchas impressas de pictogramas, que são pouco adaptáveis, de alto custo e de difícil transporte, oferecendo, em seu lugar, uma interface baseada em pictogramas, organizada por categorias, e um sistema de sugestão inteligente que aprende o padrão de uso de cada pessoa para prever os próximos pictogramas mais prováveis.
 
-O projeto visa empoderar pessoas não-verbais (como indivíduos no Espectro Autista - TEA ou com sequelas neurológicas) oferecendo uma ferramenta 100% gratuita, moderna e personalizável. O principal diferencial é a utilização de **Inteligência Artificial Preditiva**, que calcula contexto, ordem sintática, horário e padrões de uso do usuário para sugerir os próximos pictogramas, reduzindo em pelo menos 30% o tempo necessário para a construção de frases.
+O projeto visa empoderar pessoas não-verbais (como indivíduos no Espectro Autista - TEA ou com sequelas neurológicas) oferecendo uma ferramenta 100% gratuita, moderna e personalizável. O principal diferencial é a utilização de **Inteligência Artificial Preditiva**, que calcula contexto, ordem sintática e padrões de uso do usuário para sugerir os próximos pictogramas, reduzindo o tempo necessário para a construção de frases.
 
 *Construído com as seguintes tecnologias:*
 
