@@ -1,8 +1,7 @@
 import requests
 
-
 class Pictograma:
-    def __init__(self, id_pic: int = None):
+    def __init__(self, id_pic: int):
         # Variáveis/Atributos da classe
         self.id = id_pic
         self.palavra = ""
@@ -12,14 +11,37 @@ class Pictograma:
         if self.id is None:
             raise ValueError("Um ID precisa ser fornecido para buscar o pictograma.")
 
-        url = f'https://api.arasaac.org/api/pictograms/{self.id}'
-        resposta = requests.get(url)
+        url = f'https://api.arasaac.org/v1/pictograms/pt/{self.id}'
+        try:
+            resposta = requests.get(url, headers={"Accept": "application/json"}, timeout=15)
+        except requests.RequestException as erro:
+            print(f"Erro ao buscar pictograma {self.id}: {erro}")
+            return False
 
         if resposta.status_code != 200:
             print(f"Erro ao buscar pictograma {self.id}: HTTP {resposta.status_code}")
             return False
 
-        json_data = resposta.json()
+        try:
+            json_data = resposta.json()
+        except ValueError:
+            conteudo = resposta.text[:120].replace("\n", " ").strip()
+            print(
+                f"Erro ao buscar pictograma {self.id}: resposta nao veio em JSON."
+                f" Conteudo inicial: {conteudo!r}"
+            )
+            return False
+
+        if isinstance(json_data, list):
+            if not json_data:
+                print(f"Erro ao buscar pictograma {self.id}: resposta JSON vazia.")
+                return False
+            json_data = json_data[0]
+
+        if not isinstance(json_data, dict):
+            print(f"Erro ao buscar pictograma {self.id}: formato JSON inesperado.")
+            return False
+
         palavras = json_data.get("keywords", [])
 
         if palavras:

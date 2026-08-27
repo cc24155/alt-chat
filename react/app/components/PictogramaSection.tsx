@@ -319,7 +319,6 @@ useEffect(() => {
               >
                 <img
                   src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
-                  src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}
                   alt="Favoritar"
                   className={`w-6 h-6 transition-all ${favoritado ? "icon-heart-filled" : "icon-heart-fav"}`}
                 />

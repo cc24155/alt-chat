@@ -117,25 +117,29 @@ export async function registrarAcerto() {
 }
 
 export async function quantosAcertosUsuario(){
-    try{
-        var totalNumero = 0;
+    try {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
 
         if (userError || !user) {
             return { success: false, error: "Usuário não autenticado." };
         }
 
-        const {data: numeroAcerto, error: erroNumeroAcerto} = await supabase.from("relatorio").select("acertos_modo_aprendizado").eq("usuario_id", user).single()
-        if (numeroAcerto && !erroNumeroAcerto){
-            totalNumero = numeroAcerto?.acertos_modo_aprendizado;
-        } 
-        else{
-            return {success: false, error: erroNumeroAcerto, data:totalNumero};
+        const { data: numeroAcerto, error: erroNumeroAcerto } = await supabase
+            .from("relatorio")
+            .select("acertos_modo_aprendizado")
+            .eq("usuario_id", user.id)
+            .maybeSingle();
+
+        if (erroNumeroAcerto) {
+            return { success: false, error: erroNumeroAcerto, data: 0 };
         }
-    }     
-    catch(e){
+
+        return {
+            success: true,
+            data: numeroAcerto?.acertos_modo_aprendizado ?? 0,
+        };
+    } catch(e){
         console.error(e);
         return { success: false, error: e };
     }
-
 }
