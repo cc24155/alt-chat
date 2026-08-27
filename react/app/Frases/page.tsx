@@ -175,6 +175,7 @@ export default function FrasesPage() {
                 <img
                   src={`https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`}
                   alt={pic.keywords?.[0]?.keyword ?? "pictograma"}
+                  loading="lazy"
                   className="w-12 h-12 object-contain"
                 />
                 <span className="font-body text-[10px] uppercase text-foreground truncate w-full">
@@ -208,6 +209,7 @@ export default function FrasesPage() {
               <img
                 src={`https://static.arasaac.org/pictograms/${pictogramaPrincipal._id}/${pictogramaPrincipal._id}_300.png`}
                 alt={pictogramaPrincipal.keywords?.[0]?.keyword ?? "card"}
+                loading="lazy"
                 className="w-16 h-16 object-contain mb-2"
               />
               <span className="font-body text-xs font-bold uppercase text-emerald-600 block truncate w-full">
@@ -230,6 +232,7 @@ export default function FrasesPage() {
                 <img
                   src={`https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`}
                   alt={pic.keywords?.[0]?.keyword}
+                  loading="lazy"
                   className="w-16 h-16 object-contain mb-2 group-hover:scale-105 transition-transform"
                 />
                 <span className="font-body text-xs font-bold uppercase text-primary block truncate w-full">

@@ -54,7 +54,7 @@ export default function HeroSection(
         />
 
         <div className="relative">
-          <img src={heroImage} alt="Hero" className="w-full max-w-[800px] h-auto" />
+          <img src={heroImage} alt="Hero" loading="lazy" className="w-full max-w-[800px] h-auto" />
 
           <div className="absolute inset-0 flex items-start justify-center pt-15 sm:pt-20 md:pt-40 z-10">
             <div className="flex items-center justify-between bg-background w-[250px] sm:w-[350px] md:w-[500px] h-[40px] sm:h-[45px] md:h-[55px] px-6 py-2 border border-foreground rounded-full">

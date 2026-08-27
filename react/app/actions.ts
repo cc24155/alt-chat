@@ -1,19 +1,18 @@
-"use server";
 import { supabase } from "@/lib/supabase";
-//import { error } from "console";
 
 export async function EstaLogado() {
     try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-        if (userError || !user) {
-            return { success: false, id: user?.id };
+        if (sessionError || !session?.user) {
+            return { success: false, id: session?.user?.id ?? null };
         }
 
-        return { success: true };
+        return { success: true, user: session.user };
     }
     catch (e) {
-        console.error("Deu erro: ", e);
+        console.error("Deu erro ao verificar login: ", e);
+        return { success: false, error: "Erro ao verificar login." };
     }
 }
 

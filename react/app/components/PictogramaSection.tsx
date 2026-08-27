@@ -64,6 +64,7 @@ export default function PicCard({ pic, onUpdate }: { pic: Pictograma, onUpdate?:
         <img
           src={imagemExibida}
           alt={pic.keywords?.[0]?.keyword ?? "pictograma"}
+          loading="lazy"
           className="w-full h-full object-contain"
         />
       </div>
@@ -187,41 +188,30 @@ function PicModal({ pic, onClose, isFavorited, onUpdate }: PicModalProps) {
   }, []);
 
 useEffect(() => {
-  console.log("useeffect entrou tucs");
   async function registrar(){
-    console.log("entrou na function");
     try{
-      const {success, error} = await registrarUsoPictograma(pic._id);
-      if(success && !error){
-        console.log("Deu certo da silva!");
-      }
-      else{
-        console.log("Deu erradilson");
-      }
+      await registrarUsoPictograma(pic._id);
+    } catch (e) {
+      // ignore telemetry errors on client
     }
-    catch(e){
-      console.log("Vish mano deu erro meio severo no servidor" + e);
-   }
   }
-    
-        
-    async function verificarFavorito() {
-        if (!pic._id) return;
-        
-        try{
-          const res = await EFavorito(pic._id, origem);
-          if (res?.success) {
-            setFavoritado(true);
-          } else if (!isFavorited) {
-            setFavoritado(false);
-          }
-        }
-        catch(e){
-          console.log("Vish mano deu erro meio severo no servidor" + e);
-        }
+
+  async function verificarFavorito() {
+    if (!pic._id) return;
+    try{
+      const res = await EFavorito(pic._id, origem);
+      if (res?.success) {
+        setFavoritado(true);
+      } else if (!isFavorited) {
+        setFavoritado(false);
+      }
+    } catch (e) {
+      // ignore
     }
-    verificarFavorito();
-    registrar();
+  }
+
+  void verificarFavorito();
+  void registrar();
 }, [pic._id, origem, isFavorited]);
 
   async function handleToggleFavorite() {
@@ -307,6 +297,7 @@ useEffect(() => {
           <img
             src={imagemExibida}
             alt={keyword}
+            loading="lazy"
             className="w-full h-full object-contain"
           />
         </div>
@@ -328,8 +319,9 @@ useEffect(() => {
               >
                 <img
                   src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
+                  src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}
                   alt="Favoritar"
-                  className={`w-6 h-6 transition-all icon-adaptive}`}
+                  className={`w-6 h-6 transition-all ${favoritado ? "icon-heart-filled" : "icon-heart-fav"}`}
                 />
               </button>
 

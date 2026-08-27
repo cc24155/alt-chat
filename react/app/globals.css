@@ -50,6 +50,9 @@ input:-webkit-autofill:focus {
   content: url("/Icon Search.png");
 }
 
+.icon-heart-fav { filter: invert(1); }
+.icon-heart-filled { filter: invert(1); }
+
 
 @layer utilities {
   .shadow-figma {
@@ -70,7 +73,7 @@ input:-webkit-autofill:focus {
     filter: invert(0);
   }
 
-  .icon-home {
+  .icon-home { 
     filter: invert(1);
   }
 }
@@ -204,6 +207,11 @@ input:-webkit-autofill:focus {
   :root:not(.light):not(.dark):not(.olivaceo-theme) .icon-home {
     filter: invert(0);
   }
+
+  :root:not(.light):not(.dark):not(.olivaceo-theme) .icon-heart-fav,
+  :root:not(.light):not(.dark):not(.olivaceo-theme) .icon-heart-filled {
+    filter: invert(1);
+  }
 }
 
 
@@ -229,6 +237,11 @@ input:-webkit-autofill:focus {
 }
 
 .light .icon-adaptive {
+  filter: invert(0);
+}
+
+.light .icon-heart-fav,
+.light .icon-heart-filled {
   filter: invert(0);
 }
 
@@ -261,6 +274,11 @@ input:-webkit-autofill:focus {
   filter: invert(1);
 }
 
+.dark .icon-heart-fav,
+.dark .icon-heart-filled {
+  filter: invert(1);
+}
+
 .dark .icon-home {
   filter: invert(0);
 }
@@ -288,6 +306,11 @@ input:-webkit-autofill:focus {
 }
 
 .olivaceo-theme .icon-adaptive {
+  filter: invert(0);
+}
+
+.olivaceo-theme .icon-heart-fav,
+.olivaceo-theme .icon-heart-filled {
   filter: invert(0);
 }
 

@@ -121,7 +121,6 @@ const Form = () => {
           onInputChange={(value) => setForgotEmail(value)}
           textButton="Enviar link"
           onClick={async () => {
-            console.log("Recuperar para:", forgotEmail);
             setIsModalOpen(false);
             const rec = await recuperarSenha(forgotEmail);
             if (rec.success) {

@@ -1,4 +1,3 @@
-"use server";
 import { supabase } from "@/lib/supabase";
 import { Pictograma } from "@/arasaac api/arasaac";
 

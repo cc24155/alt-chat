@@ -1,6 +1,5 @@
 import requests
 
-import requests
 
 class Pictograma:
     def __init__(self, id_pic: int = None):
@@ -36,9 +35,9 @@ class Pictograma:
                 case 1:
                     self.classe_gramatical = "pronome"
                 case 2:
-                    self.classe_gramatical = "substantivo"      
+                    self.classe_gramatical = "substantivo"
                 case 3:
-                    self.classe_gramatical = "verbo" 
+                    self.classe_gramatical = "verbo"
                 case 4:
                     self.classe_gramatical = "adjetivo"
                 case 5:

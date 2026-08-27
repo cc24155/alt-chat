@@ -1,4 +1,3 @@
-"use server";
 import { buscarPictogramaPorId, Pictograma } from "@/arasaac api/arasaac";
 import { supabase } from "@/lib/supabase";
 

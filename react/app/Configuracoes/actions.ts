@@ -1,4 +1,3 @@
-"use server";
 import { supabase } from "@/lib/supabase";
 
 export async function AtualizarDados(newUser: string, newName: string, newEmail: string, newBio: string, newPassword: string) {

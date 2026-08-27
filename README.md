@@ -96,4 +96,7 @@ Para rodar a API da IA:
 
 ---
 
+IMPORTANT: this repository previously contained a Supabase service key in plain text. Do NOT commit real credentials. Copy `.env.example` to `.env.local` (or set environment variables) and fill values. If you have committed secrets, revoke them in Supabase immediately.
+
+
 ⬆ [Voltar ao topo](#alt-chat)

@@ -1,4 +1,3 @@
-"use server";
 import { supabase } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
 
