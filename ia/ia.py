@@ -1,3 +1,5 @@
+import os
+
 # ia/data_loader.py
 
 class DataLoader:
@@ -23,12 +25,16 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from dotenv import load_dotenv
+from supabase import create_client
 
 try:
     from .sugestor import SugestorPictograma
+    from .svo import SugestorSVO
 except ImportError:
     from sugestor import SugestorPictograma
-
+    from svo import SugestorSVO
+    
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -44,6 +50,13 @@ modelo_path = Path(__file__).with_name("modelo.pkl")
 if modelo_path.exists():
     sugestor.carregar(str(modelo_path))
 
+load_dotenv(".env.local")
+url = os.getenv("NEXT_PUBLIC_SUPABASE_URL") or os.getenv("SUPABASE_URL")
+key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY") or os.getenv("SUPABASE_KEY")
+if not url or not key:
+    raise RuntimeError("Variáveis de ambiente do Supabase não encontradas.")
+svo = SugestorSVO(create_client(url, key))
+
 class SugerirRequest(BaseModel):
     contexto: list[int] | None = None
     usuario_id: str | None = None
@@ -56,18 +69,14 @@ def montar_pictograma(_id: int, palavra: str = "sugestao") -> dict:
         "origem": "arasaac",
     }
 
-SUGESTOES_PADRAO = [
-    montar_pictograma(2435, "comer"),
-    montar_pictograma(2555, "brincar"),
-]
-
 @app.post("/sugerir")
 def sugerir(req: SugerirRequest):
     contexto = req.contexto or ([req.id_atual] if req.id_atual is not None else [])
-    ids_sugeridos = sugestor.sugerir(contexto)
-
-    if not ids_sugeridos:
-        return {"sugestoes": SUGESTOES_PADRAO}
+    if not contexto:
+        ids_sugeridos = svo.sugerir_sujeitos()
+    else:
+        candidatas = sugestor.sugerir(contexto)
+        ids_sugeridos = svo.sugerir_svo(contexto, candidatas)
 
     return {"sugestoes": [montar_pictograma(_id) for _id in ids_sugeridos]}
 

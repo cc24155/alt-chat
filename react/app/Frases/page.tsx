@@ -6,6 +6,7 @@ import HeroSection from "../components/HeroSection";
 import Contato from "../components/Contato";
 import Footer from "../components/Footer";
 import { EstaLogado } from "../actions";
+import { salvarFrase } from "./actions";
 
 import { usePictogramas, PictogramasGrid } from "../components/PictogramaSection";
 import NavBar from "../components/NavBar";
@@ -33,6 +34,9 @@ export default function FrasesPage() {
   const [sugestoesIA, setSugestoesIA] = useState<Pictograma[]>([]);
   const [fraseSelecionada, setFraseSelecionada] = useState<Pictograma[]>([]);
   const [pictogramaInicial, setPictogramaInicial] = useState<Pictograma | null>(null);
+  const [modalAberto, setModalAberto] = useState<boolean>(false);
+  const [salvandoFrase, setSalvandoFrase] = useState(false);
+  const [erroAoSalvar, setErroAoSalvar] = useState<string | null>(null);
 
   async function buscarSugestoesIA(contexto: number[]) {
     const response = await fetch("http://localhost:8000/sugerir", {
@@ -121,6 +125,33 @@ export default function FrasesPage() {
     obterSugestaoDinamica();
   }, [q, resultados, loading]);
 
+  function exibirFraseMontada(frase: Pictograma[]) {
+    if (frase.length === 0) return;
+    setModalAberto(true);
+  }
+
+  async function finalizarFrase() {
+    if (fraseMontada.length === 0 || salvandoFrase) return;
+
+    setErroAoSalvar(null);
+    setSalvandoFrase(true);
+
+    try {
+      const resultado = await salvarFrase(fraseMontada.map((pic) => Number(pic._id)));
+
+      if (!resultado.success) {
+        setErroAoSalvar(resultado.error ?? "N\u00e3o foi poss\u00edvel salvar a frase.");
+        return;
+      }
+
+      exibirFraseMontada(fraseMontada);
+    } catch (erro) {
+      console.error("Erro ao finalizar frase:", erro);
+      setErroAoSalvar("N\u00e3o foi poss\u00edvel salvar a frase. Tente novamente.");
+    } finally {
+      setSalvandoFrase(false);
+    }
+  }
 
   // quando terminar de carregar E tiver uma busca, rola até os resultados
   useEffect(() => {
@@ -164,7 +195,21 @@ export default function FrasesPage() {
             >
               Limpar
             </button>
+            <button
+              type="button"
+              onClick={finalizarFrase}
+              disabled={salvandoFrase}
+              className="font-body text-xs text-neutral hover:text-foreground transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {salvandoFrase ? "Salvando..." : "Finalizar"}
+            </button>
           </div>
+
+          {erroAoSalvar && (
+            <p role="alert" className="font-body text-xs text-secondary">
+              {erroAoSalvar}
+            </p>
+          )}
 
           <div className="flex flex-wrap gap-2">
             {fraseMontada.map((pic, index) => (
@@ -253,6 +298,52 @@ export default function FrasesPage() {
 
       <Contato />
       <Footer />
+      {/* POP-UP / MODAL EM DESTAQUE */}
+      {modalAberto && (
+        <div className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-md flex flex-col items-center justify-center p-6">
+          <div className="bg-background border border-foreground/20 rounded-3xl p-8 max-w-4xl w-full flex flex-col items-center gap-6 shadow-2xl relative">
+            
+            <button
+              type="button"
+              onClick={() => setModalAberto(false)}
+              className="absolute top-4 right-4 text-foreground/60 hover:text-foreground text-2xl font-bold p-2 transition-colors"
+            >
+              ✕
+            </button>
+
+            <span className="font-body uppercase tracking-widest text-primary text-sm font-bold">
+              Frase Finalizada
+            </span>
+
+            {/* Lista dos pictogramas maiores */}
+            <div className="flex flex-wrap justify-center gap-6 my-4 max-h-[60vh] overflow-y-auto p-2 w-full">
+              {fraseMontada.map((pic, index) => (
+                <div
+                  key={`modal-${pic._id}-${index}`}
+                  className="w-36 h-44 border border-foreground/15 rounded-2xl p-4 bg-neutral/10 flex flex-col items-center justify-between text-center shadow-md"
+                >
+                  <img
+                    src={`https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`}
+                    alt={pic.keywords?.[0]?.keyword ?? "pictograma"}
+                    className="w-24 h-24 object-contain"
+                  />
+                  <span className="font-body text-xs font-bold uppercase text-foreground truncate w-full">
+                    {pic.keywords?.[0]?.keyword}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setModalAberto(false)}
+              className="px-6 py-2.5 rounded-xl bg-primary text-background font-bold text-sm hover:opacity-90 transition-opacity"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
