@@ -1,3 +1,4 @@
+import os
 import time
 from supabase import create_client, Client
 from pictogramas import Pictograma

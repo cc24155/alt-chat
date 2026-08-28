@@ -59,8 +59,44 @@ svo = SugestorSVO(create_client(url, key))
 
 class SugerirRequest(BaseModel):
     contexto: list[int] | None = None
+    contexto_palavras: list[str] | None = None
     usuario_id: str | None = None
     id_atual: int | None = None
+
+def buscar_id_por_palavra(palavra: str) -> int | None:
+    palavra_normalizada = palavra.strip().lower()
+    if not palavra_normalizada:
+        return None
+
+    res = (
+        svo.supabase.table("pictograma")
+        .select("arasaac_id")
+        .ilike("palavra", palavra_normalizada)
+        .limit(1)
+        .execute()
+    )
+    return int(res.data[0]["arasaac_id"]) if res.data else None
+
+def normalizar_contexto(req: SugerirRequest) -> list[int]:
+    if req.contexto_palavras:
+        ids = [buscar_id_por_palavra(palavra) for palavra in req.contexto_palavras]
+        ids_validos = [id_pic for id_pic in ids if id_pic is not None]
+        if ids_validos:
+            return ids_validos
+
+    return req.contexto or ([req.id_atual] if req.id_atual is not None else [])
+
+def buscar_palavras_por_id(ids: list[int]) -> dict[int, str]:
+    if not ids:
+        return {}
+
+    res = (
+        svo.supabase.table("pictograma")
+        .select("arasaac_id, palavra")
+        .in_("arasaac_id", ids)
+        .execute()
+    )
+    return {int(row["arasaac_id"]): row["palavra"] for row in res.data}
 
 def montar_pictograma(_id: int, palavra: str = "sugestao") -> dict:
     return {
@@ -71,14 +107,21 @@ def montar_pictograma(_id: int, palavra: str = "sugestao") -> dict:
 
 @app.post("/sugerir")
 def sugerir(req: SugerirRequest):
-    contexto = req.contexto or ([req.id_atual] if req.id_atual is not None else [])
+    contexto = normalizar_contexto(req)
     if not contexto:
         ids_sugeridos = svo.sugerir_sujeitos()
     else:
         candidatas = sugestor.sugerir(contexto)
         ids_sugeridos = svo.sugerir_svo(contexto, candidatas)
 
-    return {"sugestoes": [montar_pictograma(_id) for _id in ids_sugeridos]}
+    palavras_por_id = buscar_palavras_por_id(ids_sugeridos)
+
+    return {
+        "sugestoes": [
+            montar_pictograma(_id, palavras_por_id.get(_id, ""))
+            for _id in ids_sugeridos
+        ]
+    }
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 class SugestorSVO:
-    """Aplica a ordem sujeito -> verbo -> objeto às sugestões do modelo."""
+    """Aplica a ordem sujeito -> verbo -> complemento às sugestões do modelo."""
 
     def __init__(self, supabase_client):
         self.supabase = supabase_client
@@ -11,20 +11,25 @@ class SugestorSVO:
             return self.filtrar_por_classe(candidatas_brutas, ["pronome", "substantivo"])
         if len(contexto) == 1:
             return self.filtrar_por_classe(candidatas_brutas, ["verbo"])
-        if len(contexto) == 2:
-            return self.filtrar_por_classe(candidatas_brutas, ["substantivo"])
-        return []
+        return self.filtrar_por_classe(
+            candidatas_brutas,
+            ["substantivo", "preposição", "pronome", "adjetivo", "outros"],
+        )
 
-    def sugerir_sujeitos(self, limite: int = 5) -> list[int]:
+    def sugerir_sujeitos(self, limite: int = 20) -> list[int]:
         """Sugere inícios possíveis para uma nova frase."""
         res = (
             self.supabase.table("pictograma")
-            .select("arasaac_id")
+            .select("arasaac_id, palavra")
             .in_("classe", ["pronome", "substantivo"])
-            .limit(limite)
+            .limit(max(limite, 20))
             .execute()
         )
-        return [row["arasaac_id"] for row in res.data]
+        sujeitos = sorted(
+            res.data,
+            key=lambda row: (row.get("palavra", "").lower() not in {"eu", "tu"}, row.get("palavra", "").lower()),
+        )
+        return [int(row["arasaac_id"]) for row in sujeitos[:limite]]
 
     def filtrar_por_classe(self, ids: list[int], classes_permitidas: list[str]) -> list[int]:
         if not ids:

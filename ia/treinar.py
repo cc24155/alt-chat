@@ -21,7 +21,7 @@ if not url or not key:
 
 supabase: Client = create_client(url, key)
 
-# O cadastro grava cada frase como, por exemplo, "[10, 20, 30]".
+# O cadastro grava cada frase como, por exemplo, "[10, 20]" ou "[10, 20, 30]".
 resposta = supabase.table("frase_pictograma").select("lista_pictograma").execute()
 sequencias = []
 for linha in resposta.data:
@@ -30,13 +30,13 @@ for linha in resposta.data:
     except (KeyError, TypeError, json.JSONDecodeError):
         print(f"Frase ignorada por estar em formato inválido: {linha}")
         continue
-    if isinstance(sequencia, list) and len(sequencia) == 3 and all(isinstance(i, int) for i in sequencia):
+    if isinstance(sequencia, list) and len(sequencia) >= 2 and all(isinstance(i, int) for i in sequencia):
         sequencias.append(sequencia)
 
 if not sequencias:
-    raise RuntimeError("Não há frases SVO válidas no banco para treinar.")
+    raise RuntimeError("Não há frases válidas no banco para treinar.")
 
 sugestor = SugestorPictograma()
 sugestor.treinar(sequencias)
 sugestor.salvar(str(Path(__file__).with_name("modelo.pkl")))
-print(f"Modelo treinado com {len(sequencias)} frases SVO confirmadas.")
+print(f"Modelo treinado com {len(sequencias)} frases confirmadas.")
