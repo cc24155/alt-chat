@@ -264,6 +264,10 @@ useEffect(() => {
     : `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`;
   
 
+  function handleAudio(): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div
       className="animate-fade-in fixed inset-0 z-[200] flex items-center justify-center p-4"
@@ -321,6 +325,18 @@ useEffect(() => {
                   src={favoritado ? "/Heart-filled.png" : "/Heart-fav.png"}   //se deu certo, heart-filled, senãon heart-fav
                   alt="Favoritar"
                   className={`w-6 h-6 transition-all ${favoritado ? "icon-heart-filled" : "icon-heart-fav"}`}
+                />
+              </button>
+              
+              {/* Audio */}
+              <button
+                onClick={() => handleAudio()}
+                className="flex items-center justify-center hover:scale-110 transition-all"
+              >
+                <img
+                  src={"/sound.png"}   //se deu certo, heart-filled, senãon heart-fav
+                  alt="Som"
+                  className={`w-6 h-6 transition-all icon-adaptive`}
                 />
               </button>
 
