@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { buscarPictogramas, buscarCategorias, Pictograma } from "../../arasaac api/arasaac";
 import { useSearchParams } from "next/navigation";
 import { registrarUsoPictograma } from "../actions";
-import { EFavorito } from "./actions";
+import { EFavorito, palavraPorID } from "./actions";
 
 import Button from "./Button";
 import { adicionarFavorito, excluirFavoritos, marcarFavoritos, excluirPicProprio } from "./actions";
@@ -263,9 +263,28 @@ useEffect(() => {
     ? pic.url_imagem
     : `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`;
   
+  async function handleAudio() {
+    try {
+      const res = await palavraPorID(pic._id);
 
-  function handleAudio(): void {
-    throw new Error("Function not implemented.");
+      if (res.success && res.palavra) {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+
+          const utterance = new SpeechSynthesisUtterance(res.palavra);
+          utterance.lang = "pt-BR";
+          utterance.rate = 0.9;
+
+          window.speechSynthesis.speak(utterance);
+        } else {
+          alert("Seu navegador não suporta reprodução de áudio.");
+        }
+      } else {
+        alert("Não foi possível reproduzir o áudio.");
+      }
+    } catch (e) {
+      console.error("Erro ao reproduzir áudio:", e);
+    }
   }
 
   return (

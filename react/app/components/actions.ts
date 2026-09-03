@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { Pictograma } from "@/arasaac api/arasaac";
+import { error } from "console";
 
 type OrigemPictograma = "arasaac" | "usuario";
 
@@ -149,4 +150,26 @@ export async function excluirPicProprio(id: number | string, origem?: OrigemPict
     } catch (e: any) {
         return { success: false, error: e.message };
     }
+}
+
+export function formatarErro(texto: string) {
+    if (!texto || texto.trim() === "" || texto === null) return new Error("Texto inválido");
+    const textoFormatado = texto.trim().toLowerCase();
+    return{
+        success: true,
+        texto: textoFormatado
+    }
+}
+
+export async function palavraPorID(idPic: number | string) {
+    try{
+        let res = await fetch(`https://api.arasaac.org/v1/pictograms/pt/${idPic}`) || await supabase.from("usuario_pictograma").select("palavra").eq("id", idPic).single();
+        const data = await res.json();
+        const palavraEncontrada = data.keywords?.[0]?.keyword;
+        return { success: true, palavra: palavraEncontrada || "" }; 
+        
+    } 
+    catch (error) {
+        return { success: false, error: (error as Error).message };
+    };
 }
