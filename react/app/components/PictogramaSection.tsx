@@ -334,9 +334,9 @@ useEffect(() => {
                 className="flex items-center justify-center hover:scale-110 transition-all"
               >
                 <img
-                  src={"/sound.png"}   //se deu certo, heart-filled, senãon heart-fav
+                  src="/sound.png"
                   alt="Som"
-                  className={`w-6 h-6 transition-all icon-adaptive`}
+                  className="w-5 h-5 opacity-50 hover:opacity-100 transition-all icon-adaptive"
                 />
               </button>
 
@@ -344,14 +344,13 @@ useEffect(() => {
               {origem === "usuario" && (
                 <button
                   onClick={handleDelete}
-                  className="flex items-center justify-center hover:scale-110 transition-all p-2 rounded-full"
+                  className="flex items-center justify-center hover:scale-110 transition-all rounded-full"
                   title="Excluir pictograma"
                 >
                   <img
-                    src="/Trash.png" // Certifique-se de ter esse ícone na pasta public
+                    src="/Trash.png"
                     alt="Excluir"
-                    className="w-6 h-6 icon-adaptive
-                  hover:content-[url('/Trash-open.png')]"
+                    className="w-6 h-6 icon-adaptive hover:content-[url('/Trash-open.png')]"
                   />
                 </button>
               )}
