@@ -268,6 +268,10 @@ useEffect(() => {
     : `https://static.arasaac.org/pictograms/${pic._id}/${pic._id}_300.png`;
   
 
+  function handleAudio(): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div
       className="animate-fade-in fixed inset-0 z-[200] flex items-center justify-center p-4"
@@ -327,19 +331,32 @@ useEffect(() => {
                   className={`w-6 h-6 transition-all ${favoritado ? "icon-heart-filled" : "icon-heart-fav"}`}
                 />
               </button>
+              
+              {/* Audio */}
+              {origem !== "usuario" && (
+                <button
+                  onClick={() => handleAudio()}
+                  className="flex items-center justify-center hover:scale-110 transition-all"
+                >
+                  <img
+                    src="/sound.png"
+                    alt="Som"
+                    className="w-5 h-5 opacity-50 hover:opacity-100 transition-all icon-adaptive"
+                  />
+                </button>
+              )}
 
               {/* Lixeira */}
               {origem === "usuario" && (
                 <button
                   onClick={handleDelete}
-                  className="flex items-center justify-center hover:scale-110 transition-all p-2 rounded-full"
+                  className="flex items-center justify-center hover:scale-110 transition-all rounded-full"
                   title="Excluir pictograma"
                 >
                   <img
-                    src="/Trash.png" // Certifique-se de ter esse ícone na pasta public
+                    src="/Trash.png"
                     alt="Excluir"
-                    className="w-6 h-6 icon-adaptive
-                  hover:content-[url('/Trash-open.png')]"
+                    className="w-7 h-7 icon-adaptive hover:content-[url('/Trash-open.png')]"
                   />
                 </button>
               )}
