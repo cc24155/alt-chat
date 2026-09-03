@@ -329,16 +329,18 @@ useEffect(() => {
               </button>
               
               {/* Audio */}
-              <button
-                onClick={() => handleAudio()}
-                className="flex items-center justify-center hover:scale-110 transition-all"
-              >
-                <img
-                  src="/sound.png"
-                  alt="Som"
-                  className="w-5 h-5 opacity-50 hover:opacity-100 transition-all icon-adaptive"
-                />
-              </button>
+              {origem !== "usuario" && (
+                <button
+                  onClick={() => handleAudio()}
+                  className="flex items-center justify-center hover:scale-110 transition-all"
+                >
+                  <img
+                    src="/sound.png"
+                    alt="Som"
+                    className="w-5 h-5 opacity-50 hover:opacity-100 transition-all icon-adaptive"
+                  />
+                </button>
+              )}
 
               {/* Lixeira */}
               {origem === "usuario" && (
@@ -350,7 +352,7 @@ useEffect(() => {
                   <img
                     src="/Trash.png"
                     alt="Excluir"
-                    className="w-6 h-6 icon-adaptive hover:content-[url('/Trash-open.png')]"
+                    className="w-7 h-7 icon-adaptive hover:content-[url('/Trash-open.png')]"
                   />
                 </button>
               )}
