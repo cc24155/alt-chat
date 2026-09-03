@@ -150,3 +150,12 @@ export async function excluirPicProprio(id: number | string, origem?: OrigemPict
         return { success: false, error: e.message };
     }
 }
+
+export function formatarErro(texto: string) {
+    if (!texto || texto.trim() === "" || texto === null) return new Error("Texto inválido");
+    const textoFormatado = texto.trim().toLowerCase();
+    return{
+        success: true,
+        texto: textoFormatado
+    }
+}

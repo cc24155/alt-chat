@@ -210,6 +210,10 @@ useEffect(() => {
     }
   }
 
+  function handleFalar(){
+
+  }
+
   void verificarFavorito();
   void registrar();
 }, [pic._id, origem, isFavorited]);
