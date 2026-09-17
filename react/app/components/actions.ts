@@ -161,15 +161,48 @@ export function formatarErro(texto: string) {
     }
 }
 
-export async function palavraPorID(idPic: number | string) {
-    try{
-        let res = await fetch(`https://api.arasaac.org/v1/pictograms/pt/${idPic}`) || await supabase.from("usuario_pictograma").select("palavra").eq("id", idPic).single();
-        const data = await res.json();
-        const palavraEncontrada = data.keywords?.[0]?.keyword;
-        return { success: true, palavra: palavraEncontrada || "" }; 
+// export async function palavraPorID(idPic: number | string) {
+//     try{
+//         let res = await fetch(`https://api.arasaac.org/v1/pictograms/pt/${idPic}`) || await supabase.from("usuario_pictograma").select("palavra").eq("id", idPic).single();
+//         const data = await res.json();
+//         const palavraEncontrada = data.keywords?.[0]?.keyword;
+//         return { success: true, palavra: palavraEncontrada || "" }; 
         
-    } 
-    catch (error) {
-        return { success: false, error: (error as Error).message };
-    };
+//     } 
+//     catch (error) {
+//         return { success: false, error: (error as Error).message };
+//     };
+// }
+
+export async function palavraPorID(idPic: number | string) {
+  try {
+    const res = await fetch(`https://api.arasaac.org/v1/pictograms/pt/${idPic}`);
+
+    if (res.ok) {
+      const data = await res.json();
+      const palavraEncontrada = data.keywords?.[0]?.keyword;
+      if (palavraEncontrada) {
+        return { success: true, palavra: palavraEncontrada };
+      }
+    }
+
+    const { data, error } = await supabase
+      .from("usuario_pictograma")
+      .select("descricao")
+      .eq("id", idPic)
+      .maybeSingle(); // maybeSingle evita lançar exceção caso não encontre nenhuma linha
+
+    if (error) {
+      return { success: false, error: `Erro no Supabase: ${error.message}` };
+    }
+
+    if (data?.descricao) {
+      return { success: true, palavra: data.descricao };
+    }
+    
+    return { success: false, error: "Palavra não encontrada em nenhuma das bases." };
+
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
 }

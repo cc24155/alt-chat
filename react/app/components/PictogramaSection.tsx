@@ -8,6 +8,7 @@ import { EFavorito, palavraPorID } from "./actions";
 
 import Button from "./Button";
 import { adicionarFavorito, excluirFavoritos, marcarFavoritos, excluirPicProprio } from "./actions";
+import { convertServerPatchToFullTree } from "next/dist/client/components/segment-cache/navigation";
 
 
 export function usePictogramas(nomes: string[]) {
@@ -266,6 +267,7 @@ useEffect(() => {
   async function handleAudio() {
     try {
       const res = await palavraPorID(pic._id);
+      console.log(pic._id);
 
       if (res.success && res.palavra) {
         if ("speechSynthesis" in window) {
@@ -281,6 +283,8 @@ useEffect(() => {
         }
       } else {
         alert("Não foi possível reproduzir o áudio.");
+        console.log(pic._id);
+        console.log(res.error);
       }
     } catch (e) {
       console.error("Erro ao reproduzir áudio:", e);
