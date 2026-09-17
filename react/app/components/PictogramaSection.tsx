@@ -348,18 +348,16 @@ useEffect(() => {
               </button>
               
               {/* Audio */}
-              {origem !== "usuario" && (
-                <button
-                  onClick={() => handleAudio()}
-                  className="flex items-center justify-center hover:scale-110 transition-all"
-                >
-                  <img
-                    src="/sound.png"
-                    alt="Som"
-                    className="w-5 h-5 opacity-50 hover:opacity-100 transition-all icon-adaptive"
-                  />
-                </button>
-              )}
+              <button
+                onClick={() => handleAudio()}
+                className="flex items-center justify-center hover:scale-110 transition-all"
+              >
+                <img
+                  src="/sound.png"
+                  alt="Som"
+                  className="w-5 h-5 opacity-50 hover:opacity-100 transition-all icon-adaptive"
+                />
+              </button>
 
               {/* Lixeira */}
               {origem === "usuario" && (
