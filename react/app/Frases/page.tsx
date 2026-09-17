@@ -171,6 +171,10 @@ export default function FrasesPage() {
     ? [pictogramaInicial, ...fraseSelecionada]
     : fraseSelecionada;
 
+  function handleAudio(): void {
+    throw new Error("Function not implemented.");
+  }
+
   //se é true, navigationblue, se não é, navbar
 
 
@@ -333,14 +337,26 @@ export default function FrasesPage() {
                 </div>
               ))}
             </div>
+            <div className="justify-between w-full flex items-center ">
+              <div></div>
+              <button
+                type="button"
+                onClick={() => setModalAberto(false)}
+                className="px-6 py-2.5 rounded-xl bg-primary text-background font-bold text-sm hover:opacity-90 transition-opacity"
+              >
+                Fechar
+              </button>
+              <button
+                onClick={() => handleAudio()}
+                className="flex items-center justify-center hover:scale-110 transition-all">
+                <img
+                  src="/sound.png"
+                  alt="Som"
+                  className="w-5 h-5 opacity-50 hover:opacity-100 transition-all icon-adaptive"
+                />
+              </button>
+            </div>
 
-            <button
-              type="button"
-              onClick={() => setModalAberto(false)}
-              className="px-6 py-2.5 rounded-xl bg-primary text-background font-bold text-sm hover:opacity-90 transition-opacity"
-            >
-              Fechar
-            </button>
           </div>
         </div>
       )}
