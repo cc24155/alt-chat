@@ -39,14 +39,30 @@ export default function FrasesPage() {
   const [erroAoSalvar, setErroAoSalvar] = useState<string | null>(null);
 
   async function buscarSugestoesIA(contexto: number[]) {
-    const response = await fetch("http://localhost:8000/sugerir", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contexto }),
-    });
+    const response = await fetch(
+      "http://localhost:8000/sugerir",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ contexto }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Erro da IA: ${response.status}`
+      );
+    }
 
     const dados = await response.json();
-    setSugestoesIA(Array.isArray(dados.sugestoes) ? dados.sugestoes : sugestoesPadraoIA);
+
+    setSugestoesIA(
+      Array.isArray(dados.sugestoes)
+        ? dados.sugestoes
+        : []
+    );
   }
 
   function idsNumericos(pictogramas: Pictograma[]) {
@@ -70,7 +86,7 @@ export default function FrasesPage() {
       await buscarSugestoesIA(contexto);
     } catch (erro) {
       console.error("Erro ao chamar a IA:", erro);
-      setSugestoesIA(sugestoesPadraoIA);
+      setSugestoesIA([]);
     }
   }
 
@@ -90,35 +106,74 @@ export default function FrasesPage() {
 
 
   // CAPTURA A DIGITAÇÃO, PEGA A ÚLTIMA PALAVRA E BUSCA A SUGESTÃO DA IA
-  useEffect(() => {
-    const obterSugestaoDinamica = async () => {
-      if (!loading && q && resultados && resultados.length > 0) {
+  useEffect(() => { 
+  const obterSugestaoDinamica = async () => {
+      if (
+        !loading &&
+        q &&
+        resultados &&
+        resultados.length > 0
+      ) {
+        const palavrasDigitadas =
+          q.trim().split(/\s+/);
 
-        // 1. LIMPEZA INTELIGENTE: Pega o texto da barra de busca, limpa espaços extras e separa por palavras
-        const palavrasDigitadas = q.trim().split(/\s+/);
-        // Pega a última palavra que o usuário escreveu (Ex: de "eu quero", pega "quero")
-        const ultimaPalavra = palavrasDigitadas[palavrasDigitadas.length - 1].toLowerCase();
+        const ultimaPalavra =
+          palavrasDigitadas[
+            palavrasDigitadas.length - 1
+          ].toLowerCase();
 
-        // 2. Procura na lista de resultados qual card realmente bate com a última palavra digitada
-        // Isso evita que o sistema envie IDs de relógios ou lixos que o ARASAAC trouxe de penetra
-        const cardCorreto = resultados.find(pic =>
-          pic.keywords?.some(kw => kw.keyword.toLowerCase() === ultimaPalavra)
-        ) || resultados[0]; // Caso não ache idêntico, usa o primeiro como plano B
+        const cardCorreto =
+          resultados.find(pic =>
+            pic.keywords?.some(
+              kw =>
+                kw.keyword.toLowerCase()
+                === ultimaPalavra
+            )
+          ) || resultados[0];
 
-        const idNumerico = Number(cardCorreto._id);
-        if (isNaN(idNumerico)) return;
+        const idNumerico =
+          Number(cardCorreto._id);
+
+        if (isNaN(idNumerico)) {
+          return;
+        }
 
         try {
-          setPictogramaInicial(cardCorreto);
+          setPictogramaInicial(
+            cardCorreto
+          );
+
           setFraseSelecionada([]);
-          await buscarSugestoesIA([idNumerico]);
+
+          await buscarSugestoesIA([
+            idNumerico
+          ]);
         } catch (erro) {
-          console.error("Erro ao chamar a IA:", erro);
-          setSugestoesIA(sugestoesPadraoIA);
+          console.error(
+            "Erro ao chamar a IA:",
+            erro
+          );
+
+          setSugestoesIA([]);
         }
-      } else {
+      }
+
+      // Nenhuma pesquisa:
+      // pede sujeitos para a IA.
+      else if (!loading && !q) {
         setPictogramaInicial(null);
-        setSugestoesIA([]);
+        setFraseSelecionada([]);
+
+        try {
+          await buscarSugestoesIA([]);
+        } catch (erro) {
+          console.error(
+            "Erro ao buscar sujeitos:",
+            erro
+          );
+
+          setSugestoesIA([]);
+        }
       }
     };
 
@@ -244,9 +299,106 @@ export default function FrasesPage() {
         routerPushButton={"/Biblioteca"}     
       />
 
+      {!pictogramaPrincipal &&
+  sugestoesIA.length > 0 && (
+    <div
+      className="
+        w-full
+        bg-neutral/5
+        p-6
+        rounded-2xl
+        border
+        border-foreground/10
+        flex
+        flex-col
+        gap-4
+      "
+    >
+      <span
+        className="
+          font-body
+          uppercase
+          tracking-widest
+          text-neutral
+          opacity-60
+          text-xs
+        "
+      >
+        Quem realiza a ação?
+      </span>
+
+      <div
+        className="
+          flex
+          flex-wrap
+          gap-4
+        "
+      >
+        {sugestoesIA.map(pic => (
+          <button
+            key={pic._id}
+            type="button"
+            onClick={() =>
+              selecionarSugestao(pic)
+            }
+            className="
+              border-2
+              border-dashed
+              border-primary/40
+              rounded-2xl
+              p-4
+              flex
+              flex-col
+              items-center
+              justify-center
+              w-32
+              bg-background
+              hover:border-primary
+              transition-all
+              shadow-sm
+            "
+          >
+            <img
+              src={
+                `https://static.arasaac.org/` +
+                `pictograms/${pic._id}/` +
+                `${pic._id}_300.png`
+              }
+              alt={
+                pic.keywords?.[0]
+                  ?.keyword ?? "pictograma"
+              }
+              className="
+                w-16
+                h-16
+                object-contain
+                mb-2
+              "
+            />
+
+            <span
+              className="
+                font-body
+                text-xs
+                font-bold
+                uppercase
+                text-primary
+              "
+            >
+              {
+                pic.keywords?.[0]
+                  ?.keyword
+              }
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+)}
+
       {/* SEÇÃO DA COSTRUÇÃO DE FRASES + PREDITIVO */}
       <div id="busca-frases" className="max-w-[1200px] mx-auto w-full flex flex-col gap-8 scroll-mt-24">
-        {q && resultados && resultados.length > 0 && pictogramaPrincipal && (
+        {pictogramaPrincipal && (
           <div className="w-full bg-neutral/5 p-6 rounded-2xl border border-foreground/10 flex flex-col gap-3">
           <span className="font-body uppercase tracking-widest text-neutral opacity-60 text-xs">
             Construindo sua Frase

@@ -1,5 +1,5 @@
 import pickle
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 
 def _novo_contador():
@@ -9,26 +9,61 @@ def _novo_contador():
 class SugestorPictograma:
     def __init__(self):
         self.modelo = defaultdict(_novo_contador)
-        # {"QUERO": {"COMER": 5, "IR": 2, "BEBER": 3}}
 
     def treinar(self, sequencias: list[list[int]]):
         for sequencia in sequencias:
+            if len(sequencia) < 2:
+                continue
+
             for i in range(len(sequencia) - 1):
-                contexto = sequencia[i]
-                proximo = sequencia[i + 1]
+                contexto = int(sequencia[i])
+                proximo = int(sequencia[i + 1])
                 self.modelo[contexto][proximo] += 1
 
-    def sugerir(self, contexto: list[int], top_n: int = 5) -> list[int]:
+    def sugerir(self, contexto: list[int], top_n: int = 50) -> list[int]:
         if not contexto:
             return []
-        ultimo = contexto[-1]
-        candidatos = self.modelo.get(ultimo, {})
-        ordenados = sorted(candidatos, key=candidatos.get, reverse=True)
-        return ordenados[:top_n]
 
-    def personalizar(self, sugestoes: list[int], historico: dict) -> list[int]:
-        # Reordena sugestoes dando peso extra para pics muito usados pelo usuário
-        pass
+        ultimo = int(contexto[-1])
+        candidatos = self.modelo.get(ultimo, {})
+
+        ordenados = sorted(
+            candidatos,
+            key=candidatos.get,
+            reverse=True
+        )
+
+        return [int(_id) for _id in ordenados[:top_n]]
+
+    def sugerir_globais(self, top_n: int = 200) -> list[int]:
+        frequencias = Counter()
+
+        for candidatos in self.modelo.values():
+            frequencias.update(candidatos)
+
+        return [
+            int(_id)
+            for _id, _ in frequencias.most_common(top_n)
+        ]
+
+    def personalizar(
+        self,
+        sugestoes: list[int],
+        historico: dict
+    ) -> list[int]:
+
+        if not historico:
+            return sugestoes
+
+        def pontuacao(_id: int):
+            dados = historico.get(_id, {})
+            return int(dados.get("total", 0))
+
+        return sorted(
+            sugestoes,
+            key=pontuacao,
+            reverse=True
+        )
 
     def salvar(self, caminho: str):
         with open(caminho, "wb") as f:

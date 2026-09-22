@@ -1,31 +1,10 @@
 import os
-
-# ia/data_loader.py
-
-class DataLoader:
-    def __init__(self, db_url: str):
-        self.db_url = db_url
-
-    def carregar_sequencias(self, usuario_id: str) -> list[list[int]]:
-        # Query: frase_pictograma JOIN frase WHERE usuario_id = ?
-        # ORDER BY frase_id, ordem
-        # Retorna: [[34560, 2419, 8709], [2419, 1234], ...]
-        pass
-
-    def carregar_historico_uso(self, usuario_id: str) -> dict:
-        # Query: uso_pictograma WHERE usuario_id = ?
-        # Retorna: {pic_id: {"total": 5, "horas": [8,8,12], "dias": [1,1,3]}}
-        pass
-
-# ia/sugestor.py
-
-
 from pathlib import Path
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from dotenv import load_dotenv
 from supabase import create_client
 
 try:
@@ -34,28 +13,65 @@ try:
 except ImportError:
     from sugestor import SugestorPictograma
     from svo import SugestorSVO
-    
+
+
+LIMITE_SUGESTOES = 10
+
+
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-sugestor = SugestorPictograma()
-modelo_path = Path(__file__).with_name("modelo.pkl")
-
-if modelo_path.exists():
-    sugestor.carregar(str(modelo_path))
 
 load_dotenv(".env.local")
-url = os.getenv("NEXT_PUBLIC_SUPABASE_URL") or os.getenv("SUPABASE_URL")
-key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY") or os.getenv("SUPABASE_KEY")
+
+url = (
+    os.getenv("NEXT_PUBLIC_SUPABASE_URL")
+    or os.getenv("SUPABASE_URL")
+)
+
+key = (
+    os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    or os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+    or os.getenv("SUPABASE_KEY")
+)
+
 if not url or not key:
-    raise RuntimeError("Variáveis de ambiente do Supabase não encontradas.")
-svo = SugestorSVO(create_client(url, key))
+    raise RuntimeError(
+        "Variáveis de ambiente do Supabase "
+        "não encontradas."
+    )
+
+
+svo = SugestorSVO(
+    create_client(url, key)
+)
+
+sugestor = SugestorPictograma()
+
+modelo_path = Path(__file__).with_name(
+    "modelo.pkl"
+)
+
+if not modelo_path.exists():
+    raise RuntimeError(
+        "modelo.pkl não encontrado. "
+        "Execute treinar.py primeiro."
+    )
+
+sugestor.carregar(
+    str(modelo_path)
+)
+
 
 class SugerirRequest(BaseModel):
     contexto: list[int] | None = None
@@ -63,146 +79,194 @@ class SugerirRequest(BaseModel):
     usuario_id: str | None = None
     id_atual: int | None = None
 
-def buscar_id_por_palavra(palavra: str) -> int | None:
-    palavra_normalizada = palavra.strip().lower()
-    if not palavra_normalizada:
+
+def buscar_id_por_palavra(
+    palavra: str
+) -> int | None:
+
+    palavra = palavra.strip().lower()
+
+    if not palavra:
         return None
 
     res = (
-        svo.supabase.table("pictograma")
+        svo.supabase
+        .table("pictograma")
         .select("arasaac_id")
-        .ilike("palavra", palavra_normalizada)
+        .ilike("palavra", palavra)
         .limit(1)
         .execute()
     )
-    return int(res.data[0]["arasaac_id"]) if res.data else None
 
-def normalizar_contexto(req: SugerirRequest) -> list[int]:
+    if not res.data:
+        return None
+
+    return int(
+        res.data[0]["arasaac_id"]
+    )
+
+
+def normalizar_contexto(
+    req: SugerirRequest
+) -> list[int]:
+
     if req.contexto_palavras:
-        ids = [buscar_id_por_palavra(palavra) for palavra in req.contexto_palavras]
-        ids_validos = [id_pic for id_pic in ids if id_pic is not None]
-        if ids_validos:
-            return ids_validos
+        ids = [
+            buscar_id_por_palavra(p)
+            for p in req.contexto_palavras
+        ]
 
-    return req.contexto or ([req.id_atual] if req.id_atual is not None else [])
+        # Não altera a estrutura da frase
+        # silenciosamente.
+        if all(
+            _id is not None
+            for _id in ids
+        ):
+            return [
+                int(_id)
+                for _id in ids
+                if _id is not None
+            ]
 
-def buscar_palavras_por_id(ids: list[int]) -> dict[int, str]:
+    if req.contexto:
+        return [
+            int(_id)
+            for _id in req.contexto
+        ]
+
+    if req.id_atual is not None:
+        return [int(req.id_atual)]
+
+    return []
+
+
+def buscar_palavras_por_id(
+    ids: list[int]
+) -> dict[int, str]:
+
     if not ids:
         return {}
 
     res = (
-        svo.supabase.table("pictograma")
+        svo.supabase
+        .table("pictograma")
         .select("arasaac_id, palavra")
         .in_("arasaac_id", ids)
         .execute()
     )
-    return {int(row["arasaac_id"]): row["palavra"] for row in res.data}
 
-def montar_pictograma(_id: int, palavra: str = "sugestao") -> dict:
     return {
-        "_id": _id,
-        "keywords": [{"keyword": palavra}],
+        int(row["arasaac_id"]):
+        str(row.get("palavra", ""))
+        for row in res.data
+    }
+
+
+def montar_pictograma(
+    _id: int,
+    palavra: str = ""
+) -> dict:
+
+    return {
+        "_id": int(_id),
+        "keywords": [
+            {"keyword": palavra}
+        ],
         "origem": "arasaac",
     }
 
+
+def gerar_sugestoes(
+    contexto: list[int]
+) -> list[int]:
+
+    # Nenhuma palavra ainda:
+    # oferece eu, tu, você...
+    if not contexto:
+        return svo.sugerir_sujeitos(
+            LIMITE_SUGESTOES
+        )
+
+    # Busca bastante candidato primeiro.
+    candidatas = sugestor.sugerir(
+        contexto,
+        top_n=50
+    )
+
+    ids = svo.sugerir_svo(
+        contexto,
+        candidatas,
+        limite=LIMITE_SUGESTOES,
+    )
+
+    if ids:
+        return ids
+
+    # Fallback para algo nunca visto.
+    candidatas_globais = (
+        sugestor.sugerir_globais(
+            top_n=200
+        )
+    )
+
+    return svo.sugerir_svo(
+        contexto,
+        candidatas_globais,
+        limite=LIMITE_SUGESTOES,
+    )
+
+
 @app.post("/sugerir")
 def sugerir(req: SugerirRequest):
-    contexto = normalizar_contexto(req)
-    if not contexto:
-        ids_sugeridos = svo.sugerir_sujeitos()
-    else:
-        candidatas = sugestor.sugerir(contexto)
-        ids_sugeridos = svo.sugerir_svo(contexto, candidatas)
 
-    palavras_por_id = buscar_palavras_por_id(ids_sugeridos)
+    contexto = normalizar_contexto(req)
+
+    ids = gerar_sugestoes(
+        contexto
+    )
+
+    palavras = buscar_palavras_por_id(
+        ids
+    )
 
     return {
+        "contexto": contexto,
         "sugestoes": [
-            montar_pictograma(_id, palavras_por_id.get(_id, ""))
-            for _id in ids_sugeridos
-        ]
+            montar_pictograma(
+                _id,
+                palavras.get(_id, "")
+            )
+            for _id in ids
+        ],
     }
+
+
+@app.get("/debug/sujeitos")
+def debug_sujeitos():
+
+    ids = svo.sugerir_sujeitos(20)
+
+    palavras = buscar_palavras_por_id(
+        ids
+    )
+
+    return [
+        {
+            "id": _id,
+            "palavra": palavras.get(
+                _id,
+                ""
+            )
+        }
+        for _id in ids
+    ]
 
 
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="127.0.0.1", port=8000)
-
-
-# GEMINI:
-
-# Ordem Sintática (Sequência): Peso 5 (É o mais importante para a frase fazer sentido).
-# Frequência Geral (Ordem de Uso): Peso 3 (Coisas que o usuário ama usar no geral).
-# Hora do Dia: Peso 2 (Se combina com o horário atual, ganha um bônus).
-# Dia da Semana: Peso 1 (Se combina com o dia atual, ganha um bônus menor).
-
-# $$\text{Pontuação} = (\text{Votos da Sequência} \times 5) + (\text{Votos de Uso} \times 3) + (\text{Bônus Hora} \times 2) + (\text{Bônus Dia} \times 1)$$
-
-# import os
-# import pickle
-# from collections import defaultdict
-# from fastapi import FastAPI, HTTPException
-# from fastapi.middleware.cors import CORSMiddleware
-# from pydantic import BaseModel
-
-# app = FastAPI(title="IA de Digitação Preditiva - CAA")
-
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-
-# class SugestorPictograma:
-#     def __init__(self):
-#         self.modelo = defaultdict(lambda: defaultdict(int)) 
-
-#     def sugerir(self, contexto: list[int], top_n: int = 2) -> list[int]:
-#         if not contexto:
-#             return []
-#         ultimo = contexto[-1]
-#         candidatos = self.modelo.get(ultimo, {})
-#         return sorted(candidatos, key=candidatos.get, reverse=True)[:top_n]
-
-# sugestor = SugestorPictograma()
-
-# class RequestSugestao(BaseModel):
-#     id_atual: int  # Recebe o ID numérico (_id) do card digitado
-
-# @app.post("/sugerir")
-# def sugerir_proximo(req: RequestSugestao):
-#     ids_sugeridos = sugestor.sugerir(contexto=[req.id_atual])
-    
-#     # Se a IA ainda não aprendeu nada no banco, deixamos o modo de teste robusto:
-#     if not ids_sugeridos:
-#         # AGORA COBRE QUALQUER ID: Se receber o ID de "querer", "eu" ou qualquer outro, 
-#         # ele vai injetar as opções de continuação na tela para o front-end funcionar!
-#         return {
-#             "sugestoes": [
-#                 {
-#                     "_id": 2435, 
-#                     "keywords": [{"keyword": "comer"}],
-#                     "origem": "arasaac"
-#                 },
-#                 {
-#                     "_id": 2555, 
-#                     "keywords": [{"keyword": "brincar"}],
-#                     "origem": "arasaac"
-#                 }
-#             ]
-#         }
-        
-#     # Quando o banco estiver integrado e o modelo treinado, essa parte cria a lista dinâmica
-#     resposta = []
-#     for _id in ids_sugeridos:
-#         resposta.append({
-#             "_id": _id,
-#             "keywords": [{"keyword": "sugestão"}],
-#             "origem": "arasaac"
-#         })
-#     return {"sugestoes": resposta}
-    
-# Execute com: uvicorn app_ia:app --reload
+    uvicorn.run(
+        app,
+        host="127.0.0.1",
+        port=8000
+    )
