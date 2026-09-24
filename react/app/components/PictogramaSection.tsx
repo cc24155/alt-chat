@@ -277,7 +277,20 @@ useEffect(() => {
           utterance.lang = "pt-BR";
           utterance.rate = 0.9;
 
-          window.speechSynthesis.speak(utterance);
+          const voices = window.speechSynthesis.getVoices();
+          const vozFeminina = voices.find(
+          (voice) =>
+            voice.lang.includes("pt") &&
+            (voice.name.includes("Luciana") ||
+            voice.name.includes("Helena") ||
+            voice.name.includes("Maria") ||
+            voice.name.toLowerCase().includes("female"))
+          ) || voices.find((voice) => voice.lang.includes("pt")); // Fallback para qualquer voz em PT
+
+          if (vozFeminina) {
+            utterance.voice = vozFeminina;
+          }
+            window.speechSynthesis.speak(utterance);
         } else {
           alert("Seu navegador não suporta reprodução de áudio.");
         }

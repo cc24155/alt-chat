@@ -11,6 +11,7 @@ import { salvarFrase } from "./actions";
 import { usePictogramas, PictogramasGrid } from "../components/PictogramaSection";
 import NavBar from "../components/NavBar";
 import { Pictograma } from "@/arasaac api/arasaac";
+import { palavraPorID } from "../components/actions";
 
 const sugestoesPadraoIA: Pictograma[] = [
   {
@@ -226,13 +227,43 @@ export default function FrasesPage() {
     ? [pictogramaInicial, ...fraseSelecionada]
     : fraseSelecionada;
 
-  function handleAudio(): void {
-    throw new Error("Function not implemented.");
-  }
+  async function handleAudio(): Promise<void> {
+    for (let i = 0; i < fraseMontada.length; i++) {
+      let idCada = fraseMontada[i]._id;
+      try{
+        const {success, palavra} = await palavraPorID(idCada);
+        if (!success) {
+          console.error("Erro ao obter palavra:", palavra);
+          throw new Error("Erro ao obter palavra");
+        }
+        if (palavra) {
+          if ("speechSynthesis" in window) {
+            const utterance = new SpeechSynthesisUtterance(palavra);
+            utterance.lang = "pt-BR";
+            const voices = window.speechSynthesis.getVoices();
+            const vozFeminina = voices.find(
+              (voice) =>
+                voice.lang.includes("pt") &&
+                (voice.name.includes("Luciana") ||
+                voice.name.includes("Helena") ||
+                voice.name.includes("Maria") ||
+                voice.name.toLowerCase().includes("female"))
+            ) || voices.find((voice) => voice.lang.includes("pt"));
 
-  //se é true, navigationblue, se não é, navbar
-
-
+            if (vozFeminina) {
+              utterance.voice = vozFeminina;
+            }
+              window.speechSynthesis.speak(utterance);
+            }
+        }  
+        else{
+          console.error("Palavra não encontrada para o pictograma:", idCada);
+        }
+      }
+      catch (error) {
+        console.error("Erro ao reproduzir áudio:", error);
+      }
+    }}
   return (
     <section className="w-full bg-background px-8 py-12 flex flex-col gap-8">
       {qualBarraNavegacao}
