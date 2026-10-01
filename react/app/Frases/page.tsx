@@ -38,6 +38,7 @@ export default function FrasesPage() {
   const [modalAberto, setModalAberto] = useState<boolean>(false);
   const [salvandoFrase, setSalvandoFrase] = useState(false);
   const [erroAoSalvar, setErroAoSalvar] = useState<string | null>(null);
+  const [fraseFinalizada, setFraseFinalizada] = useState(false);
 
   async function buscarSugestoesIA(contexto: number[]) {
     const response = await fetch(
@@ -201,6 +202,7 @@ export default function FrasesPage() {
       }
 
       exibirFraseMontada(fraseMontada);
+      setFraseFinalizada(true);
     } catch (erro) {
       console.error("Erro ao finalizar frase:", erro);
       setErroAoSalvar("N\u00e3o foi poss\u00edvel salvar a frase. Tente novamente.");
@@ -276,10 +278,18 @@ export default function FrasesPage() {
             </span>
             <button
               type="button"
-              onClick={() => {
+              onClick={async () => {
                 setPictogramaInicial(null);
                 setFraseSelecionada([]);
-                setSugestoesIA([]);
+                setFraseFinalizada(false);
+                try {
+                    await buscarSugestoesIA([]);
+                }
+                catch (erro) {
+                  console.error("Erro ao buscar sujeitos ao limpar:", erro);
+                  setSugestoesIA([]);
+                }
+      
               }}
               className="font-body text-xs text-neutral hover:text-foreground transition-colors"
             >
