@@ -108,72 +108,69 @@ export default function FrasesPage() {
 
 
   // CAPTURA A DIGITAÇÃO, PEGA A ÚLTIMA PALAVRA E BUSCA A SUGESTÃO DA IA
-  useEffect(() => { 
-  const obterSugestaoDinamica = async () => {
-      if (
-        !loading &&
-        q &&
-        resultados &&
-        resultados.length > 0
-      ) {
-        const palavrasDigitadas =
-          q.trim().split(/\s+/);
+  async function adicionarCardPesquisadoAFrase(card: Pictograma) {
+  // 1. Se não houver nada na frase ainda
+  if (!pictogramaInicial && fraseSelecionada.length === 0) {
+    setPictogramaInicial(card);
+    setFraseSelecionada([]);
+    await buscarSugestoesIA([Number(card._id)]);
+    return;
+  }
 
-        const ultimaPalavra =
-          palavrasDigitadas[
-            palavrasDigitadas.length - 1
-          ].toLowerCase();
+  // 2. Descobre qual é o último pictograma da frase atual
+  const ultimoPictograma = fraseSelecionada.length > 0
+    ? fraseSelecionada[fraseSelecionada.length - 1]
+    : pictogramaInicial;
+
+  // TRAVA DE SEGURANÇA: Se o card a ser inserido for idêntico ao último pictograma atual, ignora a duplicação
+  if (ultimoPictograma && String(ultimoPictograma._id) === String(card._id)) {
+    return;
+  }
+
+  // 3. Adiciona o card à frase sem duplicar
+  const novaFrase = [...fraseSelecionada, card];
+  setFraseSelecionada(novaFrase);
+
+  const contexto = idsNumericos([
+    ...(pictogramaInicial ? [pictogramaInicial] : []),
+    ...novaFrase,
+  ]);
+
+  try {
+    await buscarSugestoesIA(contexto);
+  } catch (erro) {
+    console.error("Erro ao atualizar sugestões após pesquisa:", erro);
+    setSugestoesIA([]);
+  }
+}
+
+  // CAPTURA A DIGITAÇÃO, PEGA A ÚLTIMA PALAVRA E ADICIONA À FRASE
+  useEffect(() => { 
+    const obterSugestaoDinamica = async () => {
+      if (!loading && q && resultados && resultados.length > 0) {
+        const palavrasDigitadas = q.trim().split(/\s+/);
+        const ultimaPalavra = palavrasDigitadas[palavrasDigitadas.length - 1].toLowerCase();
 
         const cardCorreto =
-          resultados.find(pic =>
-            pic.keywords?.some(
-              kw =>
-                kw.keyword.toLowerCase()
-                === ultimaPalavra
-            )
+          resultados.find((pic) =>
+            pic.keywords?.some((kw) => kw.keyword.toLowerCase() === ultimaPalavra)
           ) || resultados[0];
 
-        const idNumerico =
-          Number(cardCorreto._id);
+        const idNumerico = Number(cardCorreto._id);
+        if (isNaN(idNumerico)) return;
 
-        if (isNaN(idNumerico)) {
-          return;
-        }
-
-        try {
-          setPictogramaInicial(
-            cardCorreto
-          );
-
-          setFraseSelecionada([]);
-
-          await buscarSugestoesIA([
-            idNumerico
-          ]);
-        } catch (erro) {
-          console.error(
-            "Erro ao chamar a IA:",
-            erro
-          );
-
-          setSugestoesIA([]);
-        }
+        // Chama a função para ADICIONAR à frase em vez de zerar!
+        await adicionarCardPesquisadoAFrase(cardCorreto);
       }
-
-      // Nenhuma pesquisa:
-      // pede sujeitos para a IA.
-      else if (!loading && !q) {
+      // Nenhuma pesquisa e frase totalmente vazia: pede sujeitos padrão
+      else if (!loading && !q && fraseMontada.length === 0) {
         setPictogramaInicial(null);
         setFraseSelecionada([]);
 
         try {
           await buscarSugestoesIA([]);
         } catch (erro) {
-          console.error(
-            "Erro ao buscar sujeitos:",
-            erro
-          );
-
+          console.error("Erro ao buscar sujeitos:", erro);
           setSugestoesIA([]);
         }
       }
