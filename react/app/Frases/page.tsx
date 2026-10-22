@@ -106,10 +106,7 @@ export default function FrasesPage() {
     verificarLogin();
   }, []);
 
-
-  // CAPTURA A DIGITAÇÃO, PEGA A ÚLTIMA PALAVRA E BUSCA A SUGESTÃO DA IA
   async function adicionarCardPesquisadoAFrase(card: Pictograma) {
-  // 1. Se não houver nada na frase ainda
   if (!pictogramaInicial && fraseSelecionada.length === 0) {
     setPictogramaInicial(card);
     setFraseSelecionada([]);
@@ -117,17 +114,14 @@ export default function FrasesPage() {
     return;
   }
 
-  // 2. Descobre qual é o último pictograma da frase atual
+
   const ultimoPictograma = fraseSelecionada.length > 0
     ? fraseSelecionada[fraseSelecionada.length - 1]
     : pictogramaInicial;
-
-  // TRAVA DE SEGURANÇA: Se o card a ser inserido for idêntico ao último pictograma atual, ignora a duplicação
   if (ultimoPictograma && String(ultimoPictograma._id) === String(card._id)) {
     return;
   }
 
-  // 3. Adiciona o card à frase sem duplicar
   const novaFrase = [...fraseSelecionada, card];
   setFraseSelecionada(novaFrase);
 
@@ -144,7 +138,6 @@ export default function FrasesPage() {
   }
 }
 
-  // CAPTURA A DIGITAÇÃO, PEGA A ÚLTIMA PALAVRA E ADICIONA À FRASE
   useEffect(() => { 
     const obterSugestaoDinamica = async () => {
       if (!loading && q && resultados && resultados.length > 0) {
@@ -159,10 +152,8 @@ export default function FrasesPage() {
         const idNumerico = Number(cardCorreto._id);
         if (isNaN(idNumerico)) return;
 
-        // Chama a função para ADICIONAR à frase em vez de zerar!
         await adicionarCardPesquisadoAFrase(cardCorreto);
       }
-      // Nenhuma pesquisa e frase totalmente vazia: pede sujeitos padrão
       else if (!loading && !q && fraseMontada.length === 0) {
         setPictogramaInicial(null);
         setFraseSelecionada([]);
@@ -207,8 +198,6 @@ export default function FrasesPage() {
       setSalvandoFrase(false);
     }
   }
-
-  // quando terminar de carregar E tiver uma busca, rola até os resultados
   useEffect(() => {
     if (!loading && q) {
       document.getElementById("busca-frases")?.scrollIntoView({ behavior: "smooth" });
