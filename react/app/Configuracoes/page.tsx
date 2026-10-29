@@ -139,7 +139,7 @@ const Config = () => {
 
       {/* Título e Subtítulo */}
       <div className="text-center flex flex-col gap-2">
-        <h1 className="font-title text-foreground">CONFIGURAÇÕES</h1>
+        <h1 className="font-title text-foreground">Configurações</h1>
       </div>
 
       {/* Formulário Estilizado */}

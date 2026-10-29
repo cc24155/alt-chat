@@ -85,7 +85,7 @@ const Form = () => {
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">
       <div className="text-center flex flex-col gap-2">
-        <h1 className="font-title text-foreground">LOGIN</h1>
+        <h1 className="font-title text-foreground">Login</h1>
       </div>
 
       <form

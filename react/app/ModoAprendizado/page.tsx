@@ -182,7 +182,7 @@ export default function ModoAprendizadoPage() {
 
       <main className="flex-grow w-full max-w-5xl mx-auto px-4 pt-28 pb-16 flex flex-col gap-8">
         <header className="text-center flex flex-col gap-4">
-          <h1 className="font-title text-3xl md:text-5xl uppercase">Modo Aprendizado</h1>
+          <h1 className="font-title text-3xl md:text-5xl">Modo Aprendizado</h1>
           <p className="font-body text-foreground/70">Treine associações, avance no seu ritmo e acompanhe sua evolução.</p>
         </header>
 
