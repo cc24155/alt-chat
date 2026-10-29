@@ -11,6 +11,7 @@ import { usePictogramas, PictogramasGrid } from "../components/PictogramaSection
 import NavBar from "../components/NavBar";
 import Button from "../components/Button";
 import { useRouter } from "next/navigation";
+import Loading from "../loading";
 
 
 export default function BibliotecaPage() {
@@ -43,8 +44,7 @@ export default function BibliotecaPage() {
     }
   }, [loading, q]);
 
-  if (loading)
-    return <div className="text-foreground text-center py-20">Carregando...</div>;
+  if (loading) return <Loading />;
 
   const qualBarraNavegacao = logado ? <NavigationBlue /> : <NavBar />;
 

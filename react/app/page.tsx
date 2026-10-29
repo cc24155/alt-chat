@@ -9,6 +9,7 @@ import Link from "next/link";
 import NavBar from "./components/NavBar";
 import NavigationBlue from "./components/NavigationBlue";
 import { EstaLogado } from "./actions";
+import Loading from "./loading";
 
 
 // navbar
@@ -355,6 +356,8 @@ export const Box = (): JSX.Element => {
   }, []);
 
   const qualBarraNavegacao = logado ? <NavigationBlue /> : <NavBar />;
+
+  if (logado === null) return <Loading />;
   
   return (
     <div className="w-full min-h-screen bg-background">

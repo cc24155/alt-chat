@@ -47,11 +47,6 @@ export default function Loading() {
           </span>
         </div>
 
-        {/* Barrinha de Progresso Infinita */}
-        <div className="w-44 h-1.5 bg-[var(--neutral)]/20 rounded-full overflow-hidden mt-2">
-          <div className="w-full h-full bg-[var(--primary)] rounded-full -translate-x-full animate-[loading-bar_1.5s_infinite_easeInOut]" />
-        </div>
-
         {/* Texto auxiliar */}
         <p className="font-body text-xs text-[var(--neutral)] tracking-wide uppercase mt-1">
           Carregando...
@@ -59,20 +54,6 @@ export default function Loading() {
 
       </div>
 
-      {/* Estilo local */}
-      <style jsx>{`
-        @keyframes loading-bar {
-          0% {
-            transform: translateX(-100%);
-          }
-          50% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
-        }
-      `}</style>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { EFavorito, palavraPorID } from "./actions";
 import Button from "./Button";
 import { adicionarFavorito, excluirFavoritos, marcarFavoritos, excluirPicProprio } from "./actions";
 import { convertServerPatchToFullTree } from "next/dist/client/components/segment-cache/navigation";
+import Loading from "../loading";
 
 
 export function usePictogramas(nomes: string[]) {
@@ -481,9 +482,7 @@ export function CategoriaModal({ nome, onClose }: CategoriaModalProps) {
 
         <div className="overflow-y-auto px-8 pb-8">
           {loading ? (
-            <div className="flex items-center justify-center py-16">
-              <span className="font-body text-neutral">Carregando...</span>
-            </div>
+            <Loading />
           ) : (
             <>
               <span className="font-body text-neutral mb-4 block">

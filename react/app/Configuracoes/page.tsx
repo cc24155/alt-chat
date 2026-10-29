@@ -11,6 +11,7 @@ import { AtualizarDados } from "./actions";
 import { buscarDadosUsuario } from "../Conta/actions";
 import { EstaLogado } from "../actions";
 import Mensagem from "../components/Mensagem";
+import Loading from "../loading";
 
 interface Usuario {
   username: string;
@@ -25,23 +26,9 @@ interface Usuario {
 const Config = () => {
   const router = useRouter();
   const [acessoNegado, setAcessoNegado] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   //antes de declarar coisas que talvez nem usadas serão, é importante verificar se o usuário está logado.
-  useEffect(() => {
-    const verificarLogin = async () => {
-      try {
-        const result = await EstaLogado();
-        if (!result?.success) {
-          setAcessoNegado(true);
-        }
-      }
-      catch (e) {
-        console.error("Deu erro: ", e);
-      }
-    };
-    verificarLogin();
-  }, []);
-
   // estado para armazenar os dados do usuário
   const [name, setName] = useState("");
   const [user, setUser] = useState("");
@@ -68,21 +55,24 @@ const Config = () => {
   };
 
   useEffect(() => {
-    const carregarPerfil = async () => {
+    const carregarPagina = async () => {
       try {
-        const res = await buscarDadosUsuario();
-        if (res.success && res.dadosUser) {
-          setUsuario(res.dadosUser);
-          setBiografia(res.dadosUser.biografia ?? "");
+        const [login, perfil] = await Promise.all([EstaLogado(), buscarDadosUsuario()]);
+        if (!login?.success) setAcessoNegado(true);
+        if (perfil.success && perfil.dadosUser) {
+          setUsuario(perfil.dadosUser);
+          setBiografia(perfil.dadosUser.biografia ?? "");
         } else {
           setUsuario(null);
         }
       } catch (err) {
-        console.error("Erro ao carregar perfil", err);
+        console.error("Erro ao carregar configurações", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    carregarPerfil();
+    void carregarPagina();
   }, []);
 
   // atualiza os dados do usuário no bd
@@ -102,6 +92,7 @@ const Config = () => {
     }
 
     try {
+      setLoading(true);
       const result = await AtualizarDados(
         user,
         name,
@@ -118,6 +109,8 @@ const Config = () => {
       }
     } catch (e: unknown) {
       notify("Erro inesperado.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,6 +122,8 @@ const Config = () => {
     if (tema) html.classList.add(tema);
     localStorage.setItem("tema-extra", tema);
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">

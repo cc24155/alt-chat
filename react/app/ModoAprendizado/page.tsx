@@ -9,6 +9,7 @@ import PicCard from "../components/PictogramaSection";
 import { EstaLogado } from "../actions";
 import { quantosAcertosUsuario, registrarAcerto } from "./actions";
 import { buscarPictogramas } from "../../arasaac api/arasaac";
+import Loading from "../loading";
 
 type PictogramaExercicio = {
   _id: number;
@@ -70,6 +71,8 @@ function embaralharPalavras(pictogramas: PictogramaExercicio[]) {
 export default function ModoAprendizadoPage() {
   const router = useRouter();
   const [acessoNegado, setAcessoNegado] = useState(false);
+  const [pictogramasCarregando, setPictogramasCarregando] = useState(true);
+  const [progressoCarregando, setProgressoCarregando] = useState(true);
   const [nivelAtual, setNivelAtual] = useState(0);
   const [selecionado, setSelecionado] = useState<number | null>(null);
   const [acertos, setAcertos] = useState<number[]>([]);
@@ -83,17 +86,22 @@ export default function ModoAprendizadoPage() {
 
   useEffect(() => {
     const carregarPictogramas = async () => {
-      const resultados = await Promise.all(nivel.palavras.map(async (palavra) => {
-        const encontrados = await buscarPictogramas(palavra);
-        const pictograma = encontrados[0];
-        return pictograma ? { ...pictograma, _id: Number(pictograma._id), keywords: [{ keyword: palavra }] } : null;
-      }));
+      setPictogramasCarregando(true);
+      try {
+        const resultados = await Promise.all(nivel.palavras.map(async (palavra) => {
+          const encontrados = await buscarPictogramas(palavra);
+          const pictograma = encontrados[0];
+          return pictograma ? { ...pictograma, _id: Number(pictograma._id), keywords: [{ keyword: palavra }] } : null;
+        }));
 
-      const pictogramasCarregados = resultados.filter((p): p is PictogramaExercicio => p !== null);
-      setPictogramas(pictogramasCarregados);
-      setPalavras(embaralharPalavras(pictogramasCarregados));
-      setAcertos([]);
-      setSelecionado(null);
+        const pictogramasCarregados = resultados.filter((p): p is PictogramaExercicio => p !== null);
+        setPictogramas(pictogramasCarregados);
+        setPalavras(embaralharPalavras(pictogramasCarregados));
+        setAcertos([]);
+        setSelecionado(null);
+      } finally {
+        setPictogramasCarregando(false);
+      }
     };
 
     void carregarPictogramas();
@@ -101,17 +109,23 @@ export default function ModoAprendizadoPage() {
 
   useEffect(() => {
     const carregarProgresso = async () => {
-      const resultLogin = await EstaLogado();
-      if (!resultLogin?.success) {
-        setAcessoNegado(true);
-        return;
-      }
+      try {
+        const resultLogin = await EstaLogado();
+        if (!resultLogin?.success) {
+          setAcessoNegado(true);
+          return;
+        }
 
-      const resultado = await quantosAcertosUsuario();
-      if (resultado.success) setTotalAcertos(resultado.data ?? 0);
+        const resultado = await quantosAcertosUsuario();
+        if (resultado.success) setTotalAcertos(resultado.data ?? 0);
+      } finally {
+        setProgressoCarregando(false);
+      }
     };
     carregarProgresso();
   }, []);
+
+  if (pictogramasCarregando || progressoCarregando) return <Loading />;
 
   const mostrarPopup = (mensagem: string, sucesso = false) => {
     setPopup({ visivel: true, mensagem, sucesso });

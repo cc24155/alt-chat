@@ -10,6 +10,7 @@ import Footer from "../components/Footer";
 import { recuperarSenha } from "../Senha/actions";
 import NavBar from "../components/NavBar";
 import Mensagem from "../components/Mensagem";
+import Loading from "../loading";
 
 
 const Form = () => {
@@ -17,6 +18,7 @@ const Form = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -34,6 +36,7 @@ const Form = () => {
   const handleSubmit = async (e?: React.SubmitEvent) => {
     if (e) e.preventDefault();
     try {
+      setLoading(true);
       const result = await autenticarUsuario(email, password);
       if (result.success) {
         notify("Login feito com sucesso! Redirecionando...", false);
@@ -43,8 +46,12 @@ const Form = () => {
       }
     } catch (e) {
       notify("Erro inesperado no servidor.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">

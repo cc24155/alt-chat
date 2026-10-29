@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { EstaLogado } from "../actions";
 import { buscarDadosRelatorio } from "./actions"; 
 import Mensagem from "../components/Mensagem";
+import Loading from "../loading";
 
 interface Relatorio {
   tempo_medio_mensagem?: number;
@@ -18,27 +19,32 @@ export default function RelatorioPage() {
   
   const [acessoNegado, setAcessoNegado] = useState(false);
   const [usuario, setUsuario] = useState<Relatorio | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const carregarTudo = async () => {
-      const resultLogin = await EstaLogado();
-      if (!resultLogin?.success) {
-        setAcessoNegado(true);
-        return;
-      }
+      try {
+        const resultLogin = await EstaLogado();
+        if (!resultLogin?.success) {
+          setAcessoNegado(true);
+          return;
+        }
 
-      const resultRelatorio = await buscarDadosRelatorio();
-      
-      if (resultRelatorio.success && resultRelatorio.dados) {
-        console.log(" Dados do servidor:", resultRelatorio.dados);
-        setUsuario(resultRelatorio.dados as Relatorio);
-      } else {
-        console.error("Erro ao buscar no servidor:", resultRelatorio.error);
+        const resultRelatorio = await buscarDadosRelatorio();
+        if (resultRelatorio.success && resultRelatorio.dados) {
+          setUsuario(resultRelatorio.dados as Relatorio);
+        } else {
+          console.error("Erro ao buscar no servidor:", resultRelatorio.error);
+        }
+      } finally {
+        setLoading(false);
       }
     };
 
     carregarTudo();
   }, []);
+
+  if (loading) return <Loading />;
 
   const META_ACERTOS = 3; 
   const totalAcertos = usuario?.acertos_modo_aprendizado || 0;

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
+import Loading from "../loading";
 
 
 const Form = () => {
@@ -21,6 +22,7 @@ const Form = () => {
 
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -60,6 +62,7 @@ const Form = () => {
     }
 
     try {
+      setLoading(true);
       const result = await createUser(name, email, user, password);
       if (result.success) {
         notify("Usuário cadastrado com sucesso! Redirecionando...", false);
@@ -71,8 +74,12 @@ const Form = () => {
     } catch (e) {
       console.error("Erro: ", e);
       notify("Erro inesperado no servidor.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">

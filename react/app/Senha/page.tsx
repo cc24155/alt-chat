@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import { supabase } from "@/lib/supabase";
 import { EstaLogado } from "../actions";
 import Mensagem from "../components/Mensagem";
+import Loading from "../loading";
 
 
 const Form = () => {
@@ -16,6 +17,7 @@ const Form = () => {
   const [confirmPass, setConfirmNewPass] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -56,6 +58,7 @@ const Form = () => {
     }
 
     try {
+      setLoading(true);
       // Chamamos o supabase diretamente no componente (Client Side).
       // Ele vai ler o #access_token da URL automaticamente.
       const { data, error } = await supabase.auth.updateUser({
@@ -82,8 +85,12 @@ const Form = () => {
     } catch (err) {
       notify("Erro inesperado ao processar.");
       console.error("Erro na submissão:", err);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) return <Loading />;
 
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center gap-8">

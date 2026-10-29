@@ -12,6 +12,7 @@ import { usePictogramas, PictogramasGrid } from "../components/PictogramaSection
 import NavBar from "../components/NavBar";
 import { Pictograma } from "@/arasaac api/arasaac";
 import { palavraPorID } from "../components/actions";
+import Loading from "../loading";
 
 const sugestoesPadraoIA: Pictograma[] = [
   {
@@ -204,8 +205,7 @@ export default function FrasesPage() {
     }
   }, [loading, q]);
 
-  if (loading)
-    return <div className="text-foreground text-center py-20">Carregando...</div>;
+  if (loading) return <Loading />;
 
   const qualBarraNavegacao = logado ? <NavigationBlue /> : <NavBar />;
   const pictogramaPrincipal = fraseSelecionada.length > 0

@@ -16,6 +16,7 @@ import { Pictograma } from "@/arasaac api/arasaac";
 import { throws } from "assert";
 import { marcarFavoritos } from "../components/actions";
 import { supabase } from "@/lib/supabase";
+import Loading from "../loading";
 //import { error } from "console";
 
 interface Usuario {
@@ -44,64 +45,15 @@ export default function ContaPage() {
   const [acessoNegado, setAcessoNegado] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const carregarTudo = async () => {
-      try {
-        setLoading(true);
-        const resUser = await buscarDadosUsuario();
-        const resMeusPic = await pegarPicUser();
-        const resFavoritos = await pegarFavoritosUser();
-
-        //lógica para meus pictogramas
-        if (resMeusPic?.success) {
-          if (resMeusPic.data) {
-            const formatados = resMeusPic.data.map(p => ({
-                _id: p._id,
-                url_imagem: p.url_imagem,
-                keywords: p.keywords ?? [{ keyword: "Meu Pictograma" }], // keywords é obrigatório na sua interface
-                origem: "usuario" as const
-              }));
-            setMeusPic(formatados);
-          }
-          else {
-            console.log("Não conseguiu pegar os meus pictogramas");
-          }
-        }
-
-        //lógica para dados do usuário
-        if (resUser.success) {
-          if (resUser.dadosUser) {
-            setUsuario(resUser.dadosUser);
-            setUserId(resUser.userId);
-          }
-        } else {
-          setAcessoNegado(true);
-        }
-
-        if (resFavoritos.success) {
-          if (resFavoritos.data) 
-            setFavoritos(resFavoritos.data);
-          else 
-            console.log("Deu erro: o resFavoritos.data ta dando")
-        }
-
-      } catch (err) {
-        console.error("Erro ao carregar dados da conta:", err);
-      }
-      finally {
-        setLoading(false);
-      }
-    };
-
-    carregarTudo();
-  }, [router]);
-
   const atualizarDados = async () => {
     setLoading(true);
     try {
       const resUser = await buscarDadosUsuario();
       if (resUser.success && resUser.dadosUser) {
         setUsuario(resUser.dadosUser);
+        setUserId(resUser.userId);
+      } else {
+        setAcessoNegado(true);
       }
       
       // 1. Busca Favoritos
@@ -189,7 +141,7 @@ export default function ContaPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="text-foreground font-body animate-pulse">Carregando seu perfil...</div>
+        <Loading />
       </div>
     );
   }
