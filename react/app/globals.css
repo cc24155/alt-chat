@@ -329,3 +329,8 @@ body {
   color: var(--foreground);
   font-family: var(--font-body);
 }
+
+/* Garante que o cursor do texto siga sempre a cor principal do tema ativo */
+input, textarea {
+  caret-color: var(--foreground);
+}

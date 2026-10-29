@@ -167,6 +167,7 @@ const Form = () => {
         </div>
 
         <Button
+          type="submit"
           text="CADASTRAR"
           className="!text-[15px] w-full py-4 mt-4 !rounded-full font-bold tracking-widest"
           onClick={handleSubmit}

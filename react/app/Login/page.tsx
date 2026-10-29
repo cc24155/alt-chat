@@ -104,9 +104,11 @@ const Form = () => {
         )}
 
         <Button
+          type="submit"
           text="ENTRAR"
           className="!text-[15px] w-full py-4 mt-4 !rounded-full font-bold tracking-widest"
-          onClick={handleSubmit} />
+          onClick={handleSubmit} 
+        />
       </form>
 
       {/* --- MODAL DE ESQUECI A SENHA --- */}
