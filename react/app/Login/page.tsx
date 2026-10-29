@@ -1,5 +1,5 @@
 "use client";
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { autenticarUsuario } from "./actions";
 import { useRouter } from "next/navigation";
 
@@ -11,6 +11,7 @@ import { recuperarSenha } from "../Senha/actions";
 import NavBar from "../components/NavBar";
 import Mensagem from "../components/Mensagem";
 import Loading from "../loading";
+import { supabase } from "@/lib/supabase";
 
 
 const Form = () => {
@@ -26,6 +27,15 @@ const Form = () => {
   const [forgotEmail, setForgotEmail] = useState("");
 
   const router = useRouter();
+
+  useEffect(() => {
+    const oauthError = sessionStorage.getItem("google-oauth-error");
+    if (oauthError) {
+      sessionStorage.removeItem("google-oauth-error");
+      setMessage(oauthError);
+      setIsError(true);
+    }
+  }, []);
 
   const notify = (msg: string, error = true) => {
     setMessage(msg);
@@ -47,6 +57,25 @@ const Form = () => {
     } catch (e) {
       notify("Erro inesperado no servidor.");
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      });
+
+      if (error) {
+        notify("Não foi possível iniciar o login com Google.");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Erro ao iniciar login com Google:", error);
+      notify("Não foi possível iniciar o login com Google.");
       setLoading(false);
     }
   };
@@ -114,8 +143,26 @@ const Form = () => {
           type="submit"
           text="ENTRAR"
           className="!text-[15px] w-full py-4 mt-4 !rounded-full font-bold tracking-widest"
-          onClick={handleSubmit} 
         />
+
+        <div className="flex items-center gap-4 text-neutral font-body text-sm">
+          <span className="h-px flex-1 bg-foreground/20" />
+          <span>ou</span>
+          <span className="h-px flex-1 bg-foreground/20" />
+        </div>
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="w-full rounded-full border border-foreground/30 py-4 font-body font-bold text-foreground transition-colors hover:bg-foreground/5 flex items-center justify-center gap-3"
+        >
+          <svg aria-hidden="true" viewBox="0 0 48 48" className="h-5 w-5">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z" transform="translate(0 4)" />
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.87 47 31.8 47 24.55Z" />
+            <path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.2a23.9 23.9 0 0 0 0 21.58l7.98-6.2Z" transform="translate(0 0)" />
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.14 1.44-4.88 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.2C6.51 42.62 14.62 48 24 48Z" />
+          </svg>
+          Continuar com Google
+        </button>
       </form>
 
       {/* --- MODAL DE ESQUECI A SENHA --- */}
